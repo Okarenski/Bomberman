@@ -1,6 +1,6 @@
 /**
     Estrutura inicial para um jogo
-    vers�o: 0.1 (Prof. Alex,  Adaptado Prof. Felski)
+    versão: 0.1 (Prof. Alex,  Adaptado Prof. Felski)
 */
 #include <iostream>
 #include <windows.h>
@@ -18,6 +18,15 @@ bool colisao(int p){
     } else
         return true;
 }
+
+int v = 10; // valor da vida do personagem 
+bool vida(int v){   // verificação da vida, se v for 0 o jogador morre.
+   if(v == 0){
+    return false;
+   }else{
+       return true;
+   }
+
 
 int main()
 {
