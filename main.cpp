@@ -59,6 +59,8 @@ int main()
     int x=5, y=5;
     //Variavel para tecla precionada
     char tecla;
+    // variavel de vida
+    int v=10;
 
     while(true){
         ///Posiciona a escrita no iicio do console
