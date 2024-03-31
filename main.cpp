@@ -148,7 +148,7 @@ int main()
         
         //movimento inimigo 
 
-             int movimento = rand()% 1000;
+             int movimento = rand()% 800;
              switch(movimento){
                    case 0: if(xi>0){
                     xi--;
@@ -179,7 +179,7 @@ int main()
             }
          }
 
-        int movimento2 = rand()% 100;
+        int movimento2 = rand()% 800;
          switch(movimento2){
                    case 0: if(xi2>0){
                     xi2++;
