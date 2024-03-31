@@ -5,6 +5,8 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <time.h> // para o movimento do inimigo
+#include <stdlib.h> // --
 
 using namespace std;
 
@@ -18,12 +20,6 @@ bool colisao(int p){
         return true;
 }
 
-bool colisao_Inimigo(int c){
-    if (c!=0){
-        return false;
-    } else
-        return true;
-}
 
 
 
@@ -32,6 +28,8 @@ bool colisao_Inimigo(int c){
 
 int main()
 {
+    srand(time(0));
+
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
         //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
         HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -112,7 +110,8 @@ int main()
             cout<<"\n";
         } //fim for mapa
 
-        ///executa os movimentos do inimigo
+
+
 
          ///executa os movimentos
          if ( _kbhit() ){
@@ -145,16 +144,84 @@ int main()
                         y--;
                     }
                 break;
+            }}
+
+             int movimento = rand()% 1000;
+             switch(movimento){
+                   case 0: if(xi>0){
+                    xi--;
+                    if(colisao(m[xi][yi]==false)){
+                        xi++;
+                    }
+                break;}
+
+                  case 1: if(xi<6){
+                    xi++;
+                    if(colisao(m[xi][yi]==false)){
+                        xi--;
+                    }
+                break;}
+               case 2: if(yi>0){
+                    yi--;
+                    if(colisao(m[xi][yi]==false)){
+                        yi++;
+                    }
+                break;}
+
+                 case 3: if(yi<6){
+                    yi++;
+                    if(colisao(m[xi][yi]==false)){
+                        yi--;
+                    }
+                break;}
             }
+         }
+
+        int movimento2 = rand()% 100;
+         switch(movimento2){
+                   case 0: if(xi2>0){
+                    xi2++;
+                    if(colisao(m[xi2][yi2]==false)){
+                        xi2--;
+                    }
+                break;}
+
+                  case 1: if(xi2<6){
+                    xi2--;
+                    if(colisao(m[xi2][yi2]==false)){
+                        xi2++;
+                    }
+                break;}
+               case 2: if(yi>0){
+                    yi2++;
+                    if(colisao(m[xi2][yi2]==false)){
+                        yi2--;
+                    }
+                break;}
+
+                 case 3: if(yi2<6){
+                    yi2++;
+                    if(colisao(m[xi2][yi2]==false)){
+                        yi2--;
+                    }
+                break;}
+                return 0;
+
+            }
+
          }
 
 
 
 
 
-    } //fim do laco do jogo
-
-    return 0;
-}//fim main
 
 
+
+
+
+
+
+     //fim do laco do jogo
+
+//fim main
