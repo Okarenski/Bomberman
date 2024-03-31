@@ -8,9 +8,8 @@
 
 using namespace std;
 
-//int baixo (m[x][y]){
 
-//}
+
 
 bool colisao(int p){
     if (p!=0){
@@ -19,13 +18,16 @@ bool colisao(int p){
         return true;
 }
 
-int v = 10; // valor da vida do personagem 
-bool vida(int v){   // verificação da vida, se v for 0 o jogador morre.
-   if(v == 0){
-    return false;
-   }else{
-       return true;
-   }
+bool colisao_Inimigo(int c){
+    if (c!=0){
+        return false;
+    } else
+        return true;
+}
+
+
+
+
 
 
 int main()
@@ -50,17 +52,22 @@ int main()
                     1,0,0,0,0,0,1,
                     1,0,0,0,1,1,1,
                     1,0,0,0,1,0,1,
-                    1,1,2,0,1,0,1,
+                    1,1,0,0,1,0,1,
                     1,0,0,0,0,0,1,
                     1,1,1,1,1,1,1};
 
 
+
+
     //Posicao inicial do personagem no console
     int x=5, y=5;
+    // posicao inicial do inimigo no console
+    int xi = 3, yi = 3;
     //Variavel para tecla precionada
     char tecla;
-    // variavel de vida
-    int v=10;
+    // variavel personagem e inimigo
+    char personagem(153);
+    char inimigo (041);
 
     while(true){
         ///Posiciona a escrita no iicio do console
@@ -68,14 +75,22 @@ int main()
 
         ///Imprime o jogo: mapa e personagem.
         for(int i=0;i<7;i++){
-            for(int j=0;j<7;j++){
+            for(int j=0;j<7;j++){ // imprime a matriz
                 if(i==x && j==y){
-                    cout<<char(36); //personagem
-                } else {
+                    cout<<personagem; //personagem
+
+                    }else if(i==xi&&j==yi){
+                        cout << inimigo;
+
+
+
+
+
+                 }else {
+
                     switch (m[i][j]){
                         case 0: cout<<" "; break; //caminho
                         case 1: cout<<char(219); break; //parede
-                        case 2: cout<<char(230); break;
                         //default: cout<<"-"; //erro
                     } //fim switch
                 }
@@ -83,7 +98,9 @@ int main()
             cout<<"\n";
         } //fim for mapa
 
-        ///executa os movimentos
+        ///executa os movimentos do inimigo
+
+         ///executa os movimentos
          if ( _kbhit() ){
             tecla = getch();
             switch(tecla)
@@ -118,7 +135,11 @@ int main()
          }
 
 
+
+
+
     } //fim do laco do jogo
 
     return 0;
-} //fim main
+}//fim main
+
