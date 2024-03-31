@@ -145,6 +145,8 @@ int main()
                     }
                 break;
             }}
+        
+        //movimento inimigo 
 
              int movimento = rand()% 1000;
              switch(movimento){
