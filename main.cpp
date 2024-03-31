@@ -62,12 +62,14 @@ int main()
     //Posicao inicial do personagem no console
     int x=5, y=5;
     // posicao inicial do inimigo no console
-    int xi = 3, yi = 3;
+    int xi = 1, yi = 1;
+    int xi2 = 3, yi2 = 3;
     //Variavel para tecla precionada
     char tecla;
     // variavel personagem e inimigo
     char personagem(153);
     char inimigo (041);
+    char inimigo2 (041);
 
     while(true){
         ///Posiciona a escrita no iicio do console
@@ -79,8 +81,20 @@ int main()
                 if(i==x && j==y){
                     cout<<personagem; //personagem
 
+
+
+
                     }else if(i==xi&&j==yi){
-                        cout << inimigo;
+
+                            cout << inimigo;
+
+                       }else if(i==xi2 && j==yi2){   // ver de mudar essa feiura para um for
+                         cout << inimigo2;
+
+
+
+
+
 
 
 
@@ -142,4 +156,5 @@ int main()
 
     return 0;
 }//fim main
+
 
