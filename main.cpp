@@ -46,21 +46,33 @@ int main()
         //FIM: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, ACIMA.
 
-    int m[7][7]={   1,1,1,1,1,1,1,
-                    1,0,0,0,0,0,1,
-                    1,0,0,0,1,1,1,
-                    1,0,0,0,1,0,1,
-                    1,1,0,0,1,0,1,
-                    1,0,0,0,0,0,1,
-                    1,1,1,1,1,1,1};
-
+    int m[20][20]={ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+                    1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,};
 
 
 
     //Posicao inicial do personagem no console
     int x=5, y=5;
     // posicao inicial do inimigo no console
-    int xi = 1, yi = 1;
+    int xi = 10, yi = 10;
     int xi2 = 3, yi2 = 3;
     //Variavel para tecla precionada
     char tecla;
@@ -74,8 +86,8 @@ int main()
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
         ///Imprime o jogo: mapa e personagem.
-        for(int i=0;i<7;i++){
-            for(int j=0;j<7;j++){ // imprime a matriz
+        for(int i=0;i<20;i++){
+            for(int j=0;j<20;j++){ // imprime a matriz
                 if(i==x && j==y){
                     cout<<personagem; //personagem
 
@@ -145,10 +157,10 @@ int main()
                     }
                 break;
             }}
-        
-        //movimento inimigo 
 
-             int movimento = rand()% 800;
+        //movimento inimigo
+
+             int movimento = rand()% 1000;
              switch(movimento){
                    case 0: if(xi>0){
                     xi--;
@@ -179,7 +191,7 @@ int main()
             }
          }
 
-        int movimento2 = rand()% 800;
+        int movimento2 = rand()% 1000;
          switch(movimento2){
                    case 0: if(xi2>0){
                     xi2++;
