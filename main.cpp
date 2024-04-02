@@ -63,6 +63,7 @@ int main()
     // posicao inicial do inimigo no console
     int xi = 1, yi = 18;
     int xi2 = 1, yi2 = 3;
+    int xi3 = 1, yi3 = 5;
     //posição bomba
 
     //Variavel para tecla precionada
@@ -71,6 +72,7 @@ int main()
     char personagem(153);
     char inimigo   (041);
     char inimigo2  (041);
+    char inimigo3  (041);
     char bomba     (100);
 
     while(true){
@@ -94,11 +96,8 @@ int main()
                          cout << inimigo2;
 
 
-
-
-
-
-
+                 } else if (i==xi3&&j==yi3){
+                        cout << inimigo3;
 
 
 
@@ -169,7 +168,8 @@ int main()
                         xi++;
                     }
                 break;
-               case 61:
+
+                  case 61:
                     yi++;
                     if(colisao(m[xi][yi]==false)){
                         yi--;
@@ -183,7 +183,7 @@ int main()
                     }
                 break;
             }
-         }
+
 
         int movimento2 = rand()% 90;
          switch(movimento2){
@@ -213,6 +213,36 @@ int main()
                         yi2++;
                     }
                 break;}
+
+        int movimento3 = rand()% 90;
+         switch(movimento3){
+                   case 17:
+                    xi3++;
+                    if(colisao(m[xi3][yi3]==false)){
+                        xi3--;
+                    }
+                break;
+
+                  case 31:
+                    xi3--;
+                    if(colisao(m[xi3][yi3]==false)){
+                        xi3++;
+                    }
+                break;
+               case 64:
+                    yi3++;
+                    if(colisao(m[xi3][yi3]==false)){
+                        yi3--;
+                    }
+                break;
+
+                 case 83:
+                    yi3--;
+                    if(colisao(m[xi3][yi3]==false)){
+                        yi3++;
+                    }
+                break;}
+                }
                 return 0;
 
             }
