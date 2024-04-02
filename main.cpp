@@ -25,7 +25,6 @@ bool colisao(int p){
 
 
 
-
 int main()
 {
     srand(time(0));
@@ -46,47 +45,40 @@ int main()
         //FIM: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, ACIMA.
 
-    int m[20][20]={ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-                    1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,};
+    int m[10][20]=            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+                               1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+                               1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,
+                               1,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,1,
+                               1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1,
+                               1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,
+                               1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,
+                               1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,
+                               1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+                               1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
 
 
     //Posicao inicial do personagem no console
     int x=5, y=5;
     // posicao inicial do inimigo no console
-    int xi = 10, yi = 10;
-    int xi2 = 3, yi2 = 3;
+    int xi = 1, yi = 18;
+    int xi2 = 1, yi2 = 3;
+    //posição bomba
+
     //Variavel para tecla precionada
     char tecla;
-    // variavel personagem e inimigo
+    // variavel personagem, inimigo e bomba.
     char personagem(153);
-    char inimigo (041);
-    char inimigo2 (041);
+    char inimigo   (041);
+    char inimigo2  (041);
+    char bomba     (100);
 
     while(true){
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
         ///Imprime o jogo: mapa e personagem.
-        for(int i=0;i<20;i++){
+        for(int i=0;i<10;i++){
             for(int j=0;j<20;j++){ // imprime a matriz
                 if(i==x && j==y){
                     cout<<personagem; //personagem
@@ -156,74 +148,76 @@ int main()
                         y--;
                     }
                 break;
+                ///case 81: case 'spacebar' ///bomba
+
             }}
 
         //movimento inimigo
 
-             int movimento = rand()% 1000;
+             int movimento = rand()% 90;
              switch(movimento){
-                   case 0: if(xi>0){
-                    xi--;
-                    if(colisao(m[xi][yi]==false)){
-                        xi++;
-                    }
-                break;}
-
-                  case 1: if(xi<6){
+                   case 27:
                     xi++;
                     if(colisao(m[xi][yi]==false)){
                         xi--;
                     }
-                break;}
-               case 2: if(yi>0){
-                    yi--;
-                    if(colisao(m[xi][yi]==false)){
-                        yi++;
-                    }
-                break;}
+                break;
 
-                 case 3: if(yi<6){
+                  case 48:
+                    xi--;
+                    if(colisao(m[xi][yi]==false)){
+                        xi++;
+                    }
+                break;
+               case 61:
                     yi++;
                     if(colisao(m[xi][yi]==false)){
                         yi--;
                     }
-                break;}
+                break;
+
+                 case 84:
+                    yi--;
+                    if(colisao(m[xi][yi]==false)){
+                        yi++;
+                    }
+                break;
             }
          }
 
-        int movimento2 = rand()% 1000;
+        int movimento2 = rand()% 90;
          switch(movimento2){
-                   case 0: if(xi2>0){
+                   case 15:
                     xi2++;
                     if(colisao(m[xi2][yi2]==false)){
                         xi2--;
                     }
-                break;}
+                break;
 
-                  case 1: if(xi2<6){
+                  case 28:
                     xi2--;
                     if(colisao(m[xi2][yi2]==false)){
                         xi2++;
                     }
-                break;}
-               case 2: if(yi>0){
+                break;
+               case 59:
                     yi2++;
                     if(colisao(m[xi2][yi2]==false)){
                         yi2--;
                     }
-                break;}
+                break;
 
-                 case 3: if(yi2<6){
-                    yi2++;
+                 case 87:
+                    yi2--;
                     if(colisao(m[xi2][yi2]==false)){
-                        yi2--;
+                        yi2++;
                     }
                 break;}
                 return 0;
 
             }
 
-         }
+
 
 
 
