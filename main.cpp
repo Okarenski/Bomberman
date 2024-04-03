@@ -20,7 +20,15 @@ bool colisao(int p){
         return true;
 }
 
+int bomba(int j, int k){
+    for(int i=3;i==0;i--){
+        for(int p=3;i==0;i--){
+            int m[j][k]=3;
+        }
 
+    }  m[j][k]=0;
+
+}
 
 
 
@@ -48,18 +56,18 @@ int main()
     int m[10][20]=            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
                                1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,
-                               1,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,1,
-                               1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1,
-                               1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,
-                               1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,
-                               1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,
-                               1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+                               1,0,2,0,2,0,2,0,0,0,1,0,2,0,0,0,0,0,0,1,
+                               1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,2,1,1,2,1,
+                               1,0,0,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,1,
+                               1,0,1,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,1,
+                               1,0,0,0,2,0,1,0,0,0,1,0,1,1,1,2,1,1,1,1,
+                               1,0,1,1,1,0,2,0,0,0,2,0,0,0,0,0,0,0,0,1,
                                1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
 
 
     //Posicao inicial do personagem no console
-    int x=5, y=5;
+    int x=8, y=18;
     // posicao inicial do inimigo no console
     int xi = 1, yi = 18;
     int xi2 = 1, yi2 = 3;
@@ -73,7 +81,7 @@ int main()
     char inimigo   (041);
     char inimigo2  (041);
     char inimigo3  (041);
-    char bomba     (100);
+    char bomba     (022);
 
     while(true){
         ///Posiciona a escrita no iicio do console
@@ -106,6 +114,8 @@ int main()
                     switch (m[i][j]){
                         case 0: cout<<" "; break; //caminho
                         case 1: cout<<char(219); break; //parede
+                        case 2: cout<<char(176); break; //parede quebravel
+                        case 3: cout<<char(022); break; //bomba
                         //default: cout<<"-"; //erro
                     } //fim switch
                 }
@@ -147,7 +157,10 @@ int main()
                         y--;
                     }
                 break;
-                ///case 81: case 'spacebar' ///bomba
+
+                case 81: case 'z': ///bomba
+                    for(int i=3,i)
+                    m[x][y]=3;
 
             }}
 
