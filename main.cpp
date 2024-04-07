@@ -19,19 +19,15 @@ bool colisao(int p){
     } else
         return true;
 }
-
-int bomba(int j, int k){
-    for(int i=3;i==0;i--){
-        for(int p=3;i==0;i--){
-            int m[j][k]=3;
-        }
-
-    }  m[j][k]=0;
+bool timer (int &bomb){
+    if(bomb==5){
+        return false;
+    } else {
+        bomb=bomb+1;
+        return true;
+    }
 
 }
-
-
-
 
 int main()
 {
@@ -65,7 +61,7 @@ int main()
                                1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
 
-
+    int bomb=0;
     //Posicao inicial do personagem no console
     int x=8, y=18;
     // posicao inicial do inimigo no console
@@ -91,25 +87,30 @@ int main()
         for(int i=0;i<10;i++){
             for(int j=0;j<20;j++){ // imprime a matriz
                 if(i==x && j==y){
+
                     cout<<personagem; //personagem
-
-
-
 
                     }else if(i==xi&&j==yi){
 
-                            cout << inimigo;
+                        cout << inimigo;
 
                        }else if(i==xi2 && j==yi2){   // ver de mudar essa feiura para um for
+
                          cout << inimigo2;
 
+                        } else if (i==xi3&&j==yi3){
 
-                 } else if (i==xi3&&j==yi3){
-                        cout << inimigo3;
+                            cout << inimigo3;
 
+                        }else if (m[i][j]==3){
 
+                            if (time(m[i][j]==false)){
+                                m[i][j]=0;
+                            } else {
+                             break;
+                            }
 
-                 }else {
+                            }else{
 
                     switch (m[i][j]){
                         case 0: cout<<" "; break; //caminho
@@ -159,9 +160,8 @@ int main()
                 break;
 
                 case 81: case 'z': ///bomba
-                    for(int i=3,i)
                     m[x][y]=3;
-
+                break;
             }}
 
         //movimento inimigo
