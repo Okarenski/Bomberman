@@ -95,7 +95,7 @@ int main()
 
                         cout << inimigo;
 
-                       }else if(i==xi2 && j==yi2){  
+                       }else if(i==xi2 && j==yi2){
 
                          cout << inimigo2;
 
@@ -121,9 +121,10 @@ int main()
             cout<<"\n";
         } //fim for mapa
             /// tem que ficar fora por do for por causa do if do player, se não o timer não começa a contar
-        if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer 
+        if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer
 
             if (timer(bomb)==false){ /// timer da bomba
+
                 m[xb][yb]=0;
                 bomb = 1;
                 xb=-1;
@@ -180,30 +181,30 @@ int main()
              int movimento = rand()% 90;
              switch(movimento){
                    case 27:
-                    xi++;
-                    if(colisao(m[xi][yi]==false)){
-                        xi--;
-                    }
-                break;
-
-                  case 48:
                     xi--;
                     if(colisao(m[xi][yi]==false)){
                         xi++;
                     }
                 break;
 
-                  case 61:
-                    yi++;
+                  case 48:
+                    xi++;
                     if(colisao(m[xi][yi]==false)){
-                        yi--;
+                        xi--;
+                    }
+                break;
+
+                  case 61:
+                    yi--;
+                    if(colisao(m[xi][yi]==false)){
+                        yi++;
                     }
                 break;
 
                  case 84:
-                    yi--;
+                    yi++;
                     if(colisao(m[xi][yi]==false)){
-                        yi++;
+                        yi--;
                     }
                 break;
             }
@@ -212,58 +213,58 @@ int main()
         int movimento2 = rand()% 90;
          switch(movimento2){
                    case 15:
-                    xi2++;
-                    if(colisao(m[xi2][yi2]==false)){
-                        xi2--;
-                    }
-                break;
-
-                  case 28:
                     xi2--;
                     if(colisao(m[xi2][yi2]==false)){
                         xi2++;
                     }
                 break;
-               case 59:
-                    yi2++;
+
+                  case 28:
+                    xi2++;
                     if(colisao(m[xi2][yi2]==false)){
-                        yi2--;
+                        xi2--;
+                    }
+                break;
+               case 59:
+                    yi2--;
+                    if(colisao(m[xi2][yi2]==false)){
+                        yi2++;
                     }
                 break;
 
                  case 87:
-                    yi2--;
+                    yi2++;
                     if(colisao(m[xi2][yi2]==false)){
-                        yi2++;
+                        yi2--;
                     }
                 break;}
 
         int movimento3 = rand()% 90;
          switch(movimento3){
                    case 17:
-                    xi3++;
-                    if(colisao(m[xi3][yi3]==false)){
-                        xi3--;
-                    }
-                break;
-
-                  case 31:
                     xi3--;
                     if(colisao(m[xi3][yi3]==false)){
                         xi3++;
                     }
                 break;
-               case 64:
-                    yi3++;
+
+                  case 31:
+                    xi3++;
                     if(colisao(m[xi3][yi3]==false)){
-                        yi3--;
+                        xi3--;
+                    }
+                break;
+               case 64:
+                    yi3--;
+                    if(colisao(m[xi3][yi3]==false)){
+                        yi3++;
                     }
                 break;
 
                  case 83:
-                    yi3--;
+                    yi3++;
                     if(colisao(m[xi3][yi3]==false)){
-                        yi3++;
+                        yi3--;
                     }
                 break;}
                 }
