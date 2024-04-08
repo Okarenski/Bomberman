@@ -20,13 +20,12 @@ bool colisao(int p){
         return true;
 }
 bool timer (int &bomb){
-    if(bomb==5){
+    if(bomb==100){
         return false;
     } else {
-        bomb=bomb+1;
+        bomb++;
         return true;
     }
-
 }
 
 int main()
@@ -61,15 +60,17 @@ int main()
                                1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
 
-    int bomb=0;
+
     //Posicao inicial do personagem no console
     int x=8, y=18;
     // posicao inicial do inimigo no console
     int xi = 1, yi = 18;
     int xi2 = 1, yi2 = 3;
     int xi3 = 1, yi3 = 5;
-    //posição bomba
-
+    //posição da bomba
+    int xb=-1,yb=-1;
+    //timer bomba
+    int bomb=1;
     //Variavel para tecla precionada
     char tecla;
     // variavel personagem, inimigo e bomba.
@@ -94,7 +95,7 @@ int main()
 
                         cout << inimigo;
 
-                       }else if(i==xi2 && j==yi2){   // ver de mudar essa feiura para um for
+                       }else if(i==xi2 && j==yi2){  
 
                          cout << inimigo2;
 
@@ -102,29 +103,33 @@ int main()
 
                             cout << inimigo3;
 
-                        }else if (m[i][j]==3){
+                        }else if (i==xb&&j==yb){
 
-                            if (time(m[i][j]==false)){
-                                m[i][j]=0;
-                            } else {
-                             break;
-                            }
+                                cout << bomba;
 
-                            }else{
+                                 } else {
 
-                    switch (m[i][j]){
-                        case 0: cout<<" "; break; //caminho
-                        case 1: cout<<char(219); break; //parede
-                        case 2: cout<<char(176); break; //parede quebravel
-                        case 3: cout<<char(022); break; //bomba
+                        switch (m[i][j]){
+                            case 0: cout<<" "; break; //caminho
+                            case 1: cout<<char(219); break; //parede
+                            case 2: cout<<char(176); break; //parede quebravel
+                            case 3: cout<<char(022); break; //bomba
                         //default: cout<<"-"; //erro
-                    } //fim switch
+                    }    //fim switch
                 }
             }
             cout<<"\n";
         } //fim for mapa
+            /// tem que ficar fora por do for por causa do if do player, se não o timer não começa a contar
+        if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer 
 
-
+            if (timer(bomb)==false){ /// timer da bomba
+                m[xb][yb]=0;
+                bomb = 1;
+                xb=-1;
+                yb=-1;
+            }
+        }
 
 
          ///executa os movimentos
@@ -160,7 +165,13 @@ int main()
                 break;
 
                 case 81: case 'z': ///bomba
-                    m[x][y]=3;
+                    if(xb==-1&&yb==-1) ///verificador se ja tem uma bomba no mapa
+                    {
+                        xb=x;
+                        yb=y;
+                        m[xb][yb]=3; ///marca a bomba na matriz
+                    }
+
                 break;
             }}
 
