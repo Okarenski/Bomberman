@@ -17,13 +17,17 @@ public:
 };
 
 int main() {
-    // Criando uma duração de 5 segundos
-    Duration duracao_5s(5);
-    std::cout << "5 segundos: " << duracao_5s.getSegundos() << " segundos" << std::endl;
+    // Criar uma instância da classe Duration com 10 segundos
+    Duration duracao(10);
 
-    // Modificando a duração para 10 segundos
-    duracao_5s.setSegundos(10);
-    std::cout << "Modificado para 10 segundos: " << duracao_5s.getSegundos() << " segundos" << std::endl;
+    // Exibir os segundos da duração
+    std::cout << "Segundos da duração: " << duracao.getSegundos() << std::endl;
+
+    // Modificar a duração para 20 segundos
+    duracao.setSegundos(20);
+
+    // Exibir os segundos da duração após modificação
+    std::cout << "Segundos da duração após modificação: " << duracao.getSegundos() << std::endl;
 
     return 0;
 }
