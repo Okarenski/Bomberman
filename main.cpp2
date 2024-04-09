@@ -1,21 +1,29 @@
-Claro! A biblioteca `<chrono>` é uma parte da biblioteca padrão do C++ introduzida na versão C++11. Ela fornece classes e funções para lidar com operações de tempo de forma mais moderna e robusta em comparação com as abordagens anteriores.
+#include <iostream>
 
-A biblioteca `<chrono>` é baseada no conceito de tempo point e duration:
+class Duration {
+private:
+    int segundos;
 
-- **`time_point`**: Representa um ponto específico no tempo. Ele pode ser usado para representar o momento atual, ou um momento específico no passado ou no futuro.
+public:
+    Duration(int s) : segundos(s) {}
 
-- **`duration`**: Representa uma duração de tempo, ou seja, um intervalo entre dois pontos no tempo.
+    int getSegundos() const {
+        return segundos;
+    }
 
-A principal vantagem da biblioteca `<chrono>` é sua precisão e flexibilidade. Ela permite operações de tempo com diferentes granularidades (nanossegundos, microssegundos, milissegundos, segundos, etc.), e é imune a problemas comuns de manipulação de tempo, como questões de fuso horário e alterações de horário de verão.
+    void setSegundos(int s) {
+        segundos = s;
+    }
+};
 
-Aqui estão alguns dos principais tipos e conceitos da biblioteca `<chrono>`:
+int main() {
+    // Criando uma duração de 5 segundos
+    Duration duracao_5s(5);
+    std::cout << "5 segundos: " << duracao_5s.getSegundos() << " segundos" << std::endl;
 
-- **`std::chrono::system_clock`**: Uma das fontes de tempo fornecidas pela biblioteca. Ela representa o tempo do sistema real, como o relógio do sistema operacional.
+    // Modificando a duração para 10 segundos
+    duracao_5s.setSegundos(10);
+    std::cout << "Modificado para 10 segundos: " << duracao_5s.getSegundos() << " segundos" << std::endl;
 
-- **`std::chrono::steady_clock`**: Outra fonte de tempo, que é garantida para ser monotônica, o que significa que não é afetada por ajustes manuais do relógio do sistema.
-
-- **`std::chrono::duration`**: Uma classe que representa uma duração de tempo. Você pode criar instâncias dela com diferentes granularidades (por exemplo, segundos, milissegundos, etc.).
-
-- **`std::chrono::time_point`**: Uma classe que representa um ponto específico no tempo, definido por uma duração a partir de um ponto de referência (por exemplo, a época do relógio do sistema).
-
-Esses são apenas alguns dos conceitos básicos da biblioteca `<chrono>`. Ela oferece uma gama completa de funcionalidades para operações de tempo em C++, tornando-a uma ferramenta poderosa para lidar com requisitos de tempo em programas C++ modernos.
+    return 0;
+}
