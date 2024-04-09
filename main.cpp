@@ -9,9 +9,16 @@
 #include <stdlib.h> // --
 
 using namespace std;
+struct inimigo {
+    int xi,yi;
+};
 
-
-struct explosao {};
+bool explosao (int ex){
+    if (ex==2){
+        return false;
+    }   else
+         return true;
+}
 
 bool colisao(int p){
     if (p!=0){
@@ -19,6 +26,7 @@ bool colisao(int p){
     } else
         return true;
 }
+
 bool timer (int &bomb){
     if(bomb==100){
         return false;
@@ -62,27 +70,32 @@ int main()
 
 
     //Posicao inicial do personagem no console
-    int x=8, y=18;
+        int x=8, y=18;
     // posicao inicial do inimigo no console
-    int xi = 1, yi = 18;
-    int xi2 = 1, yi2 = 3;
-    int xi3 = 1, yi3 = 5;
+        inimigo um;
+    //inimigo dois;
+        inimigo dois;
+    //inimigo tres;
+        inimigo tres;
+    //posição inicial inimigo
+        um.xi=1;
+        um.yi=18;
+        dois.xi=1;
+        dois.yi=3;
+        tres.xi=1;
+        tres.yi=5;
     //posição da bomba
-    int xb=-1,yb=-1;
-    // exploção da bomba
-    int ex=-2, ey=-2;
+        int xb=-1,yb=-1;
     //timer bomba
-    int bomb=1;
+        int bomb=1;
     //Variavel para tecla precionada
-    char tecla;
+        char tecla;
     // variavel personagem, inimigo e bomba.
-    char personagem(153);
-    char inimigo   (041);
-    char inimigo2  (041);
-    char inimigo3  (041);
-    char bomba     (022);
-    // variavel para a exploção
-    char explo     (216);
+        char personagem(153);
+        char inimigo1  (041);
+        char inimigo2  (041);
+        char inimigo3  (041);
+        char bomba     (022);
 
     while(true){
         ///Posiciona a escrita no iicio do console
@@ -95,15 +108,15 @@ int main()
 
                     cout<<personagem; //personagem
 
-                    }else if(i==xi&&j==yi){
+                    }else if(i==um.xi && um.yi==j){
 
-                        cout << inimigo;
+                        cout << inimigo1;
 
-                       }else if(i==xi2 && j==yi2){
+                       }else if(i==dois.xi && j==dois.yi){
 
                          cout << inimigo2;
 
-                        } else if (i==xi3&&j==yi3){
+                        } else if (i==tres.xi && j==tres.yi){
 
                             cout << inimigo3;
 
@@ -128,9 +141,76 @@ int main()
         if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer
 
             if (timer(bomb)==false){ /// timer da bomba
-                
                 m[xb][yb]=0;
-                bomb = 1;
+
+                if(explosao(m[xb][yb+1]) == false){ ///parede ///direita
+                    m[xb][yb+1]=0;
+
+                } if(xb==um.xi && yb+1==um.yi){ /// inimigo 1
+                    um.xi=-2;
+                    um.yi=-2;
+                }
+                if(xb==dois.xi && yb+1==dois.yi){ ///inimigo 2
+                    dois.xi=-2;
+                    dois.yi=-2;
+                }
+                if(xb==tres.xi && yb+1==tres.yi){ ///inimigo 3
+                    tres.xi=-2;
+                    tres.yi=-2;
+                }
+
+                if(explosao(m[xb][y-1]) == false){ ///parede ///esquerda
+                    m[xb][yb-1]=0;
+
+                } if(xb==um.xi && yb-1==um.yi){ /// inimigo 1
+                    um.xi=-2;
+                    um.xi=-2;
+                    um.yi=-2;
+
+                } if(xb==dois.xi && yb-1==dois.yi){ ///inimigo 2
+                    dois.xi=-2;
+                    dois.yi=-2;
+
+                } if(xb==tres.xi && yb-1==tres.yi){ ///inimigo 3
+                    tres.xi=-2;
+                    tres.yi=-2;
+                }
+
+                if(explosao(m[xb+1][yb]) == false){ ///parede ///baixo
+                    m[xb+1][yb]=0;
+
+                } if(xb+1==um.xi && yb==um.yi){ /// inimigo 1
+                    um.xi=-2;
+                    um.xi=-2;
+                    um.yi=-2;
+
+                } if(xb+1==dois.xi && yb==dois.yi){ ///inimigo 2
+                    dois.xi=-2;
+                    dois.yi=-2;
+
+                } if(xb+1==tres.xi && yb==tres.yi){ ///inimigo 3
+                    tres.xi=-2;
+                    tres.yi=-2;
+                }
+
+                if(explosao(m[xb-1][yb]) == false){ ///parede ///cima
+                    m[xb-1][yb]=0;
+
+                } if(xb-1==um.xi && yb==um.yi){ /// inimigo 1
+                    um.xi=-2;
+                    um.xi=-2;
+                    um.yi=-2;
+
+                } if(xb-1==dois.xi && yb==dois.yi){ ///inimigo 2
+                    dois.xi=-2;
+                    dois.yi=-2;
+
+                } if(xb-1==tres.xi && yb==tres.yi){ ///inimigo 3
+                    tres.xi=-2;
+                    tres.yi=-2;
+                }
+
+                bomb = 1; ///reset da bomba
                 xb=-1;
                 yb=-1;
             }
@@ -185,30 +265,30 @@ int main()
              int movimento = rand()% 90;
              switch(movimento){
                    case 27:
-                    xi--;
-                    if(colisao(m[xi][yi]==false)){
-                        xi++;
+                    um.xi--;
+                    if(colisao(m[um.xi][um.yi]==false)){
+                        um.xi++;
                     }
                 break;
 
                   case 48:
-                    xi++;
-                    if(colisao(m[xi][yi]==false)){
-                        xi--;
+                    um.xi++;
+                    if(colisao(m[um.xi][um.yi]==false)){
+                        um.xi--;
                     }
                 break;
 
                   case 61:
-                    yi--;
-                    if(colisao(m[xi][yi]==false)){
-                        yi++;
+                    um.yi--;
+                    if(colisao(m[um.xi][um.yi]==false)){
+                        um.yi++;
                     }
                 break;
 
                  case 84:
-                    yi++;
-                    if(colisao(m[xi][yi]==false)){
-                        yi--;
+                    um.yi++;
+                    if(colisao(m[um.xi][um.yi]==false)){
+                        um.yi--;
                     }
                 break;
             }
@@ -217,74 +297,64 @@ int main()
         int movimento2 = rand()% 90;
          switch(movimento2){
                    case 15:
-                    xi2--;
-                    if(colisao(m[xi2][yi2]==false)){
-                        xi2++;
+                    dois.xi--;
+                    if(colisao(m[dois.xi][dois.yi]==false)){
+                        dois.xi++;
                     }
                 break;
 
                   case 28:
-                    xi2++;
-                    if(colisao(m[xi2][yi2]==false)){
-                        xi2--;
+                    dois.xi++;
+                    if(colisao(m[dois.xi][dois.yi]==false)){
+                        dois.xi--;
                     }
                 break;
                case 59:
-                    yi2--;
-                    if(colisao(m[xi2][yi2]==false)){
-                        yi2++;
+                    dois.yi--;
+                    if(colisao(m[dois.xi][dois.yi]==false)){
+                        dois.yi++;
                     }
                 break;
 
                  case 87:
-                    yi2++;
-                    if(colisao(m[xi2][yi2]==false)){
-                        yi2--;
+                    dois.yi++;
+                    if(colisao(m[dois.xi][dois.yi]==false)){
+                        dois.yi--;
                     }
                 break;}
 
         int movimento3 = rand()% 90;
          switch(movimento3){
                    case 17:
-                    xi3--;
-                    if(colisao(m[xi3][yi3]==false)){
-                        xi3++;
+                    tres.xi--;
+                    if(colisao(m[tres.xi][tres.yi]==false)){
+                        tres.xi++;
                     }
                 break;
 
                   case 31:
-                    xi3++;
-                    if(colisao(m[xi3][yi3]==false)){
-                        xi3--;
+                    tres.xi++;
+                    if(colisao(m[tres.xi][tres.yi]==false)){
+                        tres.xi--;
                     }
                 break;
                case 64:
-                    yi3--;
-                    if(colisao(m[xi3][yi3]==false)){
-                        yi3++;
+                    tres.yi--;
+                    if(colisao(m[tres.xi][tres.yi]==false)){
+                        tres.yi++;
                     }
                 break;
 
                  case 83:
-                    yi3++;
-                    if(colisao(m[xi3][yi3]==false)){
-                        yi3--;
+                    tres.yi++;
+                    if(colisao(m[tres.xi][tres.yi]==false)){
+                        tres.yi--;
                     }
                 break;}
                 }
                 return 0;
 
             }
-
-
-
-
-
-
-
-
-
-
 
 
 
