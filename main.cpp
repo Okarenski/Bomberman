@@ -11,7 +11,7 @@
 using namespace std;
 
 
-
+struct explosao {};
 
 bool colisao(int p){
     if (p!=0){
@@ -69,6 +69,8 @@ int main()
     int xi3 = 1, yi3 = 5;
     //posição da bomba
     int xb=-1,yb=-1;
+    // exploção da bomba
+    int ex=-2, ey=-2;
     //timer bomba
     int bomb=1;
     //Variavel para tecla precionada
@@ -79,6 +81,8 @@ int main()
     char inimigo2  (041);
     char inimigo3  (041);
     char bomba     (022);
+    // variavel para a exploção
+    char explo     (216);
 
     while(true){
         ///Posiciona a escrita no iicio do console
@@ -124,7 +128,7 @@ int main()
         if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer
 
             if (timer(bomb)==false){ /// timer da bomba
-
+                
                 m[xb][yb]=0;
                 bomb = 1;
                 xb=-1;
