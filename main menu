@@ -1,0 +1,45 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <time.h> // para o movimento do inimigo
+#include <stdlib.h> // --
+
+using namespace std;
+
+int main()
+{
+
+int entrada;
+
+
+cout << "♡";
+cout << "digite 1 para jogar ou 2 para sair" << endl;
+
+do{
+
+cin >> entrada;
+ if(entrada !=1 || entrada !=2){
+
+    cout << "digite novamente" << endl;
+    cin >> entrada;
+ }else if(entrada ==2){
+
+ return 0;
+
+
+ }else{
+
+
+ // código do jogo
+
+ }
+
+
+
+
+
+
+}while(true);
+
+
+}
