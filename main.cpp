@@ -101,6 +101,7 @@ int main()
         char inimigo2  (041);
         char inimigo3  (041);
         char bomba     (022);
+        char quente    (105);
 
     while(true){
         ///Posiciona a escrita no iicio do console
@@ -129,7 +130,11 @@ int main()
 
                                 cout << bomba;
 
-                                 } else {
+                                 } else if(bomb==20||bomb==40||bomb==60||bomb==80){
+                                        m[xb][yb]= quente;
+                                        cout << m[xb][yb];
+                                 }
+                                 else{
 
                         switch (m[i][j]){
                             case 0: cout<<" "; break; //caminho
