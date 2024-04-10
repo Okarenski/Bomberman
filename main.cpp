@@ -35,24 +35,20 @@ bool timer (int &bomb){
         return true;
     }
 }
+bool areaexp (int &explo){
+    if(explo==50){
+        return false;
+    } else {
+        explo++;
+        return true;
+    }
+}
 
 int main()
 {
-    int entrada;
-
-     cout << "=============================" << endl;
-    cout << "        BEM-VINDO AO JOGO     " << endl;
-    cout << "=============================" << endl;
-    cout << "Digite 1 para jogar ou 2 para sair" << endl;
-    do{
-        cin >> entrada;
-         if (entrada != 1 && entrada != 2) {
-            cout << "Digite novamente." << endl;
-        } else if (entrada == 2) {
-            break;
-
-        } else {
-            system("cls");
+    cout<<"p"<<endl;
+    system("pause");
+    system("cls");
     srand(time(0));
 
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
@@ -105,6 +101,8 @@ int main()
         int xb=-1,yb=-1;
     //timer bomba
         int bomb=1;
+    //timer da exploção
+        int explo=1;
     //Variavel para tecla precionada
         char tecla;
     // variavel personagem, inimigo e bomba.
@@ -142,17 +140,14 @@ int main()
 
                                 cout << bomba;
 
-                                 } else if(bomb==20||bomb==40||bomb==60||bomb==80){
-                                        m[xb][yb]= quente;
-                                        cout << m[xb][yb];
-                                 }
-                                 else{
+                                 } else {
 
                         switch (m[i][j]){
                             case 0: cout<<" "; break; //caminho
                             case 1: cout<<char(219); break; //parede
                             case 2: cout<<char(176); break; //parede quebravel
                             case 3: cout<<char(022); break; //bomba
+                            case 4: cout<<char(105); break; //bomba esquentando
                         //default: cout<<"-"; //erro
                     }    //fim switch
                 }
@@ -172,6 +167,9 @@ int main()
 
                 if(explosao(m[xb][yb+1]) == false){ ///parede ///direita
                     m[xb][yb+1]=0;
+                    if(areaexp(explo)==false){
+                        m[xb][yb+1]=4;
+                    }
 
                 } if (xb==x&&yb+1==y){ ///player morre
                     x=-3;
@@ -390,11 +388,16 @@ int main()
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.yi--;
                     }
-
-
                 break;}
                 }
+                system("cls");
+                cout<<"game over!"<<endl;
+                cout<<"deseja tentar novamente? digite [1] para continuar ou [2] para desistir."<<endl;
+                do{
+                    cin>>gameover;
 
+                } while (gameover!=1&&gameover!=2);
+                return 0;
 
             }
 
@@ -404,10 +407,3 @@ int main()
      //fim do laco do jogo
 
 //fim main
-
-
-
-
-
-    }while(true);}
-
