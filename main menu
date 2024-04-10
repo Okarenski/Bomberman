@@ -12,7 +12,7 @@ int main()
 int entrada;
 
 
-cout << "♡";
+cout << "";
 cout << "digite 1 para jogar ou 2 para sair" << endl;
 
 do{
