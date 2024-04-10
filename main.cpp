@@ -38,9 +38,21 @@ bool timer (int &bomb){
 
 int main()
 {
-    cout<<"p"<<endl;
-    system("pause");
-    system("cls");
+    int entrada;
+
+     cout << "=============================" << endl;
+    cout << "        BEM-VINDO AO JOGO     " << endl;
+    cout << "=============================" << endl;
+    cout << "Digite 1 para jogar ou 2 para sair" << endl;
+    do{
+        cin >> entrada;
+         if (entrada != 1 && entrada != 2) {
+            cout << "Digite novamente." << endl;
+        } else if (entrada == 2) {
+            break;
+
+        } else {
+            system("cls");
     srand(time(0));
 
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
@@ -378,16 +390,11 @@ int main()
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.yi--;
                     }
+
+
                 break;}
                 }
-                system("cls");
-                cout<<"game over!"<<endl;
-                cout<<"deseja tentar novamente? digite [1] para continuar ou [2] para desistir."<<endl;
-                do{
-                    cin>>gameover;
 
-                } while (gameover!=1&&gameover!=2);
-                return 0;
 
             }
 
@@ -397,3 +404,10 @@ int main()
      //fim do laco do jogo
 
 //fim main
+
+
+
+
+
+    }while(true);}
+
