@@ -38,6 +38,9 @@ bool timer (int &bomb){
 
 int main()
 {
+    cout<<"p"<<endl;
+    system("pause");
+    system("cls");
     srand(time(0));
 
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
@@ -69,6 +72,8 @@ int main()
 
 
 
+    //condição derrota
+    int gameover;
     //Posicao inicial do personagem no console
         int x=8, y=18;
     // posicao inicial do inimigo no console
@@ -138,6 +143,11 @@ int main()
             cout<<"\n";
         } //fim for mapa
             /// tem que ficar fora por do for por causa do if do player, se não o timer não começa a contar
+        if((x==um.xi&&y==um.yi)||(x==dois.xi&&y==dois.yi)||(x==tres.xi&&y==tres.yi)){ ///inimigo mata player
+            x=-3;
+            y=-3;
+            break;
+        }
         if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer
 
             if (timer(bomb)==false){ /// timer da bomba
@@ -145,6 +155,10 @@ int main()
 
                 if(explosao(m[xb][yb+1]) == false){ ///parede ///direita
                     m[xb][yb+1]=0;
+
+                } if (xb==x&&yb+1==y){ ///player morre
+                    x=-3;
+                    y=-3;
 
                 } if(xb==um.xi && yb+1==um.yi){ /// inimigo 1
                     um.xi=-2;
@@ -159,11 +173,14 @@ int main()
                     tres.yi=-2;
                 }
 
-                if(explosao(m[xb][y-1]) == false){ ///parede ///esquerda
+                if(explosao(m[xb][yb-1]) == false){ ///parede ///esquerda
                     m[xb][yb-1]=0;
 
+                }   if (xb==x&&yb-1==y){ ///player morre
+                    x=-3;
+                    y=-3;
+
                 } if(xb==um.xi && yb-1==um.yi){ /// inimigo 1
-                    um.xi=-2;
                     um.xi=-2;
                     um.yi=-2;
 
@@ -179,8 +196,11 @@ int main()
                 if(explosao(m[xb+1][yb]) == false){ ///parede ///baixo
                     m[xb+1][yb]=0;
 
+                }  if (xb+1==x&&yb==y){ ///player morre
+                    x=-3;
+                    y=-3;
+
                 } if(xb+1==um.xi && yb==um.yi){ /// inimigo 1
-                    um.xi=-2;
                     um.xi=-2;
                     um.yi=-2;
 
@@ -196,8 +216,11 @@ int main()
                 if(explosao(m[xb-1][yb]) == false){ ///parede ///cima
                     m[xb-1][yb]=0;
 
+                } if (xb-1==x&&yb==y){ ///player morre
+                    x=-3;
+                    y=-3;
+
                 } if(xb-1==um.xi && yb==um.yi){ /// inimigo 1
-                    um.xi=-2;
                     um.xi=-2;
                     um.yi=-2;
 
@@ -352,6 +375,13 @@ int main()
                     }
                 break;}
                 }
+                system("cls");
+                cout<<"game over!"<<endl;
+                cout<<"deseja tentar novamente? digite [1] para continuar ou [2] para desistir."<<endl;
+                do{
+                    cin>>gameover;
+
+                } while (gameover!=1&&gameover!=2);
                 return 0;
 
             }
