@@ -18,9 +18,9 @@ void verificacaoExplosao{
     }
     for (int i = xb + 1; i < 10 && m[i][yb] != '1'; i++) {  // +1 (baixo)
         if (m[i][yb] == ' ') {
-            m[i][yb] = '#'; // Caractere de explosão
+            m[i][yb] = '#'; 
         } else {
-            break; // Encerra se encontrar uma parede
+            break;
         }
     }
 
