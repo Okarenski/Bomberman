@@ -13,15 +13,16 @@ void verificacaoExplosao{
         if (m[i][yb] == ' ') {   // troca dos caracteres
             m[i][yb] = '#'; 
         } else {
-            break; // não explode se tiver parede
+
         }
     }
     for (int i = xb + 1; i < 10 && m[i][yb] != '1'; i++) {  // +1 (baixo)
         if (m[i][yb] == ' ') {
             m[i][yb] = '#'; 
         } else {
-            break;
+
         }
+
     }
 
     // Explosão  horizontal
@@ -29,14 +30,14 @@ void verificacaoExplosao{
         if (m[xb][j] == ' ') {
             m[xb][j] = '#';
         } else {
-            break;
+
         }
     }
     for (int j = yb + 1; j < 20 && m[xb][j] != '1'; j++) {
         if (m[xb][j] == ' ') {
             m[xb][j] = '#';
         } else {
-            break;
+
         }
     }
 }//for para trocar os eixos da matriz por um caractere
