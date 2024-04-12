@@ -10,8 +10,8 @@ void verificacaoExplosao{
 
      // explosão vertical
     for (int i = xb - 1; i >= 0 && m[i][yb] != '1'; i--) {  // inicializa i com a posição inicial e verifica se o elemento da matriz é diferente de 1 (parede) // -1 (cima)
-        if (m[i][yb] == ' ') {  // se não tiver caractere, troca por # (explosao)
-            m[i][yb] = '#'; // Caractere de explosão
+        if (m[i][yb] == ' ') {   // troca dos caracteres
+            m[i][yb] = '#'; 
         } else {
             break; // não explode se tiver parede
         }
