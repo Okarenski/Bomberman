@@ -96,6 +96,10 @@ int main() {
     int entrada;
     system("cls");
     srand(time(0));
+     cout << "=============================" << endl;
+    cout << "        BEM-VINDO AO JOGO     " << endl;
+    cout << "=============================" << endl;
+    cout << "Digite 1 para jogar ou 2 para sair" << endl;
     cout << "Digite 1 para jogar ou 2 para sair" << endl;
 
     do {
