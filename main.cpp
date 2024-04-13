@@ -98,9 +98,9 @@ int main() {
      cout << "=============================" << endl;
     cout << "        BEM-VINDO AO JOGO     " << endl;
     cout << "=============================" << endl;
-            system("cls");
-
     cout << "Digite 1 para jogar ou 2 para sair" << endl;
+                system("cls");
+
 
 
     do {
