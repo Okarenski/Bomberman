@@ -46,7 +46,7 @@ bool areaexp(int &explo) {
 
 
 void verificacaoExplosao(int xb, int yb, int m[10][20]){
-  explosão vertical
+  //explosão vertical
     for (int i = xb - 1; i >= 0 && m[i][yb] != 1; i--) {  // inicializa i com a posição inicial e verifica se o elemento da matriz é diferente de 1 (parede) // -1 (cima)
         if (m[i][yb] == 0 || m[i][yb] == 2 ) {   // troca dos caracteres
                   m[i][yb] = '*';;
