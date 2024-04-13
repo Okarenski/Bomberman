@@ -95,11 +95,12 @@ int main() {
  int j;
     int entrada;
     srand(time(0));
+     system("cls");
      cout << "=============================" << endl;
     cout << "        BEM-VINDO AO JOGO     " << endl;
     cout << "=============================" << endl;
     cout << "Digite 1 para jogar ou 2 para sair" << endl;
-                system("cls");
+               
 
 
 
