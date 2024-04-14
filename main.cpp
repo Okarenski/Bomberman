@@ -9,25 +9,25 @@
 #include <stdlib.h> // --
 
 using namespace std;
-struct inimigo {
+struct inimigo { /// stuct inimigo 1 2 3
     int xi,yi;
 };
 
-bool explosao (int ex){
+bool explosao (int ex){ /// função da bomba destruir paredes
     if (ex==2){
         return false;
     }   else
          return true;
 }
 
-bool colisao(int p){
+bool colisao(int p){ /// colisão
     if (p!=0){
         return false;
     } else
         return true;
 }
 
-bool timer (int &bomb){
+bool timer (int &bomb){ /// timer da bomba
     if(bomb==100){
         return false;
     } else {
@@ -35,24 +35,20 @@ bool timer (int &bomb){
         return true;
     }
 }
+bool exarea (int &explo){ /// função para o tempo da animação da explosão
+    if(explo==11){
+        return false;
+    } else {
+        explo++;
+        return true;
+    }
+}
 
 int main()
 {
-    int entrada;
-
-     cout << "=============================" << endl;
-    cout << "        BEM-VINDO AO JOGO     " << endl;
-    cout << "=============================" << endl;
-    cout << "Digite 1 para jogar ou 2 para sair" << endl;
-    do{
-        cin >> entrada;
-         if (entrada != 1 && entrada != 2) {
-            cout << "Digite novamente." << endl;
-        } else if (entrada == 2) {
-            break;
-
-        } else {
-            system("cls");
+    cout<<"p"<<endl;
+    system("pause");
+    system("cls");
     srand(time(0));
 
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
@@ -105,6 +101,8 @@ int main()
         int xb=-1,yb=-1;
     //timer bomba
         int bomb=1;
+    //timer da exploção
+        int explo=1;
     //Variavel para tecla precionada
         char tecla;
     // variavel personagem, inimigo e bomba.
@@ -114,7 +112,7 @@ int main()
         char inimigo3  (041);
         char bomba     (022);
         char quente    (105);
-
+        char kbom      (161);
     while(true){
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -138,21 +136,46 @@ int main()
 
                             cout << inimigo3;
 
-                        }else if (i==xb&&j==yb){
+                        }else if ((i==xb&&j==yb)&&(bomb>20&&bomb<30)){ ///bomba esquentando
+
+                                cout << quente;
+
+                        }else if ((i==xb&&j==yb)&&(bomb>50&&bomb<60)){ ///bomba esquentando
+
+                                cout << quente;
+
+                        }else if ((i==xb&&j==yb)&&(bomb>80&&bomb<90)){ /// bomba esquentado
+
+                                cout << quente;
+
+                        }else if(i==xb&&j==yb){
 
                                 cout << bomba;
 
-                                 } else if(bomb==20||bomb==40||bomb==60||bomb==80){
-                                        m[xb][yb]= quente;
-                                        cout << m[xb][yb];
-                                 }
-                                 else{
+                        } else if((i==xb&&j==yb+1)&&(bomb==100)){ /// exploção direita
+
+                                cout << kbom;
+
+                        } else if((i==xb&&j==yb-1)&&(bomb==100)){ /// exploção esquerda
+
+                                cout << kbom;
+
+                        } else if((i==xb+1&&j==yb)&&(bomb==100)){ /// exploção baixo
+
+                                cout << kbom;
+
+                        } else if((i==xb-1&&j==yb)&&(bomb==100)){ /// exploção cima
+
+                                cout << kbom;
+
+                        } else {
 
                         switch (m[i][j]){
                             case 0: cout<<" "; break; //caminho
                             case 1: cout<<char(219); break; //parede
                             case 2: cout<<char(176); break; //parede quebravel
                             case 3: cout<<char(022); break; //bomba
+                            case 4: cout<<char(105); break; //bomba esquentando
                         //default: cout<<"-"; //erro
                     }    //fim switch
                 }
@@ -160,15 +183,29 @@ int main()
             cout<<"\n";
         } //fim for mapa
             /// tem que ficar fora por do for por causa do if do player, se não o timer não começa a contar
-        if((x==um.xi&&y==um.yi)||(x==dois.xi&&y==dois.yi)||(x==tres.xi&&y==tres.yi)){ ///inimigo mata player
-            x=-3;
-            y=-3;
-            break;
+            if((x==um.xi&&y==um.yi)||(x==dois.xi&&y==dois.yi)||(x==tres.xi&&y==tres.yi)){ ///inimigo mata player
+                x=-3;
+                y=-3;
+                break;
         }
         if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer
 
+        if(bomb==100){
+            if(exarea(explo)==false){ /// tentantiva de aumentar o tempo da animação da explosão
+                explo=1;
+            }
+        }
+
+
+
             if (timer(bomb)==false){ /// timer da bomba
                 m[xb][yb]=0;
+
+                if(x==xb&&y==yb){ /// player morrer em cima da bomba
+                    x=-3;
+                    y=-3;
+                    break;
+                }
 
                 if(explosao(m[xb][yb+1]) == false){ ///parede ///direita
                     m[xb][yb+1]=0;
@@ -176,6 +213,7 @@ int main()
                 } if (xb==x&&yb+1==y){ ///player morre
                     x=-3;
                     y=-3;
+                    break;
 
                 } if(xb==um.xi && yb+1==um.yi){ /// inimigo 1
                     um.xi=-2;
@@ -196,6 +234,7 @@ int main()
                 }   if (xb==x&&yb-1==y){ ///player morre
                     x=-3;
                     y=-3;
+                    break;
 
                 } if(xb==um.xi && yb-1==um.yi){ /// inimigo 1
                     um.xi=-2;
@@ -216,6 +255,7 @@ int main()
                 }  if (xb+1==x&&yb==y){ ///player morre
                     x=-3;
                     y=-3;
+                    break;
 
                 } if(xb+1==um.xi && yb==um.yi){ /// inimigo 1
                     um.xi=-2;
@@ -236,6 +276,7 @@ int main()
                 } if (xb-1==x&&yb==y){ ///player morre
                     x=-3;
                     y=-3;
+                    break;
 
                 } if(xb-1==um.xi && yb==um.yi){ /// inimigo 1
                     um.xi=-2;
@@ -390,23 +431,20 @@ int main()
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.yi--;
                     }
-
-
                 break;}
                 }
+                system("cls");
+                cout<<"game over!"<<endl;
+                cout<<"deseja tentar novamente? digite [1] para continuar ou [2] para desistir."<<endl;
+                do{
+                    cin>>gameover;
 
+                } while (gameover!=1&&gameover!=2);
+                return 0;
 
             }
-
-
 
 
      //fim do laco do jogo
 
 //fim main
-
-
-
-
-
-    }while(true);}
