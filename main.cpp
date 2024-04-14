@@ -46,12 +46,24 @@ bool exarea (int &explo){ /// função para o tempo da animação da explosão
 
 int main()
 {
-    cout<<"p"<<endl;
-    system("pause");
-    system("cls");
-    srand(time(0));
+    int entrada;
 
-    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
+     cout << "=============================" << endl;
+    cout << "        BEM-VINDO AO JOGO     " << endl;
+    cout << "=============================" << endl;
+    cout << "Digite 1 para jogar ou 2 para sair" << endl;
+    do{
+
+        cin >> entrada;
+         if (entrada != 1 && entrada != 2) {
+            cout << "Digite novamente." << endl;
+        } else if (entrada == 2) {
+            break;
+
+        } else {
+    system("cls");
+
+             ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
         //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
         HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_CURSOR_INFO     cursorInfo;
@@ -435,16 +447,8 @@ int main()
                 }
                 system("cls");
                 cout<<"game over!"<<endl;
-                cout<<"deseja tentar novamente? digite [1] para continuar ou [2] para desistir."<<endl;
-                do{
-                    cin>>gameover;
-
-                } while (gameover!=1&&gameover!=2);
-                return 0;
-
-            }
+                 return 0;
 
 
-     //fim do laco do jogo
+}        }while(true);}
 
-//fim main
