@@ -36,6 +36,43 @@ bool timer (int &bomb){
     }
 }
 
+void verificacaoExplosao(int xb, int yb, int m[10][20]){
+  //explosão vertical
+    for (int i = xb - 1; i >= 0 && m[i][yb] != 1; i--) {  // inicializa i com a posição inicial e verifica se o elemento da matriz é diferente de 1 (parede) // -1 (cima)
+        if (m[i][yb] == 0 || m[i][yb] == 2 ) {   // troca dos caracteres
+                  m[i][yb] = '*';;
+
+
+        } else {
+
+        }
+    }
+    for (int i = xb + 1; i < 10 && m[i][yb] != 1; i++) {  // +1 (baixo)
+        if (m[i][yb] == 0 || m[i][yb]==2) {
+             m[i][yb] = '*';;
+        } else {
+
+        }
+
+    }
+    for (int j = yb - 1; j >= 0 && m[xb][j] != 1; j--) {
+        if (m[xb][j] == 0 || m[xb][j]==2) {
+             m[xb][j] = '*';;
+        } else {
+
+        }
+    }
+    for (int j = yb + 1; j < 20 && m[xb][j] != 1; j++) {
+        if (m[xb][j] == 0 || m[xb][j]==2) {
+             m[xb][j] = '*';;
+        } else {
+
+        }
+    }
+
+}
+
+
 int main()
 {
     int entrada;
@@ -114,8 +151,19 @@ int main()
         char inimigo3  (041);
         char bomba     (022);
         char quente    (105);
+        char animacao   (42);
 
     while(true){
+
+             if(explosao){  //verifica se está acontecendo uma explosão, se sim, chama void
+
+
+  verificacaoExplosao ( yb, xb, m);
+
+
+}
+
+
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
@@ -153,6 +201,7 @@ int main()
                             case 1: cout<<char(219); break; //parede
                             case 2: cout<<char(176); break; //parede quebravel
                             case 3: cout<<char(022); break; //bomba
+                            case 4 : cout << char (42); break;
                         //default: cout<<"-"; //erro
                     }    //fim switch
                 }
