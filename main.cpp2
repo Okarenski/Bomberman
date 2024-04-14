@@ -1,33 +1,413 @@
-#include <iostream>
+#include <iostream> 
+#include <windows.h> 
+#include <conio.h> 
+#include <stdlib.h> 
+#include <time.h> 
 
-class Duration {
-private:
-    int segundos;
+using namespace std;
 
-public:
-    Duration(int s) : segundos(s) {}
-
-    int getSegundos() const {
-        return segundos;
-    }
-
-    void setSegundos(int s) {
-        segundos = s;
-    }
+struct Inimigo {
+    int xi, yi;
 };
 
+// Função para verificar se houve uma explosão
+bool explosao(int ex) {
+    return (ex == 2) ? false : true;
+}
+
+// Função para verificar se houve uma colisão
+bool colisao(int p) {
+    return (p != 0) ? false : true;
+}
+
+// Função para controlar o timer da bomba
+bool timer(int &bomb) {
+    if (bomb == 100) {
+        return false;
+    } else {
+        bomb++;
+        return true;
+    }
+}
+
+// Função para controlar a área de explosão
+bool exarea(int &explo) {
+    if (explo == 11) {
+        return false;
+    } else {
+        explo++;
+        return true;
+    }
+}
+
+
 int main() {
-    // Criar uma instância da classe Duration com 10 segundos
-    Duration duracao(10);
+    int entrada;
 
-    // Exibir os segundos da duração
-    std::cout << "Segundos da duração: " << duracao.getSegundos() << std::endl;
+    cout << "=============================" << endl;
+    cout << "        BEM-VINDO AO JOGO     " << endl;
+    cout << "=============================" << endl;
+    cout << "Digite 1 para jogar ou 2 para sair" << endl;
 
-    // Modificar a duração para 20 segundos
-    duracao.setSegundos(20);
+    do {
+        cin >> entrada;
+        if (entrada != 1 && entrada != 2) {
+            cout << "Digite novamente." << endl;
+        } else if (entrada == 2) {
+            break;
+        } else {
+            system("cls"); 
 
-    // Exibir os segundos da duração após modificação
-    std::cout << "Segundos da duração após modificação: " << duracao.getSegundos() << std::endl;
+            HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE); // Manipulador do console
+            CONSOLE_CURSOR_INFO cursorInfo; // Estrutura para informações do cursor
+            GetConsoleCursorInfo(out, &cursorInfo); // Obtém informações do cursor
+            cursorInfo.bVisible = false; // Torna o cursor invisível
+            SetConsoleCursorInfo(out, &cursorInfo); // Define as informações do cursor
 
-    return 0;
+            short int CX = 0, CY = 0; // Posição inicial do cursor no console
+            COORD coord; // Estrutura para coordenadas no console
+            coord.X = CX;
+            coord.Y = CY;
+
+            // Matriz representando o mapa do jogo
+            int m[10][20] = { {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+                              {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                              {1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1},
+                              {1,0,2,0,2,0,2,0,0,0,1,0,2,0,0,0,0,0,0,1},
+                              {1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,2,1,1,2,1},
+                              {1,0,0,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,1},
+                              {1,0,1,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,1},
+                              {1,0,0,0,2,0,1,0,0,0,1,0,1,1,1,2,1,1,1,1},
+                              {1,0,1,1,1,0,2,0,0,0,2,0,0,0,0,0,0,0,0,1},
+                              {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} };
+
+            int gameover;
+            int x = 8, y = 18; 
+
+            // Definição das posições iniciais dos inimigos
+            Inimigo um, dois, tres;
+            um.xi = 1; um.yi = 18;
+            dois.xi = 1; dois.yi = 3;
+            tres.xi = 1; tres.yi = 5;
+
+            int xb = -1, yb = -1; // Posição da bomba
+            int bomb = 1; // Timer da bomba
+            int explo = 1; // Timer da explosão
+            char tecla; // Tecla pressionada
+            char personagem(153); // Caractere representando o jogador
+            char inimigo1(041); // Caractere representando o inimigo 1
+            char inimigo2(041); // Caractere representando o inimigo 2
+            char inimigo3(041); // Caractere representando o inimigo 3
+            char bomba(022); // Caractere representando a bomba
+            char quente(105); // Caractere representando a área quente da explosão
+            char kbom(161); // Caractere representando a explosão
+
+            while (true) {
+                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord); // Define a posição do cursor no console
+
+                // Renderização do mapa e dos personagens
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 20; j++) {
+                        if (i == x && j == y) {
+                            cout << personagem;
+                        } else if (i == um.xi && um.yi == j) {
+                            cout << inimigo1;
+                        } else if (i == dois.xi && j == dois.yi) {
+                            cout << inimigo2;
+                        } else if (i == tres.xi && j == tres.yi) {
+                            cout << inimigo3;
+                        } else if ((i == xb && j == yb) && (bomb > 20 && bomb < 30)) {
+                            cout << quente;
+                        } else if ((i == xb && j == yb) && (bomb > 50 && bomb < 60)) {
+                            cout << quente;
+                        } else if ((i == xb && j == yb) && (bomb > 80 && bomb < 90)) {
+                            cout << quente;
+                        } else if (i == xb && j == yb) {
+                            cout << bomba;
+                        } else if ((i == xb && j == yb + 1) && (bomb == 100)) {
+                            cout << kbom;
+                        } else if ((i == xb && j == yb - 1) && (bomb == 100)) {
+                            cout << kbom;
+                        } else if ((i == xb + 1 && j == yb) && (bomb == 100)) {
+                            cout << kbom;
+                        } else if ((i == xb - 1 && j == yb) && (bomb == 100)) {
+                            cout << kbom;
+                        } else {
+                            switch (m[i][j]) {
+                                case 0: cout << " "; break; // Espaço vazio
+                                case 1: cout << char(219); break; // Parede
+                                case 2: cout << char(176); break; // Caixa
+                                case 3: cout << char(022); break; // Bomba
+                                case 4: cout << char(105); break; // Área quente
+                            }
+                        }
+                    }
+                    cout << "\n"; 
+                }
+
+                // Verifica se houve colisão com algum inimigo
+                if ((x == um.xi && y == um.yi) || (x == dois.xi && y == dois.yi) || (x == tres.xi && y == tres.yi)) {
+                    x = -3;
+                    y = -3;
+                    break;
+                }
+
+                // Verifica se a bomba explodiu
+                if (xb != -1 && yb != -1) {
+                    if (bomb == 100) {
+                        if (exarea(explo) == false) {
+                            explo = 1;
+                        }
+                    }
+
+                    // Atualiza o timer da bomba
+                    if (timer(bomb) == false) {
+                        m[xb][yb] = 0;
+
+                        // Verifica se houve colisão com a bomba
+                        if (x == xb && y == yb) {
+                            x = -3;
+                            y = -3;
+                            break;
+                        }
+
+                        // Verifica se houve explosão em direções específicas e atualiza o mapa
+                        if (explosao(m[xb][yb + 1]) == false) {
+                            m[xb][yb + 1] = 0;
+                        }
+
+                        // Verifica se houve colisão com a explosão
+                        if (xb == x && yb + 1 == y) {
+                            x = -3;
+                            y = -3;
+                            break;
+                        }
+
+                        // Verifica se houve colisão com algum inimigo
+                        if (xb == um.xi && yb + 1 == um.yi) {
+                            um.xi = -2;
+                            um.yi = -2;
+                        }
+
+                        if (xb == dois.xi && yb + 1 == dois.yi) {
+                            dois.xi = -2;
+                            dois.yi = -2;
+                        }
+
+                        if (xb == tres.xi && yb + 1 == tres.yi) {
+                            tres.xi = -2;
+                            tres.yi = -2;
+                        }
+
+                        // Repete o processo para as outras direções
+                        if (explosao(m[xb][yb - 1]) == false) {
+                            m[xb][yb - 1] = 0;
+                        }
+
+                        if (xb == x && yb - 1 == y) {
+                            x = -3;
+                            y = -3;
+                            break;
+                        }
+
+                        if (xb == um.xi && yb - 1 == um.yi) {
+                            um.xi = -2;
+                            um.yi = -2;
+                        }
+
+                        if (xb == dois.xi && yb - 1 == dois.yi) {
+                            dois.xi = -2;
+                            dois.yi = -2;
+                        }
+
+                        if (xb == tres.xi && yb - 1 == tres.yi) {
+                            tres.xi = -2;
+                            tres.yi = -2;
+                        }
+
+                        if (explosao(m[xb + 1][yb]) == false) {
+                            m[xb + 1][yb] = 0;
+                        }
+
+                        if (xb + 1 == x && yb == y) {
+                            x = -3;
+                            y = -3;
+                            break;
+                        }
+
+                        if (xb + 1 == um.xi && yb == um.yi) {
+                            um.xi = -2;
+                            um.yi = -2;
+                        }
+
+                        if (xb + 1 == dois.xi && yb == dois.yi) {
+                            dois.xi = -2;
+                            dois.yi = -2;
+                        }
+
+                        if (xb + 1 == tres.xi && yb == tres.yi) {
+                            tres.xi = -2;
+                            tres.yi = -2;
+                        }
+
+                        if (explosao(m[xb - 1][yb]) == false) {
+                            m[xb - 1][yb] = 0;
+                        }
+
+                        if (xb - 1 == x && yb == y) {
+                            x = -3;
+                            y = -3;
+                            break;
+                        }
+
+                        if (xb - 1 == um.xi && yb == um.yi) {
+                            um.xi = -2;
+                            um.yi = -2;
+                        }
+
+                        if (xb - 1 == dois.xi && yb == dois.yi) {
+                            dois.xi = -2;
+                            dois.yi = -2;
+                        }
+
+                        if (xb - 1 == tres.xi && yb == tres.yi) {
+                            tres.xi = -2;
+                            tres.yi = -2;
+                        }
+
+                        // Reinicia o timer da bomba e a posição dela
+                        bomb = 1;
+                        xb = -1;
+                        yb = -1;
+                    }
+                }
+
+                // Movimentaçao do personagem
+                if (_kbhit()) {
+                    tecla = getch();
+                    switch(tecla) {
+                        case 72: case 'w': // Cima
+                            x--;
+                            if (colisao(m[x][y] == false)) {
+                                x++;
+                            }
+                            break;
+                        case 80: case 's': // Baixo
+                            x++;
+                            if (colisao(m[x][y] == false)) {
+                                x--;
+                            }
+                            break;
+                        case 75: case 'a': // Esquerda
+                            y--;
+                            if (colisao(m[x][y] == false)) {
+                                y++;
+                            }
+                            break;
+                        case 77: case 'd': // Direita
+                            y++;
+                            if (colisao(m[x][y] == false)) {
+                                y--;
+                            }
+                            break;
+                        case 81: case 'z': // Coloca a bomba
+                            if (xb == -1 && yb == -1) {
+                                xb = x;
+                                yb = y;
+                                m[xb][yb] = 3;
+                            }
+                            break;
+                    }
+                }
+
+                // Movimento aleatório dos inimigos
+                int movimento = rand() % 150;
+                switch (movimento) {
+                    case 27: // Cima
+                        um.xi--;
+                        if (colisao(m[um.xi][um.yi] == false)) {
+                            um.xi++;
+                        }
+                        break;
+                    case 48: // Baixo
+                        um.xi++;
+                        if (colisao(m[um.xi][um.yi] == false)) {
+                            um.xi--;
+                        }
+                        break;
+                    case 61: // Esquerda
+                        um.yi--;
+                        if (colisao(m[um.xi][um.yi] == false)) {
+                            um.yi++;
+                        }
+                        break;
+                    case 84: // Direita
+                        um.yi++;
+                        if (colisao(m[um.xi][um.yi] == false)) {
+                            um.yi--;
+                        }
+                        break;
+                }
+
+                int movimento2 = rand() % 150;
+                switch (movimento2) {
+                    case 15: // Cima
+                        dois.xi--;
+                        if (colisao(m[dois.xi][dois.yi] == false)) {
+                            dois.xi++;
+                        }
+                        break;
+                    case 28: // Baixo
+                        dois.xi++;
+                        if (colisao(m[dois.xi][dois.yi] == false)) {
+                            dois.xi--;
+                        }
+                        break;
+                    case 59: // Esquerda
+                        dois.yi--;
+                        if (colisao(m[dois.xi][dois.yi] == false)) {
+                            dois.yi++;
+                        }
+                        break;
+                    case 87: // Direita
+                        dois.yi++;
+                        if (colisao(m[dois.xi][dois.yi] == false)) {
+                            dois.yi--;
+                        }
+                        break;
+                }
+
+                int movimento3 = rand() % 150;
+                switch (movimento3) {
+                    case 17: // Cima
+                        tres.xi--;
+                        if (colisao(m[tres.xi][tres.yi] == false)) {
+                            tres.xi++;
+                        }
+                        break;
+                    case 31: // Baixo
+                        tres.xi++;
+                        if (colisao(m[tres.xi][tres.yi] == false)) {
+                            tres.xi--;
+                        }
+                        break;
+                    case 64: // Esquerda
+                        tres.yi--;
+                        if (colisao(m[tres.xi][tres.yi] == false)) {
+                            tres.yi++;
+                        }
+                        break;
+                    case 83: // Direita
+                        tres.yi++;
+                        if (colisao(m[tres.xi][tres.yi] == false)) {
+                            tres.yi--;
+                        }
+                        break;
+                }
+            }
+            system("cls"); // Limpa o console
+            cout << "game over!" << endl;
+            return 0;
+        }
+    } while (true);
 }
