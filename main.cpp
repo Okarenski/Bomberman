@@ -113,7 +113,7 @@ int main()
         int bomb=1;
     //timer da exploção
         int explo=1;
-    //Variavel para tecla precionada
+    //Variavel para tecla pressionada
         char tecla;
     // variavel personagem, inimigo e bomba.
         char personagem(153);
