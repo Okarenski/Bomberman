@@ -459,13 +459,14 @@ int main()
                 system("cls");
                 if(vit==1){
                     cout<<"Parabens bixo se ganhou, voce e pika! :D "<<endl;
+                    system("pause");
                     return 0;
                 }
 
                 if(vit==0){
                     cout<<"game over!"<<endl;
                     cout<<"deseja tentar novamente? [1] sim [2] nao :"<<endl;
-                    
+
                 do {
                     cin>>selecionar;
                     if(selecionar<1&&selecionar>2){
