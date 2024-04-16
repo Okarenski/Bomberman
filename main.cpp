@@ -13,7 +13,7 @@ struct inimigo { /// stuct inimigo 1 2 3
     int xi,yi;
 };
 
-bool explosao (int ex){ /// função da bomba destruir paredes
+bool explosao (int ex){ /// função da bomba destruir paredes quebráveis 
     if (ex==2){
         return false;
     }   else
@@ -40,7 +40,7 @@ bool timer (int &bomb){ /// timer da bomba
 int main()
 {
     int entrada;
-
+      //menu
      cout << "=============================" << endl;
     cout << "        BEM-VINDO AO JOGO     " << endl;
     cout << "=============================" << endl;
