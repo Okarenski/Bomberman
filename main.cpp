@@ -163,19 +163,19 @@ int main()
 
                                 cout << bomba;
 
-                        } else if((i==xb&&j==yb+1)&&(bomb==100)){ /// exploção direita
+                        } else if((i==xb&&j==yb+1)&&(bomb>97&&bomb<=100)){ /// exploção direita
 
                                 cout << kbom;
 
-                        } else if((i==xb&&j==yb-1)&&(bomb==100)){ /// exploção esquerda
+                        } else if((i==xb&&j==yb-1)&&(bomb>97&&bomb<=100)){ /// exploção esquerda
 
                                 cout << kbom;
 
-                        } else if((i==xb+1&&j==yb)&&(bomb==100)){ /// exploção baixo
+                        } else if((i==xb+1&&j==yb)&&(bomb>97&&bomb<=100)){ /// exploção baixo
 
                                 cout << kbom;
 
-                        } else if((i==xb-1&&j==yb)&&(bomb==100)){ /// exploção cima
+                        } else if((i==xb-1&&j==yb)&&(bomb>97&&bomb<=100)){ /// exploção cima
 
                                 cout << kbom;
 
