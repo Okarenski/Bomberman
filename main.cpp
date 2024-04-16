@@ -35,14 +35,7 @@ bool timer (int &bomb){ /// timer da bomba
         return true;
     }
 }
-bool exarea (int &explo){ /// função para o tempo da animação da explosão
-    if(explo==11){
-        return false;
-    } else {
-        explo++;
-        return true;
-    }
-}
+
 
 int main()
 {
@@ -93,7 +86,12 @@ int main()
 
 
     //condição derrota
-    int gameover;
+        int gameover;
+    //codição de vitoria
+        int vit = 0;
+        int InimigosAtivos=3;
+    //selecionar
+        int selecionar;
     //Posicao inicial do personagem no console
         int x=8, y=18;
     // posicao inicial do inimigo no console
@@ -125,6 +123,7 @@ int main()
         char bomba     (022);
         char quente    (105);
         char kbom      (161);
+
     while(true){
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -132,7 +131,7 @@ int main()
         ///Imprime o jogo: mapa e personagem.
         for(int i=0;i<10;i++){
             for(int j=0;j<20;j++){ // imprime a matriz
-                if(i==x && j==y){
+                    if(i==x && j==y){
 
                     cout<<personagem; //personagem
 
@@ -187,29 +186,20 @@ int main()
                             case 1: cout<<char(219); break; //parede
                             case 2: cout<<char(176); break; //parede quebravel
                             case 3: cout<<char(022); break; //bomba
-                            case 4: cout<<char(105); break; //bomba esquentando
                         //default: cout<<"-"; //erro
                     }    //fim switch
                 }
             }
             cout<<"\n";
         } //fim for mapa
-            /// tem que ficar fora por do for por causa do if do player, se não o timer não começa a contar
+
             if((x==um.xi&&y==um.yi)||(x==dois.xi&&y==dois.yi)||(x==tres.xi&&y==tres.yi)){ ///inimigo mata player
                 x=-3;
                 y=-3;
                 break;
         }
         if(xb!=-1&&yb!=-1){ /// verificação se tem uma bomba no mapa para começar o timer
-
-        if(bomb==100){
-            if(exarea(explo)==false){ /// tentantiva de aumentar o tempo da animação da explosão
-                explo=1;
-            }
-        }
-
-
-
+                            /// tem que ficar fora por do for por causa do if do player, se não o timer não começa a contar
             if (timer(bomb)==false){ /// timer da bomba
                 m[xb][yb]=0;
 
@@ -230,14 +220,17 @@ int main()
                 } if(xb==um.xi && yb+1==um.yi){ /// inimigo 1
                     um.xi=-2;
                     um.yi=-2;
+                    InimigosAtivos--;
                 }
                 if(xb==dois.xi && yb+1==dois.yi){ ///inimigo 2
                     dois.xi=-2;
                     dois.yi=-2;
+                    InimigosAtivos--;
                 }
                 if(xb==tres.xi && yb+1==tres.yi){ ///inimigo 3
                     tres.xi=-2;
                     tres.yi=-2;
+                    InimigosAtivos--;
                 }
 
                 if(explosao(m[xb][yb-1]) == false){ ///parede ///esquerda
@@ -251,14 +244,17 @@ int main()
                 } if(xb==um.xi && yb-1==um.yi){ /// inimigo 1
                     um.xi=-2;
                     um.yi=-2;
+                    InimigosAtivos--;
 
                 } if(xb==dois.xi && yb-1==dois.yi){ ///inimigo 2
                     dois.xi=-2;
                     dois.yi=-2;
+                    InimigosAtivos--;
 
                 } if(xb==tres.xi && yb-1==tres.yi){ ///inimigo 3
                     tres.xi=-2;
                     tres.yi=-2;
+                    InimigosAtivos--;
                 }
 
                 if(explosao(m[xb+1][yb]) == false){ ///parede ///baixo
@@ -272,14 +268,17 @@ int main()
                 } if(xb+1==um.xi && yb==um.yi){ /// inimigo 1
                     um.xi=-2;
                     um.yi=-2;
+                    InimigosAtivos--;
 
                 } if(xb+1==dois.xi && yb==dois.yi){ ///inimigo 2
                     dois.xi=-2;
                     dois.yi=-2;
+                    InimigosAtivos--;
 
                 } if(xb+1==tres.xi && yb==tres.yi){ ///inimigo 3
                     tres.xi=-2;
                     tres.yi=-2;
+                    InimigosAtivos--;
                 }
 
                 if(explosao(m[xb-1][yb]) == false){ ///parede ///cima
@@ -293,14 +292,17 @@ int main()
                 } if(xb-1==um.xi && yb==um.yi){ /// inimigo 1
                     um.xi=-2;
                     um.yi=-2;
+                    InimigosAtivos--;
 
                 } if(xb-1==dois.xi && yb==dois.yi){ ///inimigo 2
                     dois.xi=-2;
                     dois.yi=-2;
+                    InimigosAtivos--;
 
                 } if(xb-1==tres.xi && yb==tres.yi){ ///inimigo 3
                     tres.xi=-2;
                     tres.yi=-2;
+                    InimigosAtivos--;
                 }
 
                 bomb = 1; ///reset da bomba
@@ -308,8 +310,6 @@ int main()
                 yb=-1;
             }
         }
-
-
          ///executa os movimentos
          if ( _kbhit() ){
             tecla = getch();
@@ -320,27 +320,27 @@ int main()
                     if(colisao(m[x][y]==false)){
                         x++;
                     }
-                break;
+                    break;
 
                 case 80: case 's': ///baixo
                     x++;
                     if(colisao(m[x][y]==false)){
                         x--;
                     }
-                break;
+                    break;
                 case 75:case 'a': ///esquerda
                     y--;
                     if(colisao(m[x][y]==false)){
                         y++;
                     }
-                break;
+                    break;
 
                 case 77: case 'd': ///direita
                     y++;
                     if(colisao(m[x][y]==false)){
                         y--;
                     }
-                break;
+                    break;
 
                 case 81: case 'z': ///bomba
                     if(xb==-1&&yb==-1) ///verificador se ja tem uma bomba no mapa
@@ -349,9 +349,9 @@ int main()
                         yb=y;
                         m[xb][yb]=3; ///marca a bomba na matriz
                     }
-
-                break;
-            }}
+                    break;
+                }
+            }
 
         //movimento inimigo
 
@@ -362,93 +362,134 @@ int main()
                     if(colisao(m[um.xi][um.yi]==false)){
                         um.xi++;
                     }
-                break;
+                    break;
 
                   case 48:
                     um.xi++;
                     if(colisao(m[um.xi][um.yi]==false)){
                         um.xi--;
                     }
-                break;
+                    break;
 
                   case 61:
                     um.yi--;
                     if(colisao(m[um.xi][um.yi]==false)){
                         um.yi++;
                     }
-                break;
+                    break;
 
                  case 84:
                     um.yi++;
                     if(colisao(m[um.xi][um.yi]==false)){
                         um.yi--;
                     }
-                break;
-            }
-
+                    break;
+                }
 
         int movimento2 = rand()% 90;
          switch(movimento2){
-                   case 15:
+
+                case 15:
                     dois.xi--;
                     if(colisao(m[dois.xi][dois.yi]==false)){
                         dois.xi++;
                     }
-                break;
+                    break;
 
-                  case 28:
+                case 28:
                     dois.xi++;
                     if(colisao(m[dois.xi][dois.yi]==false)){
                         dois.xi--;
                     }
-                break;
-               case 59:
+                    break;
+
+                case 59:
                     dois.yi--;
                     if(colisao(m[dois.xi][dois.yi]==false)){
                         dois.yi++;
                     }
-                break;
+                    break;
 
                  case 87:
                     dois.yi++;
                     if(colisao(m[dois.xi][dois.yi]==false)){
                         dois.yi--;
                     }
-                break;}
+                    break;
+                }
 
         int movimento3 = rand()% 90;
          switch(movimento3){
-                   case 17:
+
+                case 17:
                     tres.xi--;
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.xi++;
                     }
-                break;
+                    break;
 
-                  case 31:
+                case 31:
                     tres.xi++;
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.xi--;
                     }
-                break;
-               case 64:
+                    break;
+
+                case 64:
                     tres.yi--;
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.yi++;
                     }
-                break;
+                    break;
 
-                 case 83:
+                case 83:
                     tres.yi++;
                     if(colisao(m[tres.xi][tres.yi]==false)){
                         tres.yi--;
                     }
-                break;}
+                    break;
                 }
+                    if (InimigosAtivos==0) {
+                        vit = 1; // Define vitória
+                        break; // Sai do loop
+                    }
+
+                }
+
                 system("cls");
-                cout<<"game over!"<<endl;
+                if(vit==1){
+                    cout<<"Parabens bixo se ganhou, voce e pika! :D "<<endl;
+                    return 0;
+                }
+
+                if(vit==0){
+                    cout<<"game over!"<<endl;
+                    cout<<"deseja tentar novamente? [1] sim [2] nao :"<<endl;
+                    
+                do {
+                    cin>>selecionar;
+                    if(selecionar<1&&selecionar>2){
+                        cout<<"opcao invalida! digite novamente."<<endl;
+                        cin>>selecionar;
+                    }
+
+                switch(selecionar){
+
+                    case 1:
+
+                        system("cls");
+                        main();
+                        break;
+
+                    case 2:
+
+                        return 0;
+                        break;
+
+                        }
+                    } while (selecionar>1&&selecionar<2);
+                }
                  return 0;
-
-
-}        }while(true);}
-
+            }
+        }while(true);
+    }
