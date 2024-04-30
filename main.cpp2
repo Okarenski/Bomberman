@@ -75,9 +75,14 @@ int main() {
                 m[11][j] = 1; // borda inferior
             }
             // Preencher o interior do mapa
-            for (int i = 1; i < 11; i++) {
-                for (int j = 1; j < 21; j++) {
-                    m[i][j] = rand() % 3; // Valores aleatórios de 0 a 2
+            // Adicionar 12 paredes fixas
+            int paredes_fixas = 0;
+            while (paredes_fixas < 12) {
+                int random_x = rand() % 10 + 1;
+                int random_y = rand() % 20 + 1;
+                if (m[random_x][random_y] == 0) {
+                    m[random_x][random_y] = 1; // Pareda fixa
+                    paredes_fixas++;
                 }
             }
 
