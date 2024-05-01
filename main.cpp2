@@ -45,6 +45,29 @@ int main() {
     do {
         cin >> entrada;
         if (entrada != 1 && entrada != 2) {
+            srand(time(NULL)); // Semente para geração de números aleatórios
+
+            int m[11][21]; // Mapa com bordas
+            // Preencher as bordas
+            for (int i = 0; i < 11; i++) {
+                m[i][0] = 1; // borda esquerda
+                m[i][20] = 1; // borda direita
+            }
+            for (int j = 0; j < 21; j++) {
+                m[0][j] = 1; // borda superior
+                m[10][j] = 1; // borda inferior
+            }
+            // Preencher o interior do mapa
+            for (int i = 1; i < 10; i++) {
+                for (int j = 1; j < 20; j++) {
+                    // Verificar se é uma posição de parede fixa
+                    if ((i == 2 || i == 4 || i == 6 || i == 8) && (j == 2 || j == 4 || j == 6 || j == 8 || j == 10 || j == 12 || j == 14 || j == 16 || j == 18)) {
+                        m[i][j] = 1; // Parede fixa
+                    } else {
+                        m[i][j] = rand() % 3; // Valores aleatórios de 0 a 2
+                    }
+                }
+            }
             cout << "Digite novamente." << endl;
         } else if (entrada == 2) {
             break;
@@ -61,30 +84,30 @@ int main() {
             COORD coord;
             coord.X = CX;
             coord.Y = CY;
-
             srand(time(NULL)); // Semente para geração de números aleatórios
 
-            int m[12][22]; // Mapa com bordas
+            int m[11][21]; // Mapa com bordas
             // Preencher as bordas
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < 11; i++) {
                 m[i][0] = 1; // borda esquerda
-                m[i][21] = 1; // borda direita
+                m[i][20] = 1; // borda direita
             }
-            for (int j = 0; j < 22; j++) {
+            for (int j = 0; j < 21; j++) {
                 m[0][j] = 1; // borda superior
-                m[11][j] = 1; // borda inferior
+                m[10][j] = 1; // borda inferior
             }
             // Preencher o interior do mapa
-            // Adicionar 12 paredes fixas
-            int paredes_fixas = 0;
-            while (paredes_fixas < 12) {
-                int random_x = rand() % 10 + 1;
-                int random_y = rand() % 20 + 1;
-                if (m[random_x][random_y] == 0) {
-                    m[random_x][random_y] = 1; // Pareda fixa
-                    paredes_fixas++;
+            for (int i = 1; i < 10; i++) {
+                for (int j = 1; j < 20; j++) {
+                    // Verificar se é uma posição de parede fixa
+                    if ((i == 2 || i == 4 || i == 6 || i == 8) && (j == 2 || j == 4 || j == 6 || j == 8 || j == 10 || j == 12 || j == 14 || j == 16 || j == 18)) {
+                        m[i][j] = 1; // Parede fixa
+                    } else {
+                        m[i][j] = rand() % 3; // Valores aleatórios de 0 a 2
+                    }
                 }
             }
+
 
             int gameover;
             int vit = 0;
