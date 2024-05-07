@@ -98,11 +98,15 @@ int main()
     ///Vector da bomba
     vector <ExplosaoBomba> Explosoes;
 
+
     cout << "===============================================================================\n";
     cout << "||                                                                           ||\n";
     cout << "||                        Bem-vindo ao Jogo!                                 ||\n";
     cout << "||                                                                           ||\n";
     cout << "===============================================================================\n\n";
+
+
+
     int menu;
 
 
@@ -113,7 +117,9 @@ int main()
     cin >> menu;
                 system ("cls");
 
-    switch(menu){
+
+    do{
+            switch(menu){
         case 1:  while(true)
 
     {
@@ -289,7 +295,11 @@ int main()
     break;
 
     case 2: cout << "COMO FUNCIONA? O jogo consiste em um jogador ou mais, que tem como objetivo matar todos os inimigos utilizando bombas. As bombas sao utilizadas para matar os inimigos, mas se tocarem no jogador ele morre, o mesmo ocorre se os inimigos o tocarem. Alem das bombas existe a possibilidade de aumentar o alcance da bomba ou mesmo utilizar outros itens para matar os inimigos.Ainda, eh possivel quebrar paredes especiais utilizando-se da explosao da bomba. O objetivo geral do jogo é chegar ate o ultimo mapa e matar todos os inimigos." << endl;
+    cout << endl << "Digite 1 para jogar" << endl;
+    cin >> menu;
+    system("cls");
 
+    break;
 
 
 
@@ -300,6 +310,10 @@ int main()
 
 
     }
+
+
+    }while(menu<3);
+
 
 
 
@@ -313,4 +327,4 @@ int main()
 
 
 
- //f
+ //fim do jogo
