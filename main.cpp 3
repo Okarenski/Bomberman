@@ -8,8 +8,12 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include<stdlib.h>
 
 using namespace std;
+
+
+
 
 
 struct player
@@ -38,7 +42,7 @@ struct ExplosaoBomba{
 
 int main()
 {
-    using namespace chrono;
+     using namespace chrono;
     milliseconds TempoInimigo (500);
     milliseconds BombaTimer   (2000);
     auto InicioBomba = chrono::high_resolution_clock::now();
@@ -94,8 +98,205 @@ int main()
     ///Vector da bomba
     vector <ExplosaoBomba> Explosoes;
 
-    while(true)
+    cout << "===============================================================================\n";
+    cout << "||                                                                           ||\n";
+    cout << "||                        Bem-vindo ao Meu Jogo!                             ||\n";
+    cout << "||                                                                           ||\n";
+    cout << "===============================================================================\n\n";
+    int menu;
+
+
+    cout<< "digite 1 para comecar" << endl;
+    cout << "digite 2 para ler o tutorial" << endl;
+    cout << "digite 3 para sair" << endl;
+
+    cin >> menu;
+                system ("cls");
+
+    switch(menu){
+        case 1:  while(true)
+
     {
+
+        ///Posiciona a escrita no iicio do console
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+        ///Imprime o jogo: mapa e personagem.
+        for(int i=0; i<7; i++)
+        {
+            for(int j=0; j<7; j++)
+            {
+                bool isEnemy = false;
+
+                if(i==J[0].x && j==J[0].y)
+                {
+                    cout<<char(36); //personagem
+                }
+                else if (i==XB&&j==YB){
+
+                    cout<<char(022); //bomba
+                }
+                 else
+                {
+                    for(const auto& inimigo : Inimigos)
+                    {
+                        if(i==inimigo.xi&&j==inimigo.yi)
+                        {
+                            cout<<enemy;
+                            isEnemy = true;
+                            break;
+                        }
+                    }
+                    if(!isEnemy)
+                    {
+                        switch (m[i][j])
+                        {
+                        case 0: cout<<" "; break;       //caminho
+                        case 1: cout<<char(219); break; //parede
+                        case 2: cout<<char(176); break; //parede quebravel
+                                                        //default: cout<<"-"; //erro
+                        }   //fim switch
+                    }
+                }
+            }
+            cout<<"\n";
+        } //fim for mapa
+
+        ///executa os movimentos
+        if ( _kbhit() )
+        {
+            tecla = getch();
+            switch(tecla)
+            {
+            case 72:
+            case 'w': ///cima
+                J[0].x--;
+                if(colisao(m[J[0].x][J[0].y]==false))
+                {
+                    J[0].x++;
+                }
+                break;
+            case 80:
+            case 's': ///baixo
+                J[0].x++;
+                if(colisao(m[J[0].x][J[0].y]==false))
+                {
+                    J[0].x--;
+                }
+                break;
+            case 75:
+            case 'a': ///esquerda
+                J[0].y--;
+                if(colisao(m[J[0].x][J[0].y]==false))
+                {
+                    J[0].y++;
+                }
+                break;
+            case 77:
+            case 'd': ///direita
+                J[0].y++;
+                if(colisao(m[J[0].x][J[0].y]==false))
+                {
+                    J[0].y--;
+                }
+                break;
+            case 78:
+            case 'z': ///bomba
+                if(XB==-3&&YB==-3){
+                    XB=J[0].x;
+                    YB=J[0].y;
+                    m[XB][YB]=3;
+                    Explosoes.clear();
+                    ///DEFINE A AREA DAS EXPLOSÕES
+                    Explosoes.push_back({XB-1,YB}); ///CIMA
+                    Explosoes.push_back({XB+1,YB}); ///BAIXO
+                    Explosoes.push_back({XB,YB-1}); ///ESQUERDA
+                    Explosoes.push_back({XB,YB+1}); ///DIREITA
+                }
+                break;
+            }
+        }
+
+        if(XB!=-3&&YB!=-3){
+            auto TempoBombaAgora = chrono::high_resolution_clock::now();
+            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
+            if(BombaPassou>=BombaTimer){
+                    for(auto &inimigo:Inimigos){
+                        for(const auto& explosao : Explosoes){
+                            if(m[explosao.xboom][explosao.yboom]==2){
+                                m[explosao.xboom][explosao.yboom]=0;
+                            }
+                            if(inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom){
+                                inimigo.xi=-1;
+                                inimigo.yi=-1;
+                            }
+                        }
+                    }
+                    m[XB][YB]=0;
+                    XB=-3;
+                    YB=-3;
+                    InicioBomba = TempoBombaAgora;
+            }
+
+        }
+
+        ///executa os movimentos dos inimigos
+
+        auto TempoAgora = chrono::high_resolution_clock::now();         ///Tempo recebe o tempo do clock, agora;
+        auto Passou = duration_cast<milliseconds>(TempoAgora-Inicio);   ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
+        for(auto i = Inimigos.begin(); i!=Inimigos.cend(); i++ )
+        {
+            if(Passou>=TempoInimigo)
+            {
+                int mov = rand()%4+1;
+                switch(mov)
+                {
+                case 1:
+                    i->xi++;
+                    if(colisao(m[i->xi][i->yi]==false))
+                    {
+                        i->xi--;
+                    }
+                    break;
+                case 2:
+                    i->xi--;
+                    if(colisao(m[i->xi][i->yi]==false))
+                    {
+                        i->xi++;
+                    }
+                    break;
+                case 3:
+                    i->yi++;
+                    if(colisao(m[i->xi][i->yi]==false))
+                    {
+                        i->yi--;
+                    }
+                    break;
+                case 4:
+                    i->yi--;
+                    if(colisao(m[i->xi][i->yi]==false))
+                    {
+                        i->yi++;
+                    }
+                    break;
+                }
+                Inicio = TempoAgora; ///inico recebe o tempo atual
+            }
+        }
+
+
+    } //fim do laco do jogo
+    break;
+
+    case 2: cout << "COMO FUNCIONA? O jogo consiste em um jogador ou mais, que tem como objetivo matar todos os inimigos utilizando bombas. As bombas sao utilizadas para matar os inimigos, mas se tocarem no jogador ele morre, o mesmo ocorre se os inimigos o tocarem. Alem das bombas existe a possibilidade de aumentar o alcance da bomba ou mesmo utilizar outros itens para matar os inimigos.Ainda, eh possivel quebrar paredes especiais utilizando-se da explosao da bomba. O objetivo geral do jogo é chegar ate o ultimo mapa e matar todos os inimigos.";
+    cin >> menu;
+    system ("cls");
+
+    case 4: while(true)
+
+    {
+
+
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
@@ -265,5 +466,28 @@ int main()
 
     } //fim do laco do jogo
 
-    return 0;
-} //fim main
+
+
+
+
+
+    case 3: break;
+
+
+
+
+    }
+
+
+
+        return 0;
+
+
+    }
+
+
+
+
+
+
+ //fim main
