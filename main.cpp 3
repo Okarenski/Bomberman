@@ -288,7 +288,9 @@ int main()
     } //fim do laco do jogo
     break;
 
-    case 2: cout << "COMO FUNCIONA? O jogo consiste em um jogador ou mais, que tem como objetivo matar todos os inimigos utilizando bombas. As bombas sao utilizadas para matar os inimigos, mas se tocarem no jogador ele morre, o mesmo ocorre se os inimigos o tocarem. Alem das bombas existe a possibilidade de aumentar o alcance da bomba ou mesmo utilizar outros itens para matar os inimigos.Ainda, eh possivel quebrar paredes especiais utilizando-se da explosao da bomba. O objetivo geral do jogo é chegar ate o ultimo mapa e matar todos os inimigos.";
+    case 2: cout << "COMO FUNCIONA? O jogo consiste em um jogador ou mais, que tem como objetivo matar todos os inimigos utilizando bombas. As bombas sao utilizadas para matar os inimigos, mas se tocarem no jogador ele morre, o mesmo ocorre se os inimigos o tocarem. Alem das bombas existe a possibilidade de aumentar o alcance da bomba ou mesmo utilizar outros itens para matar os inimigos.Ainda, eh possivel quebrar paredes especiais utilizando-se da explosao da bomba. O objetivo geral do jogo é chegar ate o ultimo mapa e matar todos os inimigos." << endl;
+    cout << endl << "digite 4 para inciar o jogo" << endl;
+
     cin >> menu;
     system ("cls");
 
