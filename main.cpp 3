@@ -8,6 +8,9 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <mmsystem.h> ///musica
+#define PlaySound PlaySoundA
+
 
 using namespace std;
 
@@ -38,6 +41,12 @@ struct ExplosaoBomba{
 
 int main()
 {
+
+
+
+
+
+
     using namespace chrono;
     milliseconds TempoInimigo (500);
     milliseconds BombaTimer   (2000);
@@ -60,11 +69,12 @@ int main()
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, ACIMA.
 
 
+             int menu;
 
 
-
-    int menu;
     do{
+
+
     system ("cls");
     cout << "===============================================================================\n";
     cout << "||                                                                           ||\n";
@@ -76,13 +86,13 @@ int main()
     cout<< "digite 1 para comecar" << endl;
     cout << "digite 2 para ler o tutorial" << endl;
     cout << "digite 3 para sair" << endl;
+                 cin >> menu;
 
-    cin >> menu;
 
     switch(menu){
         case 1:
             system ("cls");
-            while(true){
+            {
             int m[7][7]= {   1,1,1,1,1,1,1,
                          1,0,0,0,0,0,1,
                          1,0,0,0,1,2,1,
@@ -283,7 +293,16 @@ int main()
                 }
             }
 
+printf("videoplayback...\n");
+    PlaySound("videoplayback.wav",
+              NULL,
+              SND_SYNC | SND_FILENAME);
 
+              Sleep(2000);
+              system("pause");
+              PlaySound(NULL, 0, 0);
+
+              //system("pause");
         } //fim do laco do jogo
     break;
     case 2:
