@@ -293,7 +293,7 @@ int main()
                 }
             }
 
-printf("videoplayback...\n");
+//printf("videoplayback...\n");
     PlaySound("videoplayback.wav",
               NULL,
               SND_SYNC | SND_FILENAME);
