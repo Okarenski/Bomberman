@@ -1,438 +1,344 @@
-#include <iostream>
+    #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <time.h>
-#include <stdlib.h>
+#include <vector>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
-struct inimigo {
+struct player
+{
+    int x, y;
+};
+
+struct inimigo
+{
     int xi, yi;
 };
 
-bool explosao(int ex) {
-    if (ex == 2) {
+bool colisao(int p) /// colisão
+{
+    if (p != 0)
+    {
         return false;
-    } else {
-        return true;
     }
+    else
+        return true;
 }
 
-bool colisao(int p) {
-    if (p != 0) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-bool timer(int &bomb) {
-    if (bomb == 100) {
-        return false;
-    } else {
-        bomb++;
-        return true;
-    }
-}
-
-int main() {
-    int entrada;
-    cout << "=============================" << endl;
-    cout << "        BEM-VINDO AO JOGO     " << endl;
-    cout << "=============================" << endl;
-    cout << "Digite 1 para jogar ou 2 para sair" << endl;
-
-    do {
-        cin >> entrada;
-        if (entrada != 1 && entrada != 2) {
-            cout << "Digite novamente." << endl;
-        } else if (entrada == 2) {
-            break;
-        } else {
-            system("cls");
-
-            HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-            CONSOLE_CURSOR_INFO cursorInfo;
-            GetConsoleCursorInfo(out, &cursorInfo);
-            cursorInfo.bVisible = false;
-            SetConsoleCursorInfo(out, &cursorInfo);
-
-            short int CX = 0, CY = 0;
-            COORD coord;
-            coord.X = CX;
-            coord.Y = CY;
-            srand(time(NULL)); // Semente para geração de números aleatórios
-
-            int m[11][23]; // Mapa com bordas
-            // Preencher as bordas
-            for (int i = 0; i < 11; i++) {
-                m[i][0] = 1; // borda esquerda
-                m[i][22] = 1; // borda direita
-            }
-            for (int j = 0; j < 23; j++) {
-                m[0][j] = 1; // borda superior
-                m[10][j] = 1; // borda inferior
-            }
-            // Preencher o interior do mapa
-            for (int i = 1; i < 10; i++) {
-                for (int j = 1; j < 22; j++) {
-                    // Verificar se é uma posição de parede fixa
-                    if ((i == 2 || i == 4 || i == 6 || i == 8) && (j == 2 || j == 4 || j == 6 || j == 8 || j == 10 || j == 12 || j == 14 || j == 16 || j == 18 || j == 20)) {
-                        m[i][j] = 1; // Parede fixa
-                    } else {
-                        // Preencher com paredes quebráveis ou espaços vazios aleatoriamente
-                        if (rand() % 5 == 0) { // Ajuste o valor (5) para mudar a densidade de paredes quebráveis
-                            m[i][j] = 2; // Paredes quebráveis
-                        } else {
-                            m[i][j] = 0; // Espaços vazios
-                        }
-                    }
-                }
-            }
-
-            // Posição inicial do protagonista
-            int x = 9, y = 21;
-            // Impedir que a posição de nascimento tenha paredes
-            m[x][y] = 0;
-
-            int gameover;
-            int vit = 0;
-            int InimigosAtivos = 3;
-            int selecionar;
-            inimigo um;
-            inimigo dois;
-            inimigo tres;
-            um.xi = 1;
-            um.yi = 1; // Posição inicial do primeiro inimigo no canto superior esquerdo
-            dois.xi = 1;
-            dois.yi = 20; // Posição inicial do segundo inimigo no canto superior direito
-            tres.xi = 9;
-            tres.yi = 1; // Posição inicial do terceiro inimigo no canto inferior esquerdo
-            int xb = -1, yb = -1;
-            int bomb = 1;
-            int explo = 1;
-            char tecla;
-            char personagem(153);
-            char inimigo1(041);
-            char inimigo2(041);
-            char inimigo3(041);
-            char bomba(022);
-            char quente(105);
-            char kbom(161);
-
-            // Variáveis para controlar os movimentos dos inimigos
-            int mov1 = 0, mov2 = 0, mov3 = 0;
-
-            while (true) {
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-
-                for (int i = 0; i < 11; i++) {
-                    for (int j = 0; j < 23; j++) {
-                        if (i == x && j == y) {
-                            cout << personagem;
-                        } else if (i == um.xi && j == um.yi) {
-                            cout << inimigo1;
-                        } else if (i == dois.xi && j == dois.yi) {
-                            cout << inimigo2;
-                        } else if (i == tres.xi && j == tres.yi) {
-                            cout << inimigo3;
-                        } else if ((i == xb && j == yb) && (bomb > 20 && bomb < 30)) {
-                            cout << quente;
-                        } else if ((i == xb && j == yb) && (bomb > 50 && bomb < 60)) {
-                            cout << quente;
-                        } else if ((i == xb && j == yb) && (bomb > 80 && bomb < 90)) {
-                            cout << quente;
-                        } else if (i == xb && j == yb) {
-                            cout << bomba;
-                        } else if ((i == xb && j == yb + 1) && (bomb > 97 && bomb <= 100)) {
-                            cout << kbom;
-                        } else if ((i == xb && j == yb - 1) && (bomb > 97 && bomb <= 100)) {
-                            cout << kbom;
-                        } else if ((i == xb + 1 && j == yb) && (bomb > 97 && bomb <= 100)) {
-                            cout << kbom;
-                        } else if ((i == xb - 1 && j == yb) && (bomb > 97 && bomb <= 100)) {
-                            cout << kbom;
-                        } else {
-                            switch (m[i][j]) {
-                                case 0: cout << " "; break;
-                                case 1: cout << char(219); break;
-                                case 2: cout << char(176); break;
-                                case 3: cout << char(022); break;
-                            }
-                        }
-                    }
-                    cout << "\n";
-                }
-
-                if ((x == um.xi && y == um.yi) || (x == dois.xi && y == dois.yi) || (x == tres.xi && y == tres.yi)) {
-                    x = -3;
-                    y = -3;
-                    break;
-                }
-
-                if (xb != -1 && yb != -1) {
-                    if (timer(bomb) == false) {
-                        m[xb][yb] = 0;
-
-                        if (x == xb && y == yb) {
-                            x = -3;
-                            y = -3;
-                            break;
-                        }
-
-                        if (explosao(m[xb][yb + 1]) == false) {
-                            m[xb][yb + 1] = 0;
-                        }
-                        if (xb == x && yb + 1 == y) {
-                            x = -3;
-                            y = -3;
-                            break;
-                        }
-                        if (xb == um.xi && yb + 1 == um.yi) {
-                            um.xi = -2;
-                            um.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb == dois.xi && yb + 1 == dois.yi) {
-                            dois.xi = -2;
-                            dois.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb == tres.xi && yb + 1 == tres.yi) {
-                            tres.xi = -2;
-                            tres.yi = -2;
-                            InimigosAtivos--;
-                        }
-
-                        if (explosao(m[xb][yb - 1]) == false) {
-                            m[xb][yb - 1] = 0;
-                        }
-                        if (xb == x && yb - 1 == y) {
-                            x = -3;
-                            y = -3;
-                            break;
-                        }
-                        if (xb == um.xi && yb - 1 == um.yi) {
-                            um.xi = -2;
-                            um.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb == dois.xi && yb - 1 == dois.yi) {
-                            dois.xi = -2;
-                            dois.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb == tres.xi && yb - 1 == tres.yi) {
-                            tres.xi = -2;
-                            tres.yi = -2;
-                            InimigosAtivos--;
-                        }
-
-                        if (explosao(m[xb + 1][yb]) == false) {
-                            m[xb + 1][yb] = 0;
-                        }
-                        if (xb + 1 == x && yb == y) {
-                            x = -3;
-                            y = -3;
-                            break;
-                        }
-                        if (xb + 1 == um.xi && yb == um.yi) {
-                            um.xi = -2;
-                            um.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb + 1 == dois.xi && yb == dois.yi) {
-                            dois.xi = -2;
-                            dois.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb + 1 == tres.xi && yb == tres.yi) {
-                            tres.xi = -2;
-                            tres.yi = -2;
-                            InimigosAtivos--;
-                        }
-
-                        if (explosao(m[xb - 1][yb]) == false) {
-                            m[xb - 1][yb] = 0;
-                        }
-                        if (xb - 1 == x && yb == y) {
-                            x = -3;
-                            y = -3;
-                            break;
-                        }
-                        if (xb - 1 == um.xi && yb == um.yi) {
-                            um.xi = -2;
-                            um.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb - 1 == dois.xi && yb == dois.yi) {
-                            dois.xi = -2;
-                            dois.yi = -2;
-                            InimigosAtivos--;
-                        }
-                        if (xb - 1 == tres.xi && yb == tres.yi) {
-                            tres.xi = -2;
-                            tres.yi = -2;
-                            InimigosAtivos--;
-                        }
-
-                        bomb = 1;
-                        xb = -1;
-                        yb = -1;
-                    }
-                }
-
-                if (_kbhit()) {
-                    tecla = getch();
-                    switch (tecla) {
-                        case 72: case 'w':
-                            x--;
-                            if (colisao(m[x][y] == false)) {
-                                x++;
-                            }
-                            break;
-
-                        case 80: case 's':
-                            x++;
-                            if (colisao(m[x][y] == false)) {
-                                x--;
-                            }
-                            break;
-                        case 75: case 'a':
-                            y--;
-                            if (colisao(m[x][y] == false)) {
-                                y++;
-                            }
-                            break;
-
-                        case 77: case 'd':
-                            y++;
-                            if (colisao(m[x][y] == false)) {
-                                y--;
-                            }
-                            break;
-
-                        case 81: case 'z':
-                            if (xb == -1 && yb == -1) {
-                                xb = x;
-                                yb = y;
-                                m[xb][yb] = 3;
-                            }
-                            break;
-                    }
-                }
-
-                // Movimento dos inimigos
-                if (mov1 % 2 == 0) {
-                    int movimento = rand() % 90;
-                    switch (movimento) {
-                        case 27:
-                            um.xi--;
-                            if (colisao(m[um.xi][um.yi] == false)) {
-                                um.xi++;
-                            }
-                            break;
-                        case 48:
-                            um.xi++;
-                            if (colisao(m[um.xi][um.yi] == false)) {
-                                um.xi--;
-                            }
-                            break;
-                        case 61:
-                            um.yi--;
-                            if (colisao(m[um.xi][um.yi] == false)) {
-                                um.yi++;
-                            }
-                            break;
-                        case 84:
-                            um.yi++;
-                            if (colisao(m[um.xi][um.yi] == false)) {
-                                um.yi--;
-                            }
-                            break;
-                    }
-                }
-
-                if (mov2 % 2 == 0) {
-                    int movimento2 = rand() % 90;
-                    switch (movimento2) {
-                        case 15:
-                            dois.xi--;
-                            if (colisao(m[dois.xi][dois.yi] == false)) {
-                                dois.xi++;
-                            }
-                            break;
-                        case 28:
-                            dois.xi++;
-                            if (colisao(m[dois.xi][dois.yi] == false)) {
-                                dois.xi--;
-                            }
-                            break;
-                        case 59:
-                            dois.yi--;
-                            if (colisao(m[dois.xi][dois.yi] == false)) {
-                                dois.yi++;
-                            }
-                            break;
-                        case 42:
-                            dois.yi++;
-                            if (colisao(m[dois.xi][dois.yi] == false)) {
-                                dois.yi--;
-                            }
-                            break;
-                    }
-                }
-
-                if (mov3 % 2 == 0) {
-                    int movimento3 = rand() % 90;
-                    switch (movimento3) {
-                        case 70:
-                            tres.xi--;
-                            if (colisao(m[tres.xi][tres.yi] == false)) {
-                                tres.xi++;
-                            }
-                            break;
-                        case 50:
-                            tres.xi++;
-                            if (colisao(m[tres.xi][tres.yi] == false)) {
-                                tres.xi--;
-                            }
-                            break;
-                        case 75:
-                            tres.yi--;
-                            if (colisao(m[tres.xi][tres.yi] == false)) {
-                                tres.yi++;
-                            }
-                            break;
-                        case 39:
-                            tres.yi++;
-                            if (colisao(m[tres.xi][tres.yi] == false)) {
-                                tres.yi--;
-                            }
-                            break;
-                    }
-                }
-
-                if (InimigosAtivos == 0) {
-                    break;
-                }
-
-                // Incrementar os contadores de movimento dos inimigos
-                mov1++;
-                mov2++;
-                mov3++;
-
-            }
-            system("cls");
-            if (InimigosAtivos == 0) {
-                cout << "Voce venceu!" << endl;
-            } else {
-                cout << "Voce perdeu!" << endl;
-            }
-            cout << "Digite 1 para jogar novamente ou 2 para sair" << endl;
+bool isEnemyAtPosition(int x, int y, const vector<inimigo> &Inimigos)
+{
+    for (const auto &enemy : Inimigos)
+    {
+        if (enemy.xi == x && enemy.yi == y)
+        {
+            return true;
         }
-    } while (entrada != 2);
+    }
+    return false;
+}
+
+struct ExplosaoBomba
+{
+    int xboom, yboom;
+};
+
+bool checkPlayerCollision(int x, int y, const vector<inimigo> &Inimigos)
+{
+    for (const auto &enemy : Inimigos)
+    {
+        if (enemy.xi == x && enemy.yi == y)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    using namespace chrono;
+    milliseconds TempoInimigo(500);
+    milliseconds BombaTimer(2000);
+    auto InicioBomba = chrono::high_resolution_clock::now();
+    auto Inicio = chrono::high_resolution_clock::now();
+    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
+    //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = false; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+    //FIM: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
+    //INICIO: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
+    short int CX = 0, CY = 0;
+    COORD coord;
+    coord.X = CX;
+    coord.Y = CY;
+    //FIM: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
+    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, ACIMA.
+
+    int m[11][23]; // Mapa com bordas
+    // Preencher as bordas
+    for (int i = 0; i < 11; i++)
+    {
+        m[i][0] = 1;    // borda esquerda
+        m[i][22] = 1;   // borda direita
+    }
+    for (int j = 0; j < 23; j++)
+    {
+        m[0][j] = 1;    // borda superior
+        m[10][j] = 1;   // borda inferior
+    }
+    // Preencher o interior do mapa
+    for (int i = 1; i < 10; i++)
+    {
+        for (int j = 1; j < 22; j++)
+        {
+            // Verificar se é uma posição de parede fixa
+            if ((i == 2 || i == 4 || i == 6 || i == 8) && (j == 2 || j == 4 || j == 6 || j == 8 || j == 10 || j == 12 || j == 14 || j == 16 || j == 18 || j == 20))
+            {
+                m[i][j] = 1; // Parede fixa
+            }
+            else
+            {
+                // Preencher com paredes quebráveis ou espaços vazios aleatoriamente
+                if (rand() % 5 == 0)
+                { // Ajuste o valor (5) para mudar a densidade de paredes quebráveis
+                    m[i][j] = 2; // Paredes quebráveis
+                }
+                else
+                {
+                    m[i][j] = 0; // Espaços vazios
+                }
+            }
+        }
+    }
+
+    // Posição inicial do protagonista
+    int x = 9, y = 21;
+    // Impedir que a posição de nascimento tenha paredes
+    m[x][y] = 0;
+
+    int gameover;
+    int vit = 0;
+    int InimigosAtivos = 3;
+    int selecionar;
+    inimigo um;
+    inimigo dois;
+    inimigo tres;
+    um.xi = 1;
+    um.yi = 1; // Posição inicial do primeiro inimigo no canto superior esquerdo
+    dois.xi = 1;
+    dois.yi = 20; // Posição inicial do segundo inimigo no canto superior direito
+    tres.xi = 9;
+    tres.yi = 1; // Posição inicial do terceiro inimigo no canto inferior esquerdo
+    int xb = -1, yb = -1;
+
+    ///Bomba
+    int XB = -3;
+    int YB = -3;
+    ///inimigo
+    char enemy(041);
+    vector<inimigo> Inimigos;
+    Inimigos.push_back({1, 1});
+    Inimigos.push_back({1, 21});
+    Inimigos.push_back({9, 1});
+    Inimigos.push_back({9, 21});
+    ///Posicao inicial do personagem no console
+    vector<player> J;
+    J.push_back({5, 5}); ///player 1
+    J.push_back({5, 4}); ///player 2
+    ///Variavel para tecla precionada
+    char tecla;
+    ///Parade Quebravel
+    char ParedeQuebravel(176);
+    ///Bomba
+    char Bomba(022);
+    char quente(105);
+    char kbom(161);
+    ///Vector da bomba
+    vector<ExplosaoBomba> Explosoes;
+
+    while (true)
+    {
+        ///Posiciona a escrita no iicio do console
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+        ///Imprime o jogo: mapa e personagem.
+        for (int i = 0; i < 11; i++)
+        {
+            for (int j = 0; j < 23; j++)
+            {
+                bool isEnemy = false;
+
+                if (i == J[0].x && j == J[0].y)
+                {
+                    cout << char(36); //personagem
+                }
+                else if (i == XB && j == YB)
+                {
+
+                    cout << char(022); //bomba
+                }
+                else
+                {
+                    for (const auto &inimigo : Inimigos)
+                    {
+                        if (i == inimigo.xi && j == inimigo.yi)
+                        {
+                            cout << enemy;
+                            isEnemy = true;
+                            break;
+                        }
+                    }
+                    if (!isEnemy)
+                    {
+                        switch (m[i][j])
+                        {
+                        case 0:
+                            cout << " "; //caminho
+                            break;
+                        case 1:
+                            cout << char(219);
+                            break; //parede
+                        case 2:
+                            cout << char(176);
+                            break; //parede quebravel
+                                 //default: cout<<"-"; //erro
+                        } //fim switch
+                    }
+                }
+            }
+            cout << "\n";
+        } //fim for mapa
+
+        ///executa os movimentos
+        if (_kbhit())
+        {
+            tecla = getch();
+            switch (tecla)
+            {
+            case 72:
+            case 'w': ///cima
+                if (colisao(m[J[0].x - 1][J[0].y]) && !isEnemyAtPosition(J[0].x - 1, J[0].y, Inimigos))
+                {
+                    J[0].x--;
+                }
+                break;
+            case 80:
+            case 's': ///baixo
+                if (colisao(m[J[0].x + 1][J[0].y]) && !isEnemyAtPosition(J[0].x + 1, J[0].y, Inimigos))
+                {
+                    J[0].x++;
+                }
+                break;
+            case 75:
+            case 'a': ///esquerda
+                if (colisao(m[J[0].x][J[0].y - 1]) && !isEnemyAtPosition(J[0].x, J[0].y - 1, Inimigos))
+                {
+                    J[0].y--;
+                }
+                break;
+            case 77:
+            case 'd': ///direita
+                if (colisao(m[J[0].x][J[0].y + 1]) && !isEnemyAtPosition(J[0].x, J[0].y + 1, Inimigos))
+                {
+                    J[0].y++;
+                }
+                break;
+            case 78:
+            case 'z': ///bomba
+                if (XB == -3 && YB == -3)
+                {
+                    XB = J[0].x;
+                    YB = J[0].y;
+                    m[XB][YB] = 3;
+                    Explosoes.clear();
+                    ///DEFINE A AREA DAS EXPLOSÕES
+                    Explosoes.push_back({XB - 1, YB});   ///CIMA
+                    Explosoes.push_back({XB + 1, YB});   ///BAIXO
+                    Explosoes.push_back({XB, YB - 1});   ///ESQUERDA
+                    Explosoes.push_back({XB, YB + 1});   ///DIREITA
+                }
+                break;
+            }
+        }
+
+        if (XB != -3 && YB != -3)
+        {
+            auto TempoBombaAgora = chrono::high_resolution_clock::now();
+            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora - InicioBomba);
+            if (BombaPassou >= BombaTimer)
+            {
+                for (auto &inimigo : Inimigos)
+                {
+                    for (const auto &explosao : Explosoes)
+                    {
+                        if (m[explosao.xboom][explosao.yboom] == 2)
+                        {
+                            m[explosao.xboom][explosao.yboom] = 0;
+                        }
+                        if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom)
+                        {
+                            inimigo.xi = -1;
+                            inimigo.yi = -1;
+                        }
+                    }
+                }
+                m[XB][YB] = 0;
+                XB = -3;
+                YB = -3;
+                InicioBomba = TempoBombaAgora;
+            }
+        }
+
+        ///executa os movimentos dos inimigos
+
+        auto TempoAgora = chrono::high_resolution_clock::now(); ///Tempo recebe o tempo do clock, agora;
+        auto Passou = duration_cast<milliseconds>(TempoAgora - Inicio); ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
+        for (auto i = Inimigos.begin(); i != Inimigos.cend(); i++)
+        {
+            if (Passou >= TempoInimigo)
+            {
+                int mov = rand() % 4 + 1;
+                switch (mov)
+                {
+                case 1:
+                    i->xi++;
+                    if (colisao(m[i->xi][i->yi] == false))
+                    {
+                        i->xi--;
+                    }
+                    break;
+                case 2:
+                    i->xi--;
+                    if (colisao(m[i->xi][i->yi] == false))
+                    {
+                        i->xi++;
+                    }
+                    break;
+                case 3:
+                    i->yi++;
+                    if (colisao(m[i->xi][i->yi] == false))
+                    {
+                        i->yi--;
+                    }
+                    break;
+                case 4:
+                    i->yi--;
+                    if (colisao(m[i->xi][i->yi] == false))
+                    {
+                        i->yi++;
+                    }
+                    break;
+                }
+                Inicio = TempoAgora; ///inico recebe o tempo atual
+            }
+        }
+    } //fim do laco do jogo
 
     return 0;
-}
+} //fim main
 
