@@ -1,4 +1,4 @@
-    #include <iostream>
+#include <iostream>
 #include <windows.h>
 #include <conio.h>
 #include <vector>
@@ -337,8 +337,45 @@ int main()
                 Inicio = TempoAgora; ///inico recebe o tempo atual
             }
         }
+
+        // Após limpar a área da explosão da bomba e verificar se o inimigo morreu
+        bool todosInimigosMortos = true;
+        for (auto &inimigo : Inimigos)
+        {
+            // Verificar se o inimigo morreu devido à explosão da bomba
+            for (const auto &explosao : Explosoes)
+            {
+                if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom)
+                {
+                    inimigo.xi = -1;
+                    inimigo.yi = -1;
+                }
+            }
+            // Verificar se há algum inimigo vivo
+            if (inimigo.xi != -1 && inimigo.yi != -1)
+            {
+                todosInimigosMortos = false;
+                break;
+            }
+        }
+
+        // Verificar se todos os inimigos morreram
+        if (todosInimigosMortos)
+        {
+            // Imprimir mensagem informando que a próxima fase está disponível
+            cout << "Todos os inimigos foram derrotados! O portal para a próxima fase está aberto!\n";
+
+            // Aguardar até que o jogador pressione uma tecla para avançar para a próxima fase
+            cout << "Pressione qualquer tecla para avançar para a próxima fase...\n";
+            _getch(); // Aguardar a entrada do usuário
+
+            // Avançar para a próxima fase (você pode adicionar aqui a lógica para a próxima fase)
+            // Por exemplo, você pode chamar uma função que inicializa a próxima fase ou redefine o estado do jogo
+        }
+
     } //fim do laco do jogo
 
     return 0;
 } //fim main
+
 
