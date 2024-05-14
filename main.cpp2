@@ -17,6 +17,11 @@ struct inimigo
     int xi, yi;
 };
 
+struct portal
+{
+    int x, y;
+};
+
 bool colisao(int p) /// colisão
 {
     if (p != 0)
@@ -39,21 +44,9 @@ bool isEnemyAtPosition(int x, int y, const vector<inimigo> &Inimigos)
     return false;
 }
 
-struct ExplosaoBomba
+bool isPlayerAtPosition(int x, int y, const player &Player)
 {
-    int xboom, yboom;
-};
-
-bool checkPlayerCollision(int x, int y, const vector<inimigo> &Inimigos)
-{
-    for (const auto &enemy : Inimigos)
-    {
-        if (enemy.xi == x && enemy.yi == y)
-        {
-            return true;
-        }
-    }
-    return false;
+    return (x == Player.x && y == Player.y);
 }
 
 int main()
@@ -121,6 +114,11 @@ int main()
     // Impedir que a posição de nascimento tenha paredes
     m[x][y] = 0;
 
+    // Posição do portal
+    portal Portal;
+    Portal.x = 1;
+    Portal.y = 21;
+
     int gameover;
     int vit = 0;
     int InimigosAtivos = 3;
@@ -172,10 +170,21 @@ int main()
             for (int j = 0; j < 23; j++)
             {
                 bool isEnemy = false;
+                bool isPortal = false;
 
                 if (i == J[0].x && j == J[0].y)
                 {
                     cout << char(36); //personagem
+                }
+                else if (isPlayerAtPosition(i, j, J[0]) && isPlayerAtPosition(i, j, Portal))
+                {
+                    cout << 'O'; //portal e personagem
+                    isPortal = true;
+                }
+                else if (isPlayerAtPosition(i, j, Portal))
+                {
+                    cout << 'O'; //portal
+                    isPortal = true;
                 }
                 else if (i == XB && j == YB)
                 {
@@ -193,7 +202,7 @@ int main()
                             break;
                         }
                     }
-                    if (!isEnemy)
+                    if (!isEnemy && !isPortal)
                     {
                         switch (m[i][j])
                         {
@@ -294,6 +303,15 @@ int main()
             }
         }
 
+        // Verificar se o jogador encostou no portal
+        if (isPlayerAtPosition(J[0].x, J[0].y, Portal))
+        {
+            // Movimentar o jogador para o novo mapa
+            // Aqui você pode adicionar a lógica para iniciar o novo mapa
+            cout << "Você entrou no portal e foi levado para outro mapa!\n";
+            break; // Saia do loop atual
+        }
+
         ///executa os movimentos dos inimigos
 
         auto TempoAgora = chrono::high_resolution_clock::now(); ///Tempo recebe o tempo do clock, agora;
@@ -362,15 +380,16 @@ int main()
         // Verificar se todos os inimigos morreram
         if (todosInimigosMortos)
         {
-            
+            // Imprimir mensagem informando que a próxima fase está disponível
             cout << "Todos os inimigos foram derrotados! O portal para a próxima fase está aberto!\n";
 
-            
+            // Aguardar até que o jogador pressione uma tecla para avançar para a próxima fase
             cout << "Pressione qualquer tecla para avançar para a próxima fase...\n";
-            _getch(); 
+            _getch(); // Aguardar a entrada do usuário
 
-            
-            break;
+            // Avançar para a próxima fase (você pode adicionar aqui a lógica para a próxima fase)
+            // Por exemplo, você pode chamar uma função que inicializa a próxima fase ou redefine o estado do jogo
+            break; // Saia do loop atual
         }
 
     } //fim do laco do jogo
