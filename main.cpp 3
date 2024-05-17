@@ -7,9 +7,11 @@
 #include <conio.h>
 #include <vector>
 #include <chrono>
+#include <mmsystem.h>
 
 using namespace std;
 using namespace std::chrono;
+
 
 void GeracaoInimigo(int m[10][20],int dificuldade,vector<pair<int,int>> &Inimigos)
 {
@@ -128,6 +130,9 @@ int main()
     int menu = 0;
     do
     {
+        PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+
+
         system ("cls");
         cout << " _______  _______  __   __  _______  _______  ______    __   __  _______  __    _ \n"
              "|  _    ||       ||  |_|  ||  _    ||       ||    _ |  |  |_|  ||   _   ||  |  | |\n"
@@ -147,6 +152,7 @@ int main()
 
         switch(menu)
         {
+
         case 1:
             int contagem;
             int movimentos = 0;
@@ -164,16 +170,21 @@ int main()
             switch(dificuldade)
             {
             case 1:
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 dificuldade=3;
                 Inimigos.resize(dificuldade);
                 break;
 
             case 2:
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+
                 dificuldade=5;
                 Inimigos.resize(dificuldade);
                 break;
 
             case 3:
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+
                 dificuldade=7;
                 Inimigos.resize(dificuldade);
                 break;
@@ -361,6 +372,8 @@ int main()
                     case 78:
 
                     case 'e': ///bomba
+
+
                         if(XB==-3&&YB==-3)
                         {
                             XB=J[0].x;
@@ -489,16 +502,23 @@ int main()
                         }
                     }
                 }
-                 auto final = steady_clock::now();
-            auto tempo = final - inicio;
-cout << " _________________________________________________________________" << endl;
-cout << "                         PONTUACAO:                               " << endl;
-cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
-cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
-cout << "                                                                  " << endl;
-cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
-cout << "__________________________________________________________________" << endl;
-
+                auto final = steady_clock::now();
+                auto tempo = final - inicio;
+                cout << " _________________________________________________________________" << endl;
+                cout << "                         PONTUACAO:                               " << endl;
+                cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
+                cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
+                cout << "                                                                  " << endl;
+                cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
+                cout << "__________________________________________________________________" << endl;
+                if(InimigosVivos==0)
+                {
+                    cout<<"voce venceu!"<<endl;
+                }
+                if(JogadoresVivos==0)
+                {
+                    cout<<"voce perdeu!"<<endl;
+                }
 
             } //fim do laco do jogo
 
@@ -510,12 +530,7 @@ cout << "__________________________________________________________________" << 
 
 
 
-//    if(InimigosVivos==0){
-        //   cout<<"voce venceu!"<<endl;
-        // }
-        // if(JogadoresVivos==0){
-        //     cout<<"voce perdeu!"<<endl;
-        // }
+
     }
     while(menu!=3);
 
