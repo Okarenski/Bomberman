@@ -9,6 +9,7 @@
 #include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 void GeracaoInimigo(int m[10][20],int dificuldade,vector<pair<int,int>> &Inimigos)
 {
@@ -190,8 +191,19 @@ int main()
 
             system("cls");
 
+            auto inicio = steady_clock::now();
             while(GameContinue)
             {
+
+
+
+
+
+
+
+
+
+
                 ///Posiciona a escrita no iicio do console
                 SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
@@ -250,76 +262,99 @@ int main()
                     {
                     case 72:
                     case 'w': ///cima
-                         do
-                        {
 
-                            int c = 1;
 
-                            contcima+= c;
-                            c++;
-                            movimentos++;
 
-                        }
-                        while(false);
+
                         J[0].x--;
                         if(!colisao(m[J[0].x][J[0].y]))
                         {
                             J[0].x++;
+
+                        }
+                        else
+                        {
+                            do
+                            {
+
+                                int c = 1;
+
+                                contcima+= c;
+                                c++;
+                                movimentos++;
+
+                            }
+                            while(false);
                         }
 
                         break;
                     case 80:
                     case 's': ///baixo
-                        do
-                        {
-                            int ba = 1;
-                            contbaixo+=ba;
-                            ba++;
-                            movimentos++;
-                        }
-                        while(false);
+
                         J[0].x++;
                         if(!colisao(m[J[0].x][J[0].y]))
                         {
                             J[0].x--;
+
+                        }
+                        else
+                        {
+                            do
+                            {
+                                int ba = 1;
+                                contbaixo+=ba;
+                                ba++;
+                                movimentos++;
+                            }
+                            while(false);
                         }
 
 
                         break;
                     case 75:
                     case 'a': ///esquerda
-                         do
-                        {
-                            int es = 1;
-                            contesquerda+=es;
-                            es++;
-                            movimentos++;
-                        }
-                        while(false);
+
                         J[0].y--;
                         if(!colisao(m[J[0].x][J[0].y]))
+
                         {
                             J[0].y++;
+
                         }
-
-
+                        else
+                        {
+                            do
+                            {
+                                int es = 1;
+                                contesquerda+=es;
+                                es++;
+                                movimentos++;
+                            }
+                            while(false);
+                        }
 
 
                         break;
                     case 77:
                     case 'd': ///direita
-                            do
-                        {
-                            int di = 1;
-                            contdireita+=di;
-                            di++;
-                            movimentos++;
-                        }
-                        while(false);
+
                         J[0].y++;
                         if(!colisao(m[J[0].x][J[0].y]))
                         {
+
                             J[0].y--;
+
+                        }
+                        else
+                        {
+                            do
+                            {
+                                int di = 1;
+                                contdireita+=di;
+                                di++;
+                                movimentos++;
+                            }
+                            while(false);
                         }
 
                         break;
@@ -454,14 +489,19 @@ int main()
                         }
                     }
                 }
-                cout << " __________________________________________________________________" << endl;
-                cout << "|                        PONTUACAO:                                |" << endl;
-                cout << "| TEMPO:                                MOVIMENTOS:" << movimentos<<                   "|" << endl;
-                cout << "|                                                                  |" << endl;
-                cout << "| BOMBAS USADAS:"<<  contagem << "       "<<"ITENS PEGOS:                               |" << endl;
-                cout << "|__________________________________________________________________|" << endl;
+                 auto final = steady_clock::now();
+            auto tempo = final - inicio;
+cout << " _________________________________________________________________" << endl;
+cout << "                         PONTUACAO:                               " << endl;
+cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
+cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
+cout << "                                                                  " << endl;
+cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
+cout << "__________________________________________________________________" << endl;
+
 
             } //fim do laco do jogo
+
             break;
         }
 
