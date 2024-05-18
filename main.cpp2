@@ -1,298 +1,7 @@
-#include <iostream>
-#include <windows.h>
-#include <conio.h>
-#include <vector>
-#include <chrono>
-#include <thread>
-
-using namespace std;
-
-struct player
-{
-    int x, y;
-};
-
-struct inimigo
-{
-    int xi, yi;
-};
-
-struct portal
-{
-    int x, y;
-};
-
-bool colisao(int p) /// colisão
-{
-    if (p != 0)
-    {
-        return false;
-    }
-    else
-        return true;
-}
-
-bool isEnemyAtPosition(int x, int y, const vector<inimigo> &Inimigos)
-{
-    for (const auto &enemy : Inimigos)
-    {
-        if (enemy.xi == x && enemy.yi == y)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool isPlayerAtPosition(int x, int y, const player &Player)
-{
-    return (x == Player.x && y == Player.y);
-}
-
-int main()
-{
-    using namespace chrono;
-    milliseconds TempoInimigo(500);
-    milliseconds BombaTimer(2000);
-    auto InicioBomba = chrono::high_resolution_clock::now();
-    auto Inicio = chrono::high_resolution_clock::now();
-    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
-    //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
-    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cursorInfo;
-    GetConsoleCursorInfo(out, &cursorInfo);
-    cursorInfo.bVisible = false; // set the cursor visibility
-    SetConsoleCursorInfo(out, &cursorInfo);
-    //FIM: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
-    //INICIO: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
-    short int CX = 0, CY = 0;
-    COORD coord;
-    coord.X = CX;
-    coord.Y = CY;
-    //FIM: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
-    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, ACIMA.
-
-    int m[11][23]; // Mapa com bordas
-    // Preencher as bordas
-    for (int i = 0; i < 11; i++)
-    {
-        m[i][0] = 1;    // borda esquerda
-        m[i][22] = 1;   // borda direita
-    }
-    for (int j = 0; j < 23; j++)
-    {
-        m[0][j] = 1;    // borda superior
-        m[10][j] = 1;   // borda inferior
-    }
-    // Preencher o interior do mapa
-    for (int i = 1; i < 10; i++)
-    {
-        for (int j = 1; j < 22; j++)
-        {
-            // Verificar se é uma posição de parede fixa
-            if ((i == 2 || i == 4 || i == 6 || i == 8) && (j == 2 || j == 4 || j == 6 || j == 8 || j == 10 || j == 12 || j == 14 || j == 16 || j == 18 || j == 20))
-            {
-                m[i][j] = 1; // Parede fixa
-            }
-            else
-            {
-                // Preencher com paredes quebráveis ou espaços vazios aleatoriamente
-                if (rand() % 5 == 0)
-                { // Ajuste o valor (5) para mudar a densidade de paredes quebráveis
-                    m[i][j] = 2; // Paredes quebráveis
-                }
-                else
-                {
-                    m[i][j] = 0; // Espaços vazios
-                }
-            }
-        }
-    }
-
-    // Posição inicial do protagonista
-    int x = 9, y = 21;
-    // Impedir que a posição de nascimento tenha paredes
-    m[x][y] = 0;
-
-    // Posição do portal
-    portal Portal;
-    Portal.x = 1;
-    Portal.y = 21;
-
-    int gameover;
-    int vit = 0;
-    int InimigosAtivos = 3;
-    int selecionar;
-    inimigo um;
-    inimigo dois;
-    inimigo tres;
-    um.xi = 1;
-    um.yi = 1; // Posição inicial do primeiro inimigo no canto superior esquerdo
-    dois.xi = 1;
-    dois.yi = 20; // Posição inicial do segundo inimigo no canto superior direito
-    tres.xi = 9;
-    tres.yi = 1; // Posição inicial do terceiro inimigo no canto inferior esquerdo
-    int xb = -1, yb = -1;
-
-    ///Bomba
-    int XB = -3;
-    int YB = -3;
-    ///inimigo
-    char enemy(041);
-    vector<inimigo> Inimigos;
-    Inimigos.push_back({1, 1});
-    Inimigos.push_back({1, 21});
-    Inimigos.push_back({9, 1});
-    Inimigos.push_back({9, 21});
-    ///Posicao inicial do personagem no console
-    vector<player> J;
-    J.push_back({5, 5}); ///player 1
-    J.push_back({5, 4}); ///player 2
-    ///Variavel para tecla precionada
-    char tecla;
-    ///Parade Quebravel
-    char ParedeQuebravel(176);
-    ///Bomba
-    char Bomba(022);
-    char quente(105);
-    char kbom(161);
-    ///Vector da bomba
-    vector<ExplosaoBomba> Explosoes;
-
-    while (true)
-    {
-        ///Posiciona a escrita no iicio do console
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-
-        ///Imprime o jogo: mapa e personagem.
-        for (int i = 0; i < 11; i++)
-        {
-            for (int j = 0; j < 23; j++)
-            {
-                bool isEnemy = false;
-                bool isPortal = false;
-
-                if (i == J[0].x && j == J[0].y)
-                {
-                    cout << char(36); //personagem
-                }
-                else if (isPlayerAtPosition(i, j, J[0]) && isPlayerAtPosition(i, j, Portal))
-                {
-                    cout << 'O'; //portal e personagem
-                    isPortal = true;
-                }
-                else if (isPlayerAtPosition(i, j, Portal))
-                {
-                    cout << 'O'; //portal
-                    isPortal = true;
-                }
-                else if (i == XB && j == YB)
-                {
-
-                    cout << char(022); //bomba
-                }
-                else
-                {
-                    for (const auto &inimigo : Inimigos)
-                    {
-                        if (i == inimigo.xi && j == inimigo.yi)
-                        {
-                            cout << enemy;
-                            isEnemy = true;
-                            break;
+o.yboom] = 0;
                         }
-                    }
-                    if (!isEnemy && !isPortal)
-                    {
-                        switch (m[i][j])
-                        {
-                        case 0:
-                            cout << " "; //caminho
-                            break;
-                        case 1:
-                            cout << char(219);
-                            break; //parede
-                        case 2:
-                            cout << char(176);
-                            break; //parede quebravel
-                                 //default: cout<<"-"; //erro
-                        } //fim switch
-                    }
-                }
-            }
-            cout << "\n";
-        } //fim for mapa
-
-        ///executa os movimentos
-        if (_kbhit())
-        {
-            tecla = getch();
-            switch (tecla)
-            {
-            case 72:
-            case 'w': ///cima
-                if (colisao(m[J[0].x - 1][J[0].y]) && !isEnemyAtPosition(J[0].x - 1, J[0].y, Inimigos))
-                {
-                    J[0].x--;
-                }
-                break;
-            case 80:
-            case 's': ///baixo
-                if (colisao(m[J[0].x + 1][J[0].y]) && !isEnemyAtPosition(J[0].x + 1, J[0].y, Inimigos))
-                {
-                    J[0].x++;
-                }
-                break;
-            case 75:
-            case 'a': ///esquerda
-                if (colisao(m[J[0].x][J[0].y - 1]) && !isEnemyAtPosition(J[0].x, J[0].y - 1, Inimigos))
-                {
-                    J[0].y--;
-                }
-                break;
-            case 77:
-            case 'd': ///direita
-                if (colisao(m[J[0].x][J[0].y + 1]) && !isEnemyAtPosition(J[0].x, J[0].y + 1, Inimigos))
-                {
-                    J[0].y++;
-                }
-                break;
-            case 78:
-            case 'z': ///bomba
-                if (XB == -3 && YB == -3)
-                {
-                    XB = J[0].x;
-                    YB = J[0].y;
-                    m[XB][YB] = 3;
-                    Explosoes.clear();
-                    ///DEFINE A AREA DAS EXPLOSÕES
-                    Explosoes.push_back({XB - 1, YB});   ///CIMA
-                    Explosoes.push_back({XB + 1, YB});   ///BAIXO
-                    Explosoes.push_back({XB, YB - 1});   ///ESQUERDA
-                    Explosoes.push_back({XB, YB + 1});   ///DIREITA
-                }
-                break;
-            }
-        }
-
-        if (XB != -3 && YB != -3)
-        {
-            auto TempoBombaAgora = chrono::high_resolution_clock::now();
-            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora - InicioBomba);
-            if (BombaPassou >= BombaTimer)
-            {
-                for (auto &inimigo : Inimigos)
-                {
-                    for (const auto &explosao : Explosoes)
-                    {
-                        if (m[explosao.xboom][explosao.yboom] == 2)
-                        {
-                            m[explosao.xboom][explosao.yboom] = 0;
-                        }
-                        if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom)
-                        {
-                            inimigo.xi = -1;
-                            inimigo.yi = -1;
+                        if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom) {
+                            inimigo.alive = false; // Marcando o inimigo como morto
                         }
                     }
                 }
@@ -303,99 +12,59 @@ int main()
             }
         }
 
-        // Verificar se o jogador encostou no portal
-        if (isPlayerAtPosition(J[0].x, J[0].y, Portal))
-        {
-            // Movimentar o jogador para o novo mapa
-            // Aqui você pode adicionar a lógica para iniciar o novo mapa
-            cout << "Você entrou no portal e foi levado para outro mapa!\n";
-            break; // Saia do loop atual
-        }
-
-        ///executa os movimentos dos inimigos
-
-        auto TempoAgora = chrono::high_resolution_clock::now(); ///Tempo recebe o tempo do clock, agora;
-        auto Passou = duration_cast<milliseconds>(TempoAgora - Inicio); ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
-        for (auto i = Inimigos.begin(); i != Inimigos.cend(); i++)
-        {
-            if (Passou >= TempoInimigo)
-            {
+        auto TempoAgora = high_resolution_clock::now();
+        auto Passou = duration_cast<milliseconds>(TempoAgora - Inicio);
+        for (auto &inimigo : Inimigos) {
+            if (inimigo.alive && Passou >= TempoInimigo) {
                 int mov = rand() % 4 + 1;
-                switch (mov)
-                {
-                case 1:
-                    i->xi++;
-                    if (colisao(m[i->xi][i->yi] == false))
-                    {
-                        i->xi--;
-                    }
-                    break;
-                case 2:
-                    i->xi--;
-                    if (colisao(m[i->xi][i->yi] == false))
-                    {
-                        i->xi++;
-                    }
-                    break;
-                case 3:
-                    i->yi++;
-                    if (colisao(m[i->xi][i->yi] == false))
-                    {
-                        i->yi--;
-                    }
-                    break;
-                case 4:
-                    i->yi--;
-                    if (colisao(m[i->xi][i->yi] == false))
-                    {
-                        i->yi++;
-                    }
-                    break;
+                switch (mov) {
+                    case 1:
+                        inimigo.xi++;
+                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
+                            inimigo.xi--;
+                        }
+                        break;
+                    case 2:
+                        inimigo.xi--;
+                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
+                            inimigo.xi++;
+                        }
+                        break;
+                    case 3:
+                        inimigo.yi++;
+                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
+                            inimigo.yi--;
+                        }
+                        break;
+                    case 4:
+                        inimigo.yi--;
+                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
+                            inimigo.yi++;
+                        }
+                        break;
                 }
-                Inicio = TempoAgora; ///inico recebe o tempo atual
+                Inicio = TempoAgora;
             }
         }
 
-        // Após limpar a área da explosão da bomba e verificar se o inimigo morreu
-        bool todosInimigosMortos = true;
-        for (auto &inimigo : Inimigos)
-        {
-            // Verificar se o inimigo morreu devido à explosão da bomba
-            for (const auto &explosao : Explosoes)
-            {
-                if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom)
-                {
-                    inimigo.xi = -1;
-                    inimigo.yi = -1;
-                }
+        if (all_of(Inimigos.begin(), Inimigos.end(), [](inimigo e){ return !e.alive; }) && !portalOpened) {
+            portalX = rand() % 11 + 1;
+            portalY = rand() % 25 + 1;
+            while (m[portalX][portalY] != 0) {
+                portalX = rand() % 11 + 1;
+                portalY = rand() % 25 + 1;
             }
-            // Verificar se há algum inimigo vivo
-            if (inimigo.xi != -1 && inimigo.yi != -1)
-            {
-                todosInimigosMortos = false;
-                break;
-            }
+            portalOpened = true;
         }
 
-        // Verificar se todos os inimigos morreram
-        if (todosInimigosMortos)
-        {
-            // Imprimir mensagem informando que a próxima fase está disponível
-            cout << "Todos os inimigos foram derrotados! O portal para a próxima fase está aberto!\n";
-
-            // Aguardar até que o jogador pressione uma tecla para avançar para a próxima fase
-            cout << "Pressione qualquer tecla para avançar para a próxima fase...\n";
-            _getch(); // Aguardar a entrada do usuário
-
-            // Avançar para a próxima fase (você pode adicionar aqui a lógica para a próxima fase)
-            // Por exemplo, você pode chamar uma função que inicializa a próxima fase ou redefine o estado do jogo
-            break; // Saia do loop atual
+        if (portalOpened && J.x == portalX && J.y == portalY) {
+            resetGame(J, Inimigos, m);
+            portalOpened = false;
+            portalX = -1;
+            portalY = -1;
         }
-
-    } //fim do laco do jogo
+    }
 
     return 0;
-} //fim main
-
-
+}
 
