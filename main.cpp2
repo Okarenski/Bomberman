@@ -1,4 +1,194 @@
-o.yboom] = 0;
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <vector>
+#include <chrono>
+#include <algorithm>
+
+using namespace std;
+
+struct player {
+    int x, y;
+};
+
+struct inimigo {
+    int xi, yi;
+    bool alive; // Flag para verificar se o inimigo está vivo
+};
+
+bool colisao(int p) {
+    return p == 0;
+}
+
+bool isEnemyAtPosition(int x, int y, const vector<inimigo> &Inimigos) {
+    for (const auto &enemy : Inimigos) {
+        if (enemy.xi == x && enemy.yi == y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+struct ExplosaoBomba {
+    int xboom, yboom;
+};
+
+void initializeMap(int m[13][27]) {
+    for (int i = 0; i < 13; i++) {
+        for (int j = 0; j < 27; j++) {
+            if (i == 0 || i == 12 || j == 0 || j == 26) {
+                m[i][j] = 1;
+            } else if ((i % 2 == 0) && (j % 2 == 0)) {
+                m[i][j] = 1;
+            } else {
+                if (rand() % 5 == 0) {
+                    m[i][j] = 2;
+                } else {
+                    m[i][j] = 0;
+                }
+            }
+        }
+    }
+}
+
+void resetGame(player &J, vector<inimigo> &Inimigos, int m[13][27]) {
+    J.x = 6;
+    J.y = 13;
+    initializeMap(m);
+    Inimigos = {
+        {1, 1, true}, {1, 25, true}, {11, 1, true}, {11, 25, true}, {6, 13, true}, {1, 13, true}, {11, 13, true}
+    };
+}
+
+int main() {
+    using namespace chrono;
+    milliseconds TempoInimigo(500);
+    milliseconds BombaTimer(2000);
+    auto InicioBomba = high_resolution_clock::now();
+    auto Inicio = high_resolution_clock::now();
+
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(out, &cursorInfo);
+
+    short int CX = 0, CY = 0;
+    COORD coord;
+    coord.X = CX;
+    coord.Y = CY;
+
+    int m[13][27];
+    initializeMap(m);
+
+    player J = {6, 13};
+    m[J.x][J.y] = 0;
+
+    vector<inimigo> Inimigos = {
+        {1, 1, true}, {1, 25, true}, {11, 1, true}, {11, 25, true}, {6, 13, true}, {1, 13, true}, {11, 13, true}
+    };
+
+    int XB = -3;
+    int YB = -3;
+
+    char enemy(041);
+    vector<ExplosaoBomba> Explosoes;
+
+    char tecla;
+    char Portal(221); // Alteração do caractere do portal
+    bool portalOpened = false;
+    int portalX = -1, portalY = -1;
+
+    while (true) {
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 27; j++) {
+                bool isEnemy = false;
+
+                if (i == J.x && j == J.y) {
+                    cout << char(36);
+                } else if (i == XB && j == YB) {
+                    cout << char(022);
+                } else if (portalOpened && i == portalX && j == portalY) {
+                    cout << Portal;
+                } else {
+                    for (const auto &inimigo : Inimigos) {
+                        if (i == inimigo.xi && j == inimigo.yi && inimigo.alive) {
+                            cout << enemy;
+                            isEnemy = true;
+                            break;
+                        }
+                    }
+                    if (!isEnemy) {
+                        switch (m[i][j]) {
+                            case 0:
+                                cout << " ";
+                                break;
+                            case 1:
+                                cout << char(219);
+                                break;
+                            case 2:
+                                cout << char(176);
+                                break;
+                        }
+                    }
+                }
+            }
+            cout << "\n";
+        }
+
+        if (_kbhit()) {
+            tecla = getch();
+            switch (tecla) {
+                case 72:
+                case 'w':
+                    if (colisao(m[J.x - 1][J.y]) && !isEnemyAtPosition(J.x - 1, J.y, Inimigos)) {
+                        J.x--;
+                    }
+                    break;
+                case 80:
+                case 's':
+                    if (colisao(m[J.x + 1][J.y]) && !isEnemyAtPosition(J.x + 1, J.y, Inimigos)) {
+                        J.x++;
+                    }
+                    break;
+                case 75:
+                case 'a':
+                    if (colisao(m[J.x][J.y - 1]) && !isEnemyAtPosition(J.x, J.y - 1, Inimigos)) {
+                        J.y--;
+                    }
+                    break;
+                case 77:
+                case 'd':
+                    if (colisao(m[J.x][J.y + 1]) && !isEnemyAtPosition(J.x, J.y + 1, Inimigos)) {
+                        J.y++;
+                    }
+                    break;
+                case 78:
+                case 'z':
+                    if (XB == -3 && YB == -3) {
+                        XB = J.x;
+                        YB = J.y;
+                        m[XB][YB] = 3;
+                        Explosoes.clear();
+                        Explosoes.push_back({XB - 1, YB});
+                        Explosoes.push_back({XB + 1, YB});
+                        Explosoes.push_back({XB, YB - 1});
+                        Explosoes.push_back({XB, YB + 1});
+                    }
+                    break;
+            }
+        }
+
+        if (XB != -3 && YB != -3) {
+            auto TempoBombaAgora = high_resolution_clock::now();
+            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora - InicioBomba);
+            if (BombaPassou >= BombaTimer) {
+                for (auto &inimigo : Inimigos) {
+                    for (const auto &explosao : Explosoes) {
+                        if (m[explosao.xboom][explosao.yboom] == 2) {
+                            m[explosao.xboom][explosao.yboom] = 0;
                         }
                         if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom) {
                             inimigo.alive = false; // Marcando o inimigo como morto
