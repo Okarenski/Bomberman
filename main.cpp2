@@ -22,7 +22,7 @@ bool colisao(int p) {
 
 bool isEnemyAtPosition(int x, int y, const vector<inimigo> &Inimigos) {
     for (const auto &enemy : Inimigos) {
-        if (enemy.xi == x && enemy.yi == y) {
+        if (enemy.xi == x && enemy.yi == y && enemy.alive) {
             return true;
         }
     }
@@ -237,14 +237,18 @@ int main() {
             }
         }
 
+        // Verificação se todos os inimigos estão mortos
         if (all_of(Inimigos.begin(), Inimigos.end(), [](inimigo e){ return !e.alive; }) && !portalOpened) {
-            portalX = rand() % 11 + 1;
-            portalY = rand() % 25 + 1;
-            while (m[portalX][portalY] != 0) {
-                portalX = rand() % 11 + 1;
-                portalY = rand() % 25 + 1;
-            }
+            portalX = 6;  // Definindo o portal no meio do mapa
+            portalY = 13; // Definindo o portal no meio do mapa
             portalOpened = true;
+        }
+
+        // Limpeza das posições dos inimigos mortos
+        for (auto &inimigo : Inimigos) {
+            if (!inimigo.alive) {
+                m[inimigo.xi][inimigo.yi] = 0;
+            }
         }
 
         if (portalOpened && J.x == portalX && J.y == portalY) {
@@ -257,4 +261,3 @@ int main() {
 
     return 0;
 }
-
