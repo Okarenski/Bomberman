@@ -38,21 +38,6 @@ struct ExplosaoBomba
     int xboom, yboom;
 };
 
-
-
-struct pontuacao{
-    string nome_jogador;
-    time_t data;
-    int pontos;
-
-};
-
-vector<pontuacao> pontuacao_facil;
-vector<pontuacao> pontuacao_medio;
-vector<pontuacao> pontuacao_dificil;
-
-
-
 void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos) {
     srand(time(0));
     for (int i = 0; i < dificuldade; i++) {
@@ -145,6 +130,16 @@ void MapaIniciar(int m[13][27]) {
     m[1][2] = 0;
     m[5][5] = 0;
 }
+
+void ProximaFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J){
+    MapaIniciar(m);
+    GeracaoInimigo(m, dificuldade, InimigoPosicoes);
+    Inimigos.clear();
+    for(int i=0;i<dificuldade;i++){
+        Inimigos.push_back({InimigoPosicoes[i].first, InimigoPosicoes[i].second});
+    }
+}
+
 int main()
 {
 
@@ -177,6 +172,7 @@ int main()
 
     int m[13][27];
     MapaIniciar(m);
+    int Vitorias=1;
     ///Bomba
     int XB=-3;
     int YB=-3;
@@ -220,12 +216,11 @@ int main()
 
 
         cout <<"                          ______________________________ " << endl;
-        cout << "                         |                              |" << endl;
-        cout << "                         |       1 - COMECAR            |" << endl;
-        cout << "                         |       2 - TUTORIAL           |" << endl;
-        cout << "                         |       3 - PONTUACAO          |" << endl;
-        cout << "                         |       4 - RANKING            |" << endl;
-        cout << "                         |        5 - SAIR              |" << endl;
+        cout << "                         | 1 - COMECAR                  |" << endl;
+        cout << "                         | 2 - TUTORIAL                 |" << endl;
+        cout << "                         | 3 - PONTUACAO                |" << endl;
+        cout << "                         | 4 - RANKING                  |" << endl;
+        cout << "                         | 5 - SAIR                     |" << endl;
         cout << "                         |______________________________|" << endl;
         cin >> menu;
 
@@ -245,13 +240,8 @@ int main()
             string nome;
 
             system("cls");
-            cout <<"                    ------- SELECIONE A DIFICULDADE -------    " << endl;
-
-        cout << "                          __________________________ " << endl;
-        cout << "                         |      1 - FACIL           |" << endl;
-        cout << "                         |      2 - MEDIO           |" << endl;
-        cout << "                         |      3 - DIFICIL         |" << endl;
-        cout << "                         |__________________________|" << endl;
+            cout <<"selecione a dificuldade:" << endl;
+            cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
             int dificuldade;
             cin >> dificuldade;
 
@@ -263,7 +253,7 @@ int main()
                 pontos=900;
                 dificuldade=3;
                 Inimigos.resize(dificuldade);
-                cout << "digite o seu nome: " << endl;
+                cout << "digite o seu nome" << endl;
                 cin >> nome;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
@@ -526,14 +516,10 @@ int main()
                 {
                     auto TempoBombaAgora = chrono::high_resolution_clock::now();
                     auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-                    if(BombaPassou>=BombaTimer)
-                    {
-                        for (auto &player : J)
-                        {
-                            for (const auto &ExplosaoBomba : Explosoes)
-                            {
-                                if (player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom)
-                                {
+                    if(BombaPassou>=BombaTimer){
+                        for (auto &player : J){
+                            for (const auto &ExplosaoBomba : Explosoes){
+                                if (player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom){
                                     JogadoresVivos--;
                                 }
                             }
@@ -617,6 +603,20 @@ int main()
                 if(InimigosVivos==0)
                 {
                     cout<<"voce venceu!"<<endl;
+                    cout<<"Se deseja continuar digite [1] e se deseja para digite [2]."<<endl;
+                    int ContinuarJogo;
+                    cin>>ContinuarJogo;
+                    switch(ContinuarJogo){
+                case 1:
+                    Vitorias+=1;
+                    GameContinue = true;
+                    ProximaFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                    break;
+                case 2:
+                    GameContinue = false;
+                    break;
+                    }
+
                 }
                 if(JogadoresVivos==0)
                 {
