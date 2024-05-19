@@ -150,6 +150,7 @@ int main()
         cout << "                         |______________________________|" << endl;
         cin >> menu;
 
+
         switch(menu)
         {
 
@@ -160,22 +161,28 @@ int main()
             int contcima;
             int contdireita;
             int contesquerda;
-
+            int pontos;
 
             system("cls");
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
             int dificuldade;
             cin >> dificuldade;
+
             switch(dificuldade)
             {
             case 1:
+                pontos=900;
+
+
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 dificuldade=3;
                 Inimigos.resize(dificuldade);
+
                 break;
 
             case 2:
+                pontos = 600;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
                 dificuldade=5;
@@ -183,6 +190,7 @@ int main()
                 break;
 
             case 3:
+                pontos = 400;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
                 dificuldade=7;
@@ -205,16 +213,6 @@ int main()
             auto inicio = steady_clock::now();
             while(GameContinue)
             {
-
-
-
-
-
-
-
-
-
-
                 ///Posiciona a escrita no iicio do console
                 SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
@@ -266,16 +264,16 @@ int main()
                 } //fim for mapa
 
                 ///executa os movimentos
+
                 if (_kbhit())
                 {
                     tecla = getch();
+                    bool movimento_valido = false;
                     switch(tecla)
+
                     {
                     case 72:
                     case 'w': ///cima
-
-
-
 
                         J[0].x--;
                         if(!colisao(m[J[0].x][J[0].y]))
@@ -293,7 +291,7 @@ int main()
                                 contcima+= c;
                                 c++;
                                 movimentos++;
-
+                                movimento_valido = true;
                             }
                             while(false);
                         }
@@ -315,7 +313,9 @@ int main()
                                 int ba = 1;
                                 contbaixo+=ba;
                                 ba++;
+
                                 movimentos++;
+                                movimento_valido = true;
                             }
                             while(false);
                         }
@@ -340,10 +340,10 @@ int main()
                                 contesquerda+=es;
                                 es++;
                                 movimentos++;
+                                movimento_valido=true;
                             }
                             while(false);
                         }
-
 
                         break;
                     case 77:
@@ -363,16 +363,19 @@ int main()
                                 int di = 1;
                                 contdireita+=di;
                                 di++;
+
                                 movimentos++;
+                                movimento_valido=true;
                             }
                             while(false);
                         }
 
                         break;
+
+
                     case 78:
 
                     case 'e': ///bomba
-
 
                         if(XB==-3&&YB==-3)
                         {
@@ -381,14 +384,14 @@ int main()
                             m[XB][YB]=3;
                             do
                             {
-
                                 int b = 1;
 
                                 contagem+= b;
                                 b++;
-
                             }
                             while(false);
+
+
 
                             Explosoes.clear();
                             ///DEFINE A AREA DAS EXPLOSÕES
@@ -398,7 +401,25 @@ int main()
                             Explosoes.push_back({XB,YB+1}); ///DIREITA
                         }
                         break;
+
                     }
+                    if(movimento_valido)
+                    {
+                        if(dificuldade==3)
+                        {
+                            pontos-=1;
+                        }
+                        else if(dificuldade==5)
+                        {
+                            pontos-=1;
+                        }
+                        else if(dificuldade==7)
+                        {
+                            pontos-=1;
+
+                        }
+                    }
+
                 }
                 if(JogadoresVivos==0)
                 {
@@ -434,6 +455,23 @@ int main()
                                     inimigo.xi=-1;
                                     inimigo.yi=-1;
                                     InimigosVivos--;
+                                    bool verificacao_inimigos = true;
+                                    if(verificacao_inimigos)
+                                    {
+                                        if(dificuldade==3)
+                                        {
+                                            pontos+=2;
+
+                                        }
+                                        else if(dificuldade==5)
+                                        {
+                                            pontos+=3;
+                                        }
+                                        else if(dificuldade==7)
+                                        {
+                                            pontos+=5;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -502,15 +540,17 @@ int main()
                         }
                     }
                 }
+
                 auto final = steady_clock::now();
                 auto tempo = final - inicio;
                 cout << " _________________________________________________________________" << endl;
-                cout << "                         PONTUACAO:                               " << endl;
+                cout << "                         PONTUACAO:" << pontos                   << endl;
                 cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
                 cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
                 cout << "                                                                  " << endl;
                 cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
                 cout << "__________________________________________________________________" << endl;
+
                 if(InimigosVivos==0)
                 {
                     cout<<"voce venceu!"<<endl;
@@ -524,13 +564,6 @@ int main()
 
             break;
         }
-
-
-
-
-
-
-
     }
     while(menu!=3);
 
