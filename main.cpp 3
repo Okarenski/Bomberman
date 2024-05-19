@@ -8,7 +8,6 @@
 #include <vector>
 #include <chrono>
 #include <mmsystem.h>
-#include <algorithm>
 
 using namespace std;
 using namespace std::chrono;
@@ -30,8 +29,7 @@ bool colisao(int p)  ///COLISAO
 {
     return p == 0;
 }
-bool colisaInimigo(int G)
-{
+bool colisaInimigo(int G){ ///COLISAO DO INIMIGO
     return G !=0;
 }
 
@@ -40,115 +38,101 @@ struct ExplosaoBomba
     int xboom, yboom;
 };
 
-
-
-struct ranking
-{
-    int pontos, data;
-    string jogador;
-
-};
-
-
-
-
-void GeracaoInimigo(int m[10][20], int dificuldade, vector<pair<int,int>> &Inimigos)
-{
+void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos) {
     srand(time(0));
-    for (int i = 0; i < dificuldade; i++)
-    {
-        while (true)
-        {
-            int PosicaoAleatoriaY = rand() % 10;
-            int PosicaoAleatoriaX = rand() % 20;
-            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0)
-            {
+    for (int i = 0; i < dificuldade; i++) {
+        while (true) {
+            int PosicaoAleatoriaY = rand() % 13;
+            int PosicaoAleatoriaX = rand() % 27;
+            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0) {
                 Inimigos.push_back({PosicaoAleatoriaY, PosicaoAleatoriaX});
                 break;
             }
         }
     }
 }
-void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[10][20])
-{
+void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[13][27]){
     int ProbabilidadeMoverParaPlayer = 0;
-    if(dificuldade==5)
-    {
+    if(dificuldade==5){
         ProbabilidadeMoverParaPlayer=50;
-    }
-    else if(dificuldade==7)
-    {
+    } else if(dificuldade==7){
         ProbabilidadeMoverParaPlayer=75;
     }
-    for(auto &inimigo:Inimigos)
-    {
-        int MoverParaPlayer = rand()%100;
-        if(MoverParaPlayer<ProbabilidadeMoverParaPlayer)
-        {
-            if(inimigo.xi<J.x)
-            {
-                if(!colisaInimigo(m[inimigo.xi+1][inimigo.yi]))
-                {
-                    inimigo.xi++;
+        for(auto &inimigo:Inimigos){
+            int MoverParaPlayer = rand()%100;
+            if(MoverParaPlayer<ProbabilidadeMoverParaPlayer){
+                if(inimigo.xi<J.x){
+                    if(!colisaInimigo(m[inimigo.xi+1][inimigo.yi])){
+                        inimigo.xi++;
+                    }
+                } else if(inimigo.xi>J.x){
+                    if(!colisaInimigo(m[inimigo.xi-1][inimigo.yi])){
+                        inimigo.xi--;
+                    }
                 }
-            }
-            else if(inimigo.xi>J.x)
-            {
-                if(!colisaInimigo(m[inimigo.xi-1][inimigo.yi]))
-                {
-                    inimigo.xi--;
+                if(inimigo.yi<J.y){
+                    if(!colisaInimigo(m[inimigo.xi][inimigo.yi+1])){
+                        inimigo.yi++;
+                    }
+                } else if(inimigo.yi>J.y){
+                    if(!colisaInimigo(m[inimigo.xi][inimigo.yi-1])){
+                        inimigo.yi--;
+                    }
                 }
-            }
-            if(inimigo.yi<J.y)
-            {
-                if(!colisaInimigo(m[inimigo.xi][inimigo.yi+1]))
-                {
-                    inimigo.yi++;
-                }
-            }
-            else if(inimigo.yi>J.y)
-            {
-                if(!colisaInimigo(m[inimigo.xi][inimigo.yi-1]))
-                {
-                    inimigo.yi--;
-                }
-            }
-        }
-        else
-        {
-            int Direcao = rand()%4;
-            switch(Direcao)
-            {
+            } else {
+                int Direcao = rand()%4;
+                switch(Direcao){
             case 0: ///CIMA
-                if(!colisaInimigo(m[inimigo.xi - 1][inimigo.yi]))
-                {
+                if(!colisaInimigo(m[inimigo.xi - 1][inimigo.yi])){
                     inimigo.xi--;
                 }
                 break;
             case 1: ///BAIXO
-                if (!colisaInimigo(m[inimigo.xi + 1][inimigo.yi]))
-                {
+                if (!colisaInimigo(m[inimigo.xi + 1][inimigo.yi])) {
                     inimigo.xi++;
                 }
                 break;
             case 2: ///ESQUERDA
-                if (!colisaInimigo(m[inimigo.xi][inimigo.yi - 1]))
-                {
+                if (!colisaInimigo(m[inimigo.xi][inimigo.yi - 1])) {
                     inimigo.yi--;
                 }
                 break;
             case 3: ///BAIXO
-                if (!colisaInimigo(m[inimigo.xi][inimigo.yi + 1]))
-                {
+                if (!colisaInimigo(m[inimigo.xi][inimigo.yi + 1])) {
                     inimigo.yi++;
                 }
                 break;
+                }
             }
         }
     }
+void MapaIniciar(int m[13][27]) {
+    srand(time(0));
+    for (int i = 0; i < 13; i++) {
+        for (int j = 0; j < 27; j++) {
+            if (i == 0 || i == 12 || j == 0 || j == 26) {
+                m[i][j] = 1;
+            } else if ((i % 2 == 0) && (j % 2 == 0)) {
+                m[i][j] = 1;
+            } else {
+                m[i][j] = 0;
+            }
+        }
+    }
+    for (int i = 1; i < 12; i++) {
+        for (int j = 1; j < 26; j++) {
+            if (m[i][j] == 0 && (rand() % 5 == 0)) {
+                m[i][j] = 2; // Parede quebrável
+            }
+        }
+    }
+    m[1][1] = 0;
+    m[1][2] = 0;
+    m[5][5] = 0;
 }
 int main()
 {
+
 
     using namespace chrono;
     milliseconds TempoAnimacao(500);
@@ -176,20 +160,8 @@ int main()
 
     bool GameContinue = true;
 
-
-    int m[10][20]= {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,
-                    1,0,0,0,2,0,2,0,0,0,2,0,2,0,0,0,0,0,0,1,
-                    1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,2,1,1,2,1,
-                    1,0,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,1,
-                    1,0,1,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,1,
-                    1,0,0,0,2,0,1,0,0,0,2,0,2,1,1,2,1,1,1,1,
-                    1,0,1,1,1,0,2,0,0,0,1,0,0,0,0,0,0,0,0,1,
-                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-                   };
-
-
+    int m[13][27];
+    MapaIniciar(m);
     ///Bomba
     int XB=-3;
     int YB=-3;
@@ -197,7 +169,6 @@ int main()
     char enemy  (041);
     vector <inimigo> Inimigos;
     vector<pair<int,int>> InimigoPosicoes;
-
 
     ///Posicao inicial do personagem no console
     vector <player> J;
@@ -236,9 +207,7 @@ int main()
         cout <<"                          ______________________________ " << endl;
         cout << "                         | 1 - COMECAR                  |" << endl;
         cout << "                         | 2 - TUTORIAL                 |" << endl;
-        cout << "                         | 3 - PONTUACAO                |" << endl;
-        cout << "                         | 4 - RANKING                  |" << endl;
-        cout << "                         | 5 - SAIR                     |" << endl;
+        cout << "                         | 3 - SAIR                     |" << endl;
         cout << "                         |______________________________|" << endl;
         cin >> menu;
 
@@ -246,8 +215,7 @@ int main()
         switch(menu)
         {
 
-        case 1:
-        {
+        case 1:{
             int contagem;
             int movimentos = 0;
             int contbaixo;
@@ -262,7 +230,6 @@ int main()
             int dificuldade;
             cin >> dificuldade;
 
-
             switch(dificuldade)
             {
             case 1:
@@ -270,8 +237,6 @@ int main()
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 dificuldade=3;
                 Inimigos.resize(dificuldade);
-
-
                 break;
 
             case 2:
@@ -304,28 +269,21 @@ int main()
             system("cls");
 
             auto inicio = steady_clock::now();
-            while(GameContinue)
-            {
+            while(GameContinue){
                 ///Posiciona a escrita no iicio do console
                 SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
                 ///Imprime o jogo: mapa e personagem.
-                for(int i=0; i<10; i++)
-                {
-                    for(int j=0; j<20; j++)
-                    {
+                for(int i=0; i<13; i++){
+                    for(int j=0; j<27; j++){
                         bool isEnemy = false;
 
-                        if(i==J[0].x && j==J[0].y)
-                        {
+                        if(i==J[0].x && j==J[0].y){
                             cout<<char(36); //personagem
                         }
-                        else if (i==XB&&j==YB)
-                        {
+                        else if (i==XB&&j==YB){
                             cout<<char(022); //bomba
-                        }
-                        else
-                        {
+                        } else{
                             for(const auto& inimigo : Inimigos)
                             {
                                 if(i==inimigo.xi&&j==inimigo.yi)
@@ -358,24 +316,18 @@ int main()
 
                 ///executa os movimentos
 
-                if (_kbhit())
-                {
+                if (_kbhit()){
                     tecla = getch();
                     bool movimento_valido = false;
                     bool bomba_colocada = true;
-                    switch(tecla)
-                    {
+                    switch(tecla){
                     case 72:
                     case 'w': ///cima
                         J[0].x--;
-                        if(!colisao(m[J[0].x][J[0].y]))
-                        {
+                        if(!colisao(m[J[0].x][J[0].y])){
                             J[0].x++;
-                        }
-                        else
-                        {
-                            do
-                            {
+                        } else{
+                            do{
                                 int c = 1;
                                 contcima+= c;
                                 c++;
@@ -388,21 +340,16 @@ int main()
                     case 80:
                     case 's': ///baixo
                         J[0].x++;
-                        if(!colisao(m[J[0].x][J[0].y]))
-                        {
+                        if(!colisao(m[J[0].x][J[0].y])){
                             J[0].x--;
-                        }
-                        else
-                        {
-                            do
-                            {
+                        } else {
+                            do{
                                 int ba = 1;
                                 contbaixo+=ba;
                                 ba++;
                                 movimentos++;
                                 movimento_valido = true;
-                            }
-                            while(false);
+                            }while(false);
                         }
 
 
@@ -501,21 +448,14 @@ int main()
                             pontos-=1;
 
                         }
-                    }
-                    if(bomba_colocada)
-                    {
-                        if(dificuldade==3)
-                        {
-                            pontos--;
-                        }
-                        else if(dificuldade==5)
-                        {
-                            pontos-=3;
-                        }
-                        else if(dificuldade==7)
-                        {
-                            pontos-=7;
-                        }
+                    }if(bomba_colocada){
+                     if(dificuldade==3){
+                        pontos--;
+                     }else if(dificuldade==5){
+                       pontos-=3;
+                     }else if(dificuldade==7){
+                      pontos-=7;
+                     }
 
                     }
 
@@ -525,12 +465,10 @@ int main()
                     GameContinue = false;
                 }
 
-                if(XB!=-3&&YB!=-3)  ///BOMBA
-                {
+                if(XB!=-3&&YB!=-3){ ///BOMBA
                     auto TempoBombaAgora = chrono::high_resolution_clock::now();
                     auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-                    if(BombaPassou>=BombaTimer)
-                    {
+                    if(BombaPassou>=BombaTimer){
                         for (auto &player : J)
                         {
                             for (const auto &ExplosaoBomba : Explosoes)
@@ -545,8 +483,8 @@ int main()
                         {
                             for(const auto& ExplosaoBomba : Explosoes)
                             {
-                                if(m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]==2)
-                                {
+                                if(m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]==2){
+
                                     m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
                                 }
                                 if(inimigo.xi == ExplosaoBomba.xboom && inimigo.yi == ExplosaoBomba.yboom)
@@ -586,22 +524,17 @@ int main()
 
                 auto TempoAgora = chrono::high_resolution_clock::now();         ///Tempo recebe o tempo do clock, agora;
                 auto Passou = duration_cast<milliseconds>(TempoAgora-Inicio);   ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
-                if(Passou>TempoInimigo)
-                {
+                if(Passou>TempoInimigo){
                     Inicio = TempoAgora; ///inico recebe o tempo atual
                     MovimentoInimigo(Inimigos,J[0],dificuldade,m);
                 }
 
-                for(auto &player:J)  ///VERIFICAÇÃO DE VITORIA DO JOGO
-                {
-                    for(auto &inimigo:Inimigos)
-                    {
-                        if(inimigo.xi==player.x&&inimigo.yi==player.y)
-                        {
+                for(auto &player:J){ ///VERIFICAÇÃO DE VITORIA DO JOGO
+                    for(auto &inimigo:Inimigos){
+                        if(inimigo.xi==player.x&&inimigo.yi==player.y){
                             JogadoresVivos--;
                         }
-                        if(InimigosVivos==0)
-                        {
+                        if(InimigosVivos==0){
                             GameContinue = false;
                         }
                     }
@@ -628,81 +561,57 @@ int main()
 
             } //fim do laco do jogo
 
-            break;
-        }
-        case 2:
-        {
-            system ("cls");
-            "Tutorial de Bomberman\n\n";
-            cout << "Objetivo:\n";
-            cout << "Seu objetivo principal e limpar cada mapa de todos os inimigos, utilizando suas bombas de forma inteligente.\n\n";
-            cout << "Controles:\n";
-            cout << "- Utilize as teclas:\n";
-            cout << "  - W: Movimento para cima\n";
-            cout << "  - A: Movimento para a esquerda\n";
-            cout << "  - S: Movimento para baixo\n";
-            cout << "  - D: Movimento para a direita\n";
-            cout << "  - E: Colocar uma bomba\n\n";
-            cout << "Como Jogar:\n";
-            cout << "1. Explosoes: Quando uma bomba explode, ela causa danos em um raio ao seu redor. Tenha cuidado para nao ser pego na explosao!\n";
-            cout << "2. Destrua Paredes: Algumas paredes podem ser destruidas pelas explosoes das bombas.\n";
-            cout << "3. Voce pode encontrar itens especiais que aumentam o alcance de suas bombas ou concedem poderes adicionais.\n";
-            cout << "4. Inimigos: Enfrente os inimigos pelo caminho, evitando suas investidas e utilizando suas bombas de forma estrategica para elimina-los.\n";
-            cout << "5. Mapas: Avance atraves dos mapas, enfrentando inimigos cada vez mais desafiadores, ate chegar ao ultimo mapa e derrotar o chefao final.\n\n";
+            break;}
+            case 2:{
+                 system ("cls");
+           "Tutorial de Bomberman\n\n";
+                cout << "Objetivo:\n";
+                cout << "Seu objetivo principal e limpar cada mapa de todos os inimigos, utilizando suas bombas de forma inteligente.\n\n";
+                cout << "Controles:\n";
+                cout << "- Utilize as teclas:\n";
+                cout << "  - W: Movimento para cima\n";
+                cout << "  - A: Movimento para a esquerda\n";
+                cout << "  - S: Movimento para baixo\n";
+                cout << "  - D: Movimento para a direita\n";
+                cout << "  - E: Colocar uma bomba\n\n";
+                cout << "Como Jogar:\n";
+                cout << "1. Explosoes: Quando uma bomba explode, ela causa danos em um raio ao seu redor. Tenha cuidado para nao ser pego na explosao!\n";
+                cout << "2. Destrua Paredes: Algumas paredes podem ser destruidas pelas explosoes das bombas.\n";
+                cout << "3. Voce pode encontrar itens especiais que aumentam o alcance de suas bombas ou concedem poderes adicionais.\n";
+                cout << "4. Inimigos: Enfrente os inimigos pelo caminho, evitando suas investidas e utilizando suas bombas de forma estrategica para elimina-los.\n";
+                cout << "5. Mapas: Avance atraves dos mapas, enfrentando inimigos cada vez mais desafiadores, ate chegar ao ultimo mapa e derrotar o chefao final.\n\n";
+                cout << "PONTUACAO: " << endl;
+             // Fácil
+             cout << "FACIL" << endl;
+    cout << "No modo facil o jogador inicia com 900 pontos \n"
+         << "A cada movimento retira-se 1 ponto da pontuacao total\n"
+         << "A cada bomba colocada retira-se 1 ponto da pontuacao total\n"
+         << "A cada inimigo abatido soma-se 3 pontos na pontuacao total\n\n";
+
+    // Medio
+    cout << "MEDIO" << endl;
+    cout << "No modo medio o jogador inicia com 600 pontos \n"
+         << "A cada movimento retira-se 3 pontos da pontuacao total\n"
+         << "A cada bomba colocada retira-se 3 pontos da pontuacao total\n"
+         << "A cada inimigo abatido soma-se 5 pontos na pontuacao total\n\n";
+
+    // Dificil
+    cout << "DIFICIL" << endl;
+    cout << "No modo dificil o jogador inicia com 200 pontos \n"
+         << "A cada movimento retira-se 7 pontos da pontuacao total\n"
+         << "A cada bomba colocada retira-se 7 pontos da pontuacao total\n"
+         << "A cada inimigo abatido soma-se 10 pontos na pontuacao total\n";
 
 
-            system("pause");
-            break;
-        }
-
-        case 3:
-        {
-            system("cls");
-
-            cout << "PONTUACAO: " << endl;
-            // Fácil
-            cout << "FACIL" << endl;
-            cout << "No modo facil o jogador inicia com 900 pontos \n"
-                 << "A cada movimento retira-se 1 ponto da pontuacao total\n"
-                 << "A cada bomba colocada retira-se 1 ponto da pontuacao total\n"
-                 << "A cada inimigo abatido soma-se 3 pontos na pontuacao total\n\n";
-
-            // Medio
-            cout << "MEDIO" << endl;
-            cout << "No modo medio o jogador inicia com 600 pontos \n"
-                 << "A cada movimento retira-se 3 pontos da pontuacao total\n"
-                 << "A cada bomba colocada retira-se 3 pontos da pontuacao total\n"
-                 << "A cada inimigo abatido soma-se 5 pontos na pontuacao total\n\n";
-
-            // Dificil
-            cout << "DIFICIL" << endl;
-            cout << "No modo dificil o jogador inicia com 200 pontos \n"
-                 << "A cada movimento retira-se 7 pontos da pontuacao total\n"
-                 << "A cada bomba colocada retira-se 7 pontos da pontuacao total\n"
-                 << "A cada inimigo abatido soma-se 10 pontos na pontuacao total\n";
-            system("pause");
-
-            break;
-        }
-        case 4:
-        {
-            system("cls");
-
-            cout << "\nRANKING:\n";
-
-        };
         system("pause");
+    break;}
 
-        case 5:
-        {
-            break;
-        }
-
+    case 3: {break;}
 
 
         }
     }
-    while(menu!=5);
+    while(menu!=3);
 
     return 0;
 } //fim main
