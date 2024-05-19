@@ -38,6 +38,21 @@ struct ExplosaoBomba
     int xboom, yboom;
 };
 
+
+
+struct pontuacao{
+    string nome_jogador;
+    time_t data;
+    int pontos;
+
+};
+
+vector<pontuacao> pontuacao_facil;
+vector<pontuacao> pontuacao_medio;
+vector<pontuacao> pontuacao_dificil;
+
+
+
 void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos) {
     srand(time(0));
     for (int i = 0; i < dificuldade; i++) {
@@ -205,11 +220,12 @@ int main()
 
 
         cout <<"                          ______________________________ " << endl;
-        cout << "                         | 1 - COMECAR                  |" << endl;
-        cout << "                         | 2 - TUTORIAL                 |" << endl;
-        cout << "                         | 3 - PONTUACAO                |" << endl;
-        cout << "                         | 4 - RANKING                  |" << endl;
-        cout << "                         | 5 - SAIR                     |" << endl;
+        cout << "                         |                              |" << endl;
+        cout << "                         |       1 - COMECAR            |" << endl;
+        cout << "                         |       2 - TUTORIAL           |" << endl;
+        cout << "                         |       3 - PONTUACAO          |" << endl;
+        cout << "                         |       4 - RANKING            |" << endl;
+        cout << "                         |        5 - SAIR              |" << endl;
         cout << "                         |______________________________|" << endl;
         cin >> menu;
 
@@ -229,8 +245,13 @@ int main()
             string nome;
 
             system("cls");
-            cout <<"selecione a dificuldade:" << endl;
-            cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
+            cout <<"                    ------- SELECIONE A DIFICULDADE -------    " << endl;
+
+        cout << "                          __________________________ " << endl;
+        cout << "                         |      1 - FACIL           |" << endl;
+        cout << "                         |      2 - MEDIO           |" << endl;
+        cout << "                         |      3 - DIFICIL         |" << endl;
+        cout << "                         |__________________________|" << endl;
             int dificuldade;
             cin >> dificuldade;
 
@@ -242,7 +263,7 @@ int main()
                 pontos=900;
                 dificuldade=3;
                 Inimigos.resize(dificuldade);
-                cout << "digite o seu nome" << endl;
+                cout << "digite o seu nome: " << endl;
                 cin >> nome;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
