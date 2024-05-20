@@ -8,6 +8,7 @@
 #include <vector>
 #include <chrono>
 #include <mmsystem.h>
+#include <fstream>
 
 using namespace std;
 using namespace std::chrono;
@@ -21,6 +22,14 @@ struct inimigo
 {
     int xi,yi;
 };
+
+
+struct jogadores{
+ int pontuacao;
+ //time_tt;
+ string nome;
+};
+
 struct PowerUPS
 {
     int ExtraVida;
@@ -157,11 +166,11 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
 
 
         cout <<"                          ______________________________ " << endl;
-        cout << "                         | 1 - COMECAR                  |" << endl;
-        cout << "                         | 2 - TUTORIAL                 |" << endl;
-        cout << "                         | 3 - PONTUACAO                |" << endl;
-        cout << "                         | 4 - RANKING                  |" << endl;
-        cout << "                         | 5 - SAIR                     |" << endl;
+        cout << "                         |         1 - COMECAR          |" << endl;
+        cout << "                         |         2 - TUTORIAL         |" << endl;
+        cout << "                         |         3 - PONTUACAO        |" << endl;
+        cout << "                         |         4 - RANKING          |" << endl;
+        cout << "                         |         5 - SAIR             |" << endl;
         cout << "                         |______________________________|" << endl;
         cin >> menu;
         switch(menu){
@@ -171,30 +180,63 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
             cin>>dificuldade;
             switch(dificuldade){
-            case 1:
+            case 1:{
+                cout << "digite seu nome" << endl;
+                cin >> nome;
                 pontos=900;
                 dificuldade=3;
-                Inimigos.resize(dificuldade);
-                cout << "digite o seu nome" << endl;
-                cin >> nome;
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
-                return;
+                jogadores facil;
+                facil.nome = nome;
+                ofstream arquivoS;
+                arquivoS.open("ranking");
+                arquivoS << "FACIL" << endl;
+                arquivoS << nome << endl;
 
-            case 2:
+                                arquivoS.close();
+
+
+
+
+                Inimigos.resize(dificuldade);
+
+
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                return;}
+
+            case 2:{
                 pontos = 600;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
                 dificuldade=5;
+                cout << "digite seu nome" << endl;
+                cin >> nome;
+                jogadores medio;
+                medio.nome = nome;
+                ofstream arquivoS;
+                arquivoS.open("ranking");
+                arquivoS << "MEDIO" << endl;
+                arquivoS << nome << endl;
+                arquivoS.close();
                 Inimigos.resize(dificuldade);
-                return;
+                return;}
 
-            case 3:
+            case 3:{
                 pontos = 400;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
                 dificuldade=7;
+                cout << "digite seu nome" << endl;
+                cin >> nome;
+                jogadores dificil;
+                dificil.nome = nome;
+                ofstream arquivoS;
+                arquivoS.open("ranking");
+                arquivoS << "DIFICIL" << endl;
+                arquivoS.close();
+
+
                 Inimigos.resize(dificuldade);
-                return;
+                return;}
             default:
                 cout<<"Opcao invalida!"<<endl;
             }
@@ -692,6 +734,14 @@ int main()
                     if(Vitorias==3){
                         GameContinue=false;
                         cout<<"Parabens voce venceu!"<<endl;
+                        if(dificuldade==3){
+                                ofstream arquivoS;
+                                arquivoS.open("ranking");
+                                arquivoS << pontos << endl;
+                                arquivoS.close();
+
+
+                        }
                         ///SCORE AQUI, RANK ETC...
                         system("pause");
                         system("cls");
@@ -742,6 +792,12 @@ int main()
                     system("cls");
                     cout<<"voce morreu!"<<endl;
                     ///SCORE AQUI, RANK ETC...
+                    if(dificuldade==3){
+                        ofstream arquivoS;
+                                arquivoS.open("ranking");
+                                arquivoS << pontos << endl;
+                                arquivoS.close();
+                    }
                     cout<<"Digite [1] para voltar ao menu, [2] para sair:"<<endl;
                     cin>>ContinuarJogo;
                     switch(ContinuarJogo){
