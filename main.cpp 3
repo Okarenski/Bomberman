@@ -24,10 +24,11 @@ struct inimigo
 };
 
 
-struct jogadores{
- int pontuacao;
- //time_tt;
- string nome;
+struct jogadores
+{
+    int pontuacao;
+//time_tt;
+    string nome;
 };
 
 struct PowerUPS
@@ -38,7 +39,8 @@ bool colisao(int p)  ///COLISAO
 {
     return p == 0 || p == 5;
 }
-bool colisaInimigo(int G){ ///COLISAO DO INIMIGO
+bool colisaInimigo(int G)  ///COLISAO DO INIMIGO
+{
     return G !=0;
 }
 
@@ -47,13 +49,17 @@ struct ExplosaoBomba
     int xboom, yboom;
 };
 
-void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos) {
+void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos)
+{
     srand(time(0));
-    for (int i = 0; i < dificuldade; i++) {
-        while (true) {
+    for (int i = 0; i < dificuldade; i++)
+    {
+        while (true)
+        {
             int PosicaoAleatoriaY = rand() % 13;
             int PosicaoAleatoriaX = rand() % 27;
-            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0) {
+            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0)
+            {
                 Inimigos.push_back({PosicaoAleatoriaY, PosicaoAleatoriaX});
                 break;
             }
@@ -61,77 +67,111 @@ void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimi
     }
 }
 
-void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[13][27]){
+void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[13][27])
+{
     int ProbabilidadeMoverParaPlayer = 0;
-    if(dificuldade==5){
+    if(dificuldade==5)
+    {
         ProbabilidadeMoverParaPlayer=50;
-    } else if(dificuldade==7){
+    }
+    else if(dificuldade==7)
+    {
         ProbabilidadeMoverParaPlayer=75;
     }
-        for(auto &inimigo:Inimigos){
-            int MoverParaPlayer = rand()%100;
-            if(MoverParaPlayer<ProbabilidadeMoverParaPlayer){
-                if(inimigo.xi<J.x){
-                    if(!colisaInimigo(m[inimigo.xi+1][inimigo.yi])){
-                        inimigo.xi++;
-                    }
-                } else if(inimigo.xi>J.x){
-                    if(!colisaInimigo(m[inimigo.xi-1][inimigo.yi])){
-                        inimigo.xi--;
-                    }
+    for(auto &inimigo:Inimigos)
+    {
+        int MoverParaPlayer = rand()%100;
+        if(MoverParaPlayer<ProbabilidadeMoverParaPlayer)
+        {
+            if(inimigo.xi<J.x)
+            {
+                if(!colisaInimigo(m[inimigo.xi+1][inimigo.yi]))
+                {
+                    inimigo.xi++;
                 }
-                if(inimigo.yi<J.y){
-                    if(!colisaInimigo(m[inimigo.xi][inimigo.yi+1])){
-                        inimigo.yi++;
-                    }
-                } else if(inimigo.yi>J.y){
-                    if(!colisaInimigo(m[inimigo.xi][inimigo.yi-1])){
-                        inimigo.yi--;
-                    }
+            }
+            else if(inimigo.xi>J.x)
+            {
+                if(!colisaInimigo(m[inimigo.xi-1][inimigo.yi]))
+                {
+                    inimigo.xi--;
                 }
-            } else {
-                int Direcao = rand()%4;
-                switch(Direcao){
+            }
+            if(inimigo.yi<J.y)
+            {
+                if(!colisaInimigo(m[inimigo.xi][inimigo.yi+1]))
+                {
+                    inimigo.yi++;
+                }
+            }
+            else if(inimigo.yi>J.y)
+            {
+                if(!colisaInimigo(m[inimigo.xi][inimigo.yi-1]))
+                {
+                    inimigo.yi--;
+                }
+            }
+        }
+        else
+        {
+            int Direcao = rand()%4;
+            switch(Direcao)
+            {
             case 0: ///CIMA
-                if(!colisaInimigo(m[inimigo.xi - 1][inimigo.yi])){
+                if(!colisaInimigo(m[inimigo.xi - 1][inimigo.yi]))
+                {
                     inimigo.xi--;
                 }
                 break;
             case 1: ///BAIXO
-                if (!colisaInimigo(m[inimigo.xi + 1][inimigo.yi])) {
+                if (!colisaInimigo(m[inimigo.xi + 1][inimigo.yi]))
+                {
                     inimigo.xi++;
                 }
                 break;
             case 2: ///ESQUERDA
-                if (!colisaInimigo(m[inimigo.xi][inimigo.yi - 1])) {
+                if (!colisaInimigo(m[inimigo.xi][inimigo.yi - 1]))
+                {
                     inimigo.yi--;
                 }
                 break;
             case 3: ///BAIXO
-                if (!colisaInimigo(m[inimigo.xi][inimigo.yi + 1])) {
+                if (!colisaInimigo(m[inimigo.xi][inimigo.yi + 1]))
+                {
                     inimigo.yi++;
                 }
                 break;
-                }
             }
         }
     }
-void MapaIniciar(int m[13][27]) {
+}
+void MapaIniciar(int m[13][27])
+{
     srand(time(0));
-    for (int i = 0; i < 13; i++) {
-        for (int j = 0; j < 27; j++) {
-            if (i == 0 || i == 12 || j == 0 || j == 26) {
+    for (int i = 0; i < 13; i++)
+    {
+        for (int j = 0; j < 27; j++)
+        {
+            if (i == 0 || i == 12 || j == 0 || j == 26)
+            {
                 m[i][j] = 1;
-            } else if ((i % 2 == 0) && (j % 2 == 0)) {
+            }
+            else if ((i % 2 == 0) && (j % 2 == 0))
+            {
                 m[i][j] = 1;
-            } else {
+            }
+            else
+            {
                 m[i][j] = 0;
             }
         }
     }
-    for (int i = 1; i < 12; i++) {
-        for (int j = 1; j < 26; j++) {
-            if (m[i][j] == 0 && (rand() % 5 == 0)) {
+    for (int i = 1; i < 12; i++)
+    {
+        for (int j = 1; j < 26; j++)
+        {
+            if (m[i][j] == 0 && (rand() % 5 == 0))
+            {
                 m[i][j] = 2; // Parede quebrável
             }
         }
@@ -141,20 +181,24 @@ void MapaIniciar(int m[13][27]) {
     m[5][5] = 0;
 }
 
-void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J){
+void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J)
+{
     MapaIniciar(m);
     GeracaoInimigo(m, dificuldade, InimigoPosicoes);
     Inimigos.clear();
-    for(int i=0;i<dificuldade;i++){
+    for(int i=0; i<dificuldade; i++)
+    {
         Inimigos.push_back({InimigoPosicoes[i].first, InimigoPosicoes[i].second});
     }
     J.clear();
     J.push_back({5,5});
 }
 
-void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos){
-do{
-PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
+{
+    do
+    {
+        PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
         system ("cls");
         cout << " _______  _______  __   __  _______  _______  ______    __   __  _______  __    _ \n"
              "|  _    ||       ||  |_|  ||  _    ||       ||    _ |  |  |_|  ||   _   ||  |  | |\n"
@@ -173,14 +217,17 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
         cout << "                         |         5 - SAIR             |" << endl;
         cout << "                         |______________________________|" << endl;
         cin >> menu;
-        switch(menu){
+        switch(menu)
+        {
         case 1:
             system("cls");
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
             cin>>dificuldade;
-            switch(dificuldade){
-            case 1:{
+            switch(dificuldade)
+            {
+            case 1:
+            {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
                 pontos=900;
@@ -189,10 +236,10 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
                 facil.nome = nome;
                 ofstream arquivoS;
                 arquivoS.open("ranking");
-                arquivoS << "FACIL" << endl;
+                //arquivoS << "FACIL" << endl;
                 arquivoS << nome << endl;
 
-                                arquivoS.close();
+                arquivoS.close();
 
 
 
@@ -201,9 +248,11 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
 
 
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
-                return;}
+                return;
+            }
 
-            case 2:{
+            case 2:
+            {
                 pontos = 600;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
@@ -218,9 +267,11 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
                 arquivoS << nome << endl;
                 arquivoS.close();
                 Inimigos.resize(dificuldade);
-                return;}
+                return;
+            }
 
-            case 3:{
+            case 3:
+            {
                 pontos = 400;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
 
@@ -236,7 +287,8 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
 
 
                 Inimigos.resize(dificuldade);
-                return;}
+                return;
+            }
             default:
                 cout<<"Opcao invalida!"<<endl;
             }
@@ -299,88 +351,109 @@ PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
         default:
             cout<<"Opcao invalida!"<<endl;
         }
-    }while (menu!=1);
+    }
+    while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer){
+void PowerUps(int &VidaPlayer)
+{
     int ChancePower;
     ///ChancePower = rand()%6+1;
     ChancePower = 2;
-    switch(ChancePower){
-case 1:
-    if(VidaPlayer<=3){
-    VidaPlayer++;       ///VIDA EXTRA
-    }
-    break;
+    switch(ChancePower)
+    {
+    case 1:
+        if(VidaPlayer<=3)
+        {
+            VidaPlayer++;       ///VIDA EXTRA
+        }
+        break;
     }
 }
-void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, int &NumeroDBombas, int ChanceItem) {
-    for (auto &player : J){
-                        for (const auto &ExplosaoBomba : Explosoes){
-                            if (player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom){ ///IMPLEMENTAR ALGO PARA PLAYER MORRER QUANDO FICAR EM CIMA DA BOMBA
-                                VidaPlayer--;
-                            }
-                        }
-                    }
-                    for(auto &inimigo:Inimigos)
+void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, int &NumeroDBombas, int ChanceItem)
+{
+    for (auto &player : J)
+    {
+        for (const auto &ExplosaoBomba : Explosoes)
+        {
+            if (player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom)  ///IMPLEMENTAR ALGO PARA PLAYER MORRER QUANDO FICAR EM CIMA DA BOMBA
+            {
+                VidaPlayer--;
+            }
+        }
+    }
+    for(auto &inimigo:Inimigos)
+    {
+        for(const auto& ExplosaoBomba : Explosoes)
+        {
+            if(m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]==2)
+            {
+                ChanceItem = rand()%100+1;
+                switch(dificuldade)
+                {
+                case 3:
+                    if(ChanceItem>=25)
                     {
-                        for(const auto& ExplosaoBomba : Explosoes)
-                        {
-                            if(m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]==2)
-                            {
-                                    ChanceItem = rand()%100+1;
-                                    switch(dificuldade){
-                                case 3:
-                                    if(ChanceItem>=25){
-                                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
-                                    } else {
-                                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
-                                    } break;
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
+                    }
+                    else
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
+                    }
+                    break;
 
-                                case 5:
-                                    if(ChanceItem<=25){
-                                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
-                                    } else {
-                                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
-                                    } break;
+                case 5:
+                    if(ChanceItem<=25)
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
+                    }
+                    else
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
+                    }
+                    break;
 
-                                case 7:
-                                    if(ChanceItem<=10){
-                                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
-                                    } else {
-                                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
-                                    } break;
-                                }
-                                }
-                                if(inimigo.xi == ExplosaoBomba.xboom && inimigo.yi == ExplosaoBomba.yboom)
-                                {
-                                    inimigo.xi=-1;
-                                    inimigo.yi=-1;
-                                    InimigosVivos--;
-                                    bool verificacao_inimigos = true;
-                                    if(verificacao_inimigos)
-                                    {
-                                        if(dificuldade==3)
-                                        {
-                                            pontos+=2;
+                case 7:
+                    if(ChanceItem<=10)
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
+                    }
+                    else
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
+                    }
+                    break;
+                }
+            }
+            if(inimigo.xi == ExplosaoBomba.xboom && inimigo.yi == ExplosaoBomba.yboom)
+            {
+                inimigo.xi=-1;
+                inimigo.yi=-1;
+                InimigosVivos--;
+                bool verificacao_inimigos = true;
+                if(verificacao_inimigos)
+                {
+                    if(dificuldade==3)
+                    {
+                        pontos+=2;
 
-                                        }
-                                        else if(dificuldade==5)
-                                        {
-                                            pontos+=3;
-                                        }
-                                        else if(dificuldade==7)
-                                        {
-                                            pontos+=5;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        NumeroDBombas++;
-                        m[XB][YB]=0;
-                        XB=-3;
-                        YB=-3;
+                    }
+                    else if(dificuldade==5)
+                    {
+                        pontos+=3;
+                    }
+                    else if(dificuldade==7)
+                    {
+                        pontos+=5;
+                    }
+                }
+            }
+        }
+    }
+    NumeroDBombas++;
+    m[XB][YB]=0;
+    XB=-3;
+    YB=-3;
 }
 
 
@@ -463,360 +536,393 @@ int main()
     InimigosVivos = Inimigos.size();
     IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
 
+    system("cls");
+
+    auto inicio = steady_clock::now();
+    while(GameContinue)
+    {
+        ///Posiciona a escrita no iicio do console
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+        ///Imprime o jogo: mapa e personagem.
+        for(int i=0; i<13; i++)
+        {
+            for(int j=0; j<27; j++)
+            {
+                bool isEnemy = false;
+
+                if(i==J[0].x && j==J[0].y)
+                {
+                    cout<<char(36); //personagem
+                }
+                else if (i==XB&&j==YB)
+                {
+                    cout<<char(022); //bomba
+                }
+                else
+                {
+                    for(const auto& inimigo : Inimigos)
+                    {
+                        if(i==inimigo.xi&&j==inimigo.yi)
+                        {
+                            cout<<enemy;
+                            isEnemy = true;
+                            break;
+                        }
+                    }
+                    if(!isEnemy)
+                    {
+                        switch (m[i][j])
+                        {
+                        case 0:
+                            cout<<" ";
+                            break;       //caminho
+                        case 1:
+                            cout<<char(219);
+                            break; //parede
+                        case 2:
+                            cout<<char(176);
+                            break; //parede quebravel
+                        case 5:
+                            cout<<char(134);
+                            break; //item
+                            //default: cout<<"-"; //erro
+                        }   //fim switch
+                    }
+                }
+            }
+            cout<<"\n";
+        } //fim for mapa
+
+        ///executa os movimentos
+
+        if (_kbhit())
+        {
+            tecla = getch();
+            bool movimento_valido = false;
+            bool bomba_colocada = true;
+            switch(tecla)
+            {
+            case 72:
+            case 'w': ///cima
+                J[0].x--;
+                if(!colisao(m[J[0].x][J[0].y]))
+                {
+                    J[0].x++;
+                }
+                else
+                {
+                    do
+                    {
+                        int c = 1;
+                        contcima+= c;
+                        c++;
+                        movimentos++;
+                        movimento_valido = true;
+                    }
+                    while(false);
+                }
+                break;
+            case 80:
+            case 's': ///baixo
+                J[0].x++;
+                if(!colisao(m[J[0].x][J[0].y]))
+                {
+                    J[0].x--;
+                }
+                else
+                {
+                    do
+                    {
+                        int ba = 1;
+                        contbaixo+=ba;
+                        ba++;
+                        movimentos++;
+                        movimento_valido = true;
+                    }
+                    while(false);
+                }
+
+
+                break;
+            case 75:
+            case 'a': ///esquerda
+
+                J[0].y--;
+                if(!colisao(m[J[0].x][J[0].y]))
+
+                {
+                    J[0].y++;
+
+                }
+                else
+                {
+                    do
+                    {
+                        int es = 1;
+                        contesquerda+=es;
+                        es++;
+                        movimentos++;
+                        movimento_valido=true;
+                    }
+                    while(false);
+                }
+
+                break;
+            case 77:
+            case 'd': ///direita
+
+                J[0].y++;
+                if(!colisao(m[J[0].x][J[0].y]))
+                {
+
+                    J[0].y--;
+
+                }
+                else
+                {
+                    do
+                    {
+                        int di = 1;
+                        contdireita+=di;
+                        di++;
+
+                        movimentos++;
+                        movimento_valido=true;
+                    }
+                    while(false);
+                }
+
+                break;
+
+
+            case 78:
+
+            case 'e': ///bomba
+
+                if(NumeroDBombas>0)
+                {
+                    NumeroDBombas--;
+                    XB=J[0].x;
+                    YB=J[0].y;
+                    m[XB][YB]=3;
+                    do
+                    {
+                        int b = 1;
+
+                        contagem+= b;
+                        b++;
+                        bomba_colocada = true;
+                    }
+                    while(false);
+                    Explosoes.clear();
+                    ///DEFINE A AREA DAS EXPLOSÕES
+                    Explosoes.push_back({XB-1,YB}); ///CIMA
+                    Explosoes.push_back({XB+1,YB}); ///BAIXO
+                    Explosoes.push_back({XB,YB-1}); ///ESQUERDA
+                    Explosoes.push_back({XB,YB+1}); ///DIREITA
+                }
+                break;
+
+            }
+            if(movimento_valido)
+            {
+                if(dificuldade==3)
+                {
+                    pontos-=1;
+                }
+                else if(dificuldade==5)
+                {
+                    pontos-=1;
+                }
+                else if(dificuldade==7)
+                {
+                    pontos-=1;
+
+                }
+            }
+            if(bomba_colocada)
+            {
+                if(dificuldade==3)
+                {
+                    pontos--;
+                }
+                else if(dificuldade==5)
+                {
+                    pontos-=3;
+                }
+                else if(dificuldade==7)
+                {
+                    pontos-=7;
+                }
+
+            }
+
+        }
+
+        if(NumeroDBombas==0)    ///BOMBA
+        {
+            auto TempoBombaAgora = chrono::high_resolution_clock::now();
+            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
+            if(BombaPassou>=BombaTimer)
+            {
+                BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
+                InicioBomba=TempoBombaAgora;
+            }
+        }
+
+
+
+        if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
+        {
+            m[J[0].x][J[0].y]=0;
+            PowerUps(VidaPlayer);
+        }
+
+
+        ///executa os movimentos dos inimigos
+
+        auto TempoAgora = chrono::high_resolution_clock::now();         ///Tempo recebe o tempo do clock, agora;
+        auto Passou = duration_cast<milliseconds>(TempoAgora-Inicio);   ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
+        if(Passou>TempoInimigo)
+        {
+            Inicio = TempoAgora; ///inico recebe o tempo atual
+            MovimentoInimigo(Inimigos,J[0],dificuldade,m);
+        }
+
+        for(auto &player:J)  ///VERIFICAÇÃO DE VITORIA DO JOGO
+        {
+            for(auto &inimigo:Inimigos)
+            {
+                if(inimigo.xi==player.x&&inimigo.yi==player.y)
+                {
+                    VidaPlayer--;
+                }
+            }
+        }
+
+        auto final = steady_clock::now();
+        auto tempo = final - inicio;
+        cout << " _________________________________________________________________" << endl;
+        cout << "                         PONTUACAO:" << pontos                   << endl;
+        cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
+        cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
+        cout << "                                                                  " << endl;
+        cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
+        cout << "__________________________________________________________________" << endl;
+
+        if(InimigosVivos==0)
+        {
+            if(Vitorias==3)
+            {
+                GameContinue=false;
+                cout<<"Parabens voce venceu!"<<endl;
+                if(dificuldade==3)
+                {
+                    ofstream arquivoS;
+                    arquivoS.open("ranking");
+                    arquivoS << pontos << endl;
+                    arquivoS.close();
+
+
+                }
+                ///SCORE AQUI, RANK ETC...
+                system("pause");
+                system("cls");
+                return 0;
+            }
+            cout<<"voce passou de fase!"<<endl;
+            cout<<"Se deseja continuar digite [1] e se deseja para digite [2]."<<endl;
+            cin>>ContinuarJogo;
+            switch(ContinuarJogo)
+            {
+            case 1:
+                system("cls");
+                Vitorias+=1;
+                VidaPlayer+=1;
+                InimigosVivos = Inimigos.size();
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                break;
+            case 2:
+                GameContinue = false;
+                ///SCORE AQUI, RANK ETC..
+                return 0;
+                break;
+            }
+
+        }
+        if(VidaPlayer==0&&Vitorias>=1)
+        {
             system("cls");
+            cout<<"Voce perdeu!"<<endl;
+            if(dificuldade==3)
+            {
+                ofstream arquivoS;
+                arquivoS.open("ranking");
+                arquivoS << "FACIL"<< endl;
 
-            auto inicio = steady_clock::now();
-            while(GameContinue){
-                ///Posiciona a escrita no iicio do console
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-
-                ///Imprime o jogo: mapa e personagem.
-                for(int i=0; i<13; i++)
-                {
-                    for(int j=0; j<27; j++)
-                    {
-                        bool isEnemy = false;
-
-                        if(i==J[0].x && j==J[0].y)
-                        {
-                            cout<<char(36); //personagem
-                        }
-                        else if (i==XB&&j==YB)
-                        {
-                            cout<<char(022); //bomba
-                        }
-                        else
-                        {
-                            for(const auto& inimigo : Inimigos)
-                            {
-                                if(i==inimigo.xi&&j==inimigo.yi)
-                                {
-                                    cout<<enemy;
-                                    isEnemy = true;
-                                    break;
-                                }
-                            }
-                            if(!isEnemy)
-                            {
-                                switch (m[i][j])
-                                {
-                                case 0:
-                                    cout<<" ";break;       //caminho
-                                case 1:
-                                    cout<<char(219);break; //parede
-                                case 2:
-                                    cout<<char(176);break; //parede quebravel
-                                case 5:
-                                    cout<<char(134);break; //item
-                                    //default: cout<<"-"; //erro
-                                }   //fim switch
-                            }
-                        }
-                    }
-                    cout<<"\n";
-                } //fim for mapa
-
-                ///executa os movimentos
-
-                if (_kbhit())
-                {
-                    tecla = getch();
-                    bool movimento_valido = false;
-                    bool bomba_colocada = true;
-                    switch(tecla)
-                    {
-                    case 72:
-                    case 'w': ///cima
-                        J[0].x--;
-                        if(!colisao(m[J[0].x][J[0].y]))
-                        {
-                            J[0].x++;
-                        }
-                        else
-                        {
-                            do
-                            {
-                                int c = 1;
-                                contcima+= c;
-                                c++;
-                                movimentos++;
-                                movimento_valido = true;
-                            }
-                            while(false);
-                        }
-                        break;
-                    case 80:
-                    case 's': ///baixo
-                        J[0].x++;
-                        if(!colisao(m[J[0].x][J[0].y]))
-                        {
-                            J[0].x--;
-                        }
-                        else
-                        {
-                            do
-                            {
-                                int ba = 1;
-                                contbaixo+=ba;
-                                ba++;
-                                movimentos++;
-                                movimento_valido = true;
-                            }
-                            while(false);
-                        }
-
-
-                        break;
-                    case 75:
-                    case 'a': ///esquerda
-
-                        J[0].y--;
-                        if(!colisao(m[J[0].x][J[0].y]))
-
-                        {
-                            J[0].y++;
-
-                        }
-                        else
-                        {
-                            do
-                            {
-                                int es = 1;
-                                contesquerda+=es;
-                                es++;
-                                movimentos++;
-                                movimento_valido=true;
-                            }
-                            while(false);
-                        }
-
-                        break;
-                    case 77:
-                    case 'd': ///direita
-
-                        J[0].y++;
-                        if(!colisao(m[J[0].x][J[0].y]))
-                        {
-
-                            J[0].y--;
-
-                        }
-                        else
-                        {
-                            do
-                            {
-                                int di = 1;
-                                contdireita+=di;
-                                di++;
-
-                                movimentos++;
-                                movimento_valido=true;
-                            }
-                            while(false);
-                        }
-
-                        break;
-
-
-                    case 78:
-
-                    case 'e': ///bomba
-
-                        if(NumeroDBombas>0){
-                            NumeroDBombas--;
-                            XB=J[0].x;
-                            YB=J[0].y;
-                            m[XB][YB]=3;
-                            do
-                            {
-                                int b = 1;
-
-                                contagem+= b;
-                                b++;
-                                bomba_colocada = true;
-                            }
-                            while(false);
-                            Explosoes.clear();
-                            ///DEFINE A AREA DAS EXPLOSÕES
-                            Explosoes.push_back({XB-1,YB}); ///CIMA
-                            Explosoes.push_back({XB+1,YB}); ///BAIXO
-                            Explosoes.push_back({XB,YB-1}); ///ESQUERDA
-                            Explosoes.push_back({XB,YB+1}); ///DIREITA
-                        }
-                        break;
-
-                    }
-                    if(movimento_valido)
-                    {
-                        if(dificuldade==3)
-                        {
-                            pontos-=1;
-                        }
-                        else if(dificuldade==5)
-                        {
-                            pontos-=1;
-                        }
-                        else if(dificuldade==7)
-                        {
-                            pontos-=1;
-
-                        }
-                    }
-                    if(bomba_colocada)
-                    {
-                        if(dificuldade==3)
-                        {
-                            pontos--;
-                        }
-                        else if(dificuldade==5)
-                        {
-                            pontos-=3;
-                        }
-                        else if(dificuldade==7)
-                        {
-                            pontos-=7;
-                        }
-
-                    }
-
-                }
-
-                if(NumeroDBombas==0){   ///BOMBA
-                        auto TempoBombaAgora = chrono::high_resolution_clock::now();
-                        auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-                        if(BombaPassou>=BombaTimer){
-                        BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
-                        InicioBomba=TempoBombaAgora;
-                    }
-                }
+                arquivoS << pontos << endl;
+                arquivoS<< nome<< endl << endl;
+                                arquivoS << "MEDIO"<< endl << endl;
+                                                arquivoS << "DIFICIL"<< endl;
 
 
 
-                if(m[J[0].x][J[0].y]==5){ ///PLAYER PEGA ITEM
-                   m[J[0].x][J[0].y]=0;
-                   PowerUps(VidaPlayer);
-                }
+                arquivoS.close();
 
+            }
+            cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
+            cin>>ContinuarJogo;
+            switch (ContinuarJogo)
+            {
+            case 1:
+                system("cls");
+                GameContinue = true;
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                VidaPlayer+=1;
 
-                ///executa os movimentos dos inimigos
+                InimigosVivos = Inimigos.size();
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                break;
+            case 2:
+                GameContinue = false;
+                return 0;
+                break;
+            }
+        }
+        if(VidaPlayer==0&&Vitorias<1)
+        {
+            system("cls");
+            cout<<"voce morreu!"<<endl;
+            ///SCORE AQUI, RANK ETC...
+            if(dificuldade==3)
+            {
+                ofstream arquivoS;
+                arquivoS.open("ranking");
+                arquivoS << pontos << endl;
+                arquivoS.close();
+                cout << "oi";
+            }
+            cout<<"Digite [1] para voltar ao menu, [2] para sair:"<<endl;
+            cin>>ContinuarJogo;
+            switch(ContinuarJogo)
+            {
+            case 1:
+                system("cls");
+                GameContinue = true;
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                VidaPlayer+=1;
 
-                auto TempoAgora = chrono::high_resolution_clock::now();         ///Tempo recebe o tempo do clock, agora;
-                auto Passou = duration_cast<milliseconds>(TempoAgora-Inicio);   ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
-                if(Passou>TempoInimigo)
-                {
-                    Inicio = TempoAgora; ///inico recebe o tempo atual
-                    MovimentoInimigo(Inimigos,J[0],dificuldade,m);
-                }
-
-                for(auto &player:J)  ///VERIFICAÇÃO DE VITORIA DO JOGO
-                {
-                    for(auto &inimigo:Inimigos)
-                    {
-                        if(inimigo.xi==player.x&&inimigo.yi==player.y)
-                        {
-                            VidaPlayer--;
-                        }
-                    }
-                }
-
-                auto final = steady_clock::now();
-                auto tempo = final - inicio;
-                cout << " _________________________________________________________________" << endl;
-                cout << "                         PONTUACAO:" << pontos                   << endl;
-                cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
-                cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
-                cout << "                                                                  " << endl;
-                cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
-                cout << "__________________________________________________________________" << endl;
-
-                if(InimigosVivos==0)
-                {
-                    if(Vitorias==3){
-                        GameContinue=false;
-                        cout<<"Parabens voce venceu!"<<endl;
-                        if(dificuldade==3){
-                                ofstream arquivoS;
-                                arquivoS.open("ranking");
-                                arquivoS << pontos << endl;
-                                arquivoS.close();
-
-
-                        }
-                        ///SCORE AQUI, RANK ETC...
-                        system("pause");
-                        system("cls");
-                        return 0;
-                    }
-                    cout<<"voce passou de fase!"<<endl;
-                    cout<<"Se deseja continuar digite [1] e se deseja para digite [2]."<<endl;
-                    cin>>ContinuarJogo;
-                    switch(ContinuarJogo){
-                case 1:
-                    system("cls");
-                    Vitorias+=1;
-                    VidaPlayer+=1;
-                    InimigosVivos = Inimigos.size();
-                    IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
-                    break;
-                case 2:
-                    GameContinue = false;
-                    ///SCORE AQUI, RANK ETC..
-                    return 0;
-                    break;
-                    }
-
-                }
-                if(VidaPlayer==0&&Vitorias==1)
-                {
-                    system("cls");
-                    cout<<"Voce perdeu!"<<endl;
-                    cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
-                    cin>>ContinuarJogo;
-                    switch (ContinuarJogo){
-                case 1:
-                    system("cls");
-                    GameContinue = true;
-                    MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
-                    VidaPlayer+=1;
-
-                    InimigosVivos = Inimigos.size();
-                    IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
-                    break;
-                case 2:
-                    GameContinue = false;
-                    return 0;
-                    break;
-                    }
-                }
-                if(VidaPlayer==0&&Vitorias!=1){
-                    system("cls");
-                    cout<<"voce morreu!"<<endl;
-                    ///SCORE AQUI, RANK ETC...
-                    if(dificuldade==3){
-                        ofstream arquivoS;
-                                arquivoS.open("ranking");
-                                arquivoS << pontos << endl;
-                                arquivoS.close();
-                    }
-                    cout<<"Digite [1] para voltar ao menu, [2] para sair:"<<endl;
-                    cin>>ContinuarJogo;
-                    switch(ContinuarJogo){
-                case 1:
-                    system("cls");
-                    GameContinue = true;
-                    MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
-                    VidaPlayer+=1;
-
-                    InimigosVivos = Inimigos.size();
-                    IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
-                    break;
-                case 2:
-                    GameContinue = false;
-                    return 0;
-                    break;
-                    }
-                }
-            } //fim do laco do jogo
+                InimigosVivos = Inimigos.size();
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                break;
+            case 2:
+                GameContinue = false;
+                return 0;
+                break;
+            }
+        }
+    } //fim do laco do jogo
 
     return 0;
 } //fim main
