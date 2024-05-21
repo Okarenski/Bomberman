@@ -195,16 +195,6 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
 }
 
 
-void salvarRanking(const string& nome, int pontos) {
-    ofstream arquivoS;
-    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
-    if (arquivoS.is_open()) {
-        arquivoS << "Nome: " << nome << endl;
-        arquivoS << "Pontuacao: " << pontos <<  endl;
-        arquivoS.close();
-    }
-}
-
 void exibirRanking() {
     ifstream arquivoE;
     string linha;
@@ -214,6 +204,17 @@ void exibirRanking() {
             cout << linha << endl;
         }
         arquivoE.close();}}
+
+void salvarRanking(const string& nome, int &pontos) {
+    ofstream arquivoS;
+    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
+    if (arquivoS.is_open()) {
+        arquivoS << "Nome: " << nome << endl;
+        arquivoS << "Pontuacao: " << pontos <<  endl;
+        arquivoS.close();
+    }
+}
+
 
 
 
@@ -902,11 +903,14 @@ int main()
             cout<<"Voce perdeu!"<<endl;
             if(dificuldade==3)
             {
+                exibirRanking();
 
-            salvarRanking(nome,pontos);
-            exibirRanking();
-                        salvarRanking(nome,pontos);
-                        exibirRanking;
+                    salvarRanking(nome,pontos);
+
+
+exibirRanking();
+                    salvarRanking(nome,pontos);
+
 
 
 
