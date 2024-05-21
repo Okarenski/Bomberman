@@ -203,9 +203,12 @@ void salvarRanking(const string& nome, int &pontos)
     arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
     if (arquivoS.is_open())
     {
+
         arquivoS << "Nome: " << nome <<  endl;
         arquivoS << "Pontuacao: " << pontos <<  endl << endl;
-arquivoS.close();
+
+
+        arquivoS.close();
     }
 
 }
@@ -217,11 +220,17 @@ void exibirRanking()
     arquivoE.open("ranking.txt");
     if (arquivoE.is_open())
     {
-        while (getline(arquivoE, linha))
+        if(linha.empty())
         {
-            cout << linha << endl;
+            while (getline(arquivoE, linha))
+            {
+                cout << linha << endl;
+            }
+
+            arquivoE.close();
+        } else {
+            cout << "banana";
         }
-arquivoE.close();
     }
 
 }
@@ -558,7 +567,7 @@ int main()
     int pontos;
     string nome;
 
-          salvarRanking(nome, pontos);
+          //salvarRanking(nome, pontos);
               exibirRanking();
 
 
@@ -897,10 +906,26 @@ int main()
             {
 
                 salvarRanking(nome,pontos);
+
                 exibirRanking();
-                                //salvarRanking(nome,pontos);
 
 
+            }
+            else if(dificuldade==5)
+            {
+
+                salvarRanking(nome,pontos);
+
+                exibirRanking();
+
+            }
+            else if(dificuldade==7)
+            {
+
+
+                salvarRanking(nome,pontos);
+
+                exibirRanking();
             }
             cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
             cin>>ContinuarJogo;
