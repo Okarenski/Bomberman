@@ -195,24 +195,35 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
 }
 
 
-void exibirRanking() {
+
+
+void salvarRanking(const string& nome, int &pontos)
+{
+    ofstream arquivoS;
+    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
+    if (arquivoS.is_open())
+    {
+        arquivoS << "Nome: " << nome <<  endl;
+        arquivoS << "Pontuacao: " << pontos <<  endl << endl;
+arquivoS.close();
+    }
+
+}
+
+void exibirRanking()
+{
     ifstream arquivoE;
     string linha;
     arquivoE.open("ranking.txt");
-    if (arquivoE.is_open()) {
-        while (getline(arquivoE, linha)) {
+    if (arquivoE.is_open())
+    {
+        while (getline(arquivoE, linha))
+        {
             cout << linha << endl;
         }
-        arquivoE.close();}}
-
-void salvarRanking(const string& nome, int &pontos) {
-    ofstream arquivoS;
-    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
-    if (arquivoS.is_open()) {
-        arquivoS << "Nome: " << nome << endl;
-        arquivoS << "Pontuacao: " << pontos <<  endl;
-        arquivoS.close();
+arquivoE.close();
     }
+
 }
 
 
@@ -245,6 +256,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
         switch(menu)
         {
         case 1:
+            PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
             system("cls");
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
@@ -255,31 +267,11 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
+
                 pontos=900;
                 dificuldade=3;
                 jogadores facil;
                 facil.nome = nome;
-                ofstream arquivoS;
-                arquivoS.open("ranking.txt");
-                //arquivoS << "FACIL" << endl;
-                arquivoS << nome << endl;
-
-                arquivoS.close();
-
-                ifstream arquivoE;
-                string linha;
-                arquivoE.open("ranking.txt");
-                if(arquivoE.is_open()){
-                    while(getline(arquivoE, linha)){
-                        cout << linha << endl;
-                    }
-                }
-                arquivoE.close();
-
-
-                arquivoS.open("ranking.txt");
-                arquivoS.close();
-
 
 
 
@@ -903,22 +895,10 @@ int main()
             cout<<"Voce perdeu!"<<endl;
             if(dificuldade==3)
             {
+
+                salvarRanking(nome,pontos);
                 exibirRanking();
-
-                    salvarRanking(nome,pontos);
-
-
-exibirRanking();
-                    salvarRanking(nome,pontos);
-
-
-
-
-
-
-
-
-
+                                //salvarRanking(nome,pontos);
 
 
             }
