@@ -197,7 +197,7 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
 
 
 
-void salvarRanking(const string& nome, int &pontos)
+void salvarRanking(const string& nome, int &pontos, int dificuldade)
 {
     ofstream arquivoS;
     arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
@@ -206,6 +206,29 @@ void salvarRanking(const string& nome, int &pontos)
 
         arquivoS << "Nome: " << nome <<  endl;
         arquivoS << "Pontuacao: " << pontos <<  endl << endl;
+
+        switch(dificuldade)
+        {
+        case 3:
+        {
+
+            arquivoS << "FACIL" << endl << endl;
+
+
+            break;
+        }
+        case 5:
+        {
+            arquivoS << "Medio" << endl;
+            break;
+        }
+        case 7:
+        {
+            // arquivoS << "Dificil" << endl;
+            break;
+        }
+        }
+
 
 
         arquivoS.close();
@@ -220,18 +243,18 @@ void exibirRanking()
     arquivoE.open("ranking.txt");
     if (arquivoE.is_open())
     {
-        if(linha.empty())
-        {
+
             while (getline(arquivoE, linha))
             {
                 cout << linha << endl;
             }
+            //if(linha){
+                cout << "ja existe facil" << endl;
+            }
 
             arquivoE.close();
-        } else {
-            cout << "banana";
-        }
-    }
+
+
 
 }
 
@@ -272,61 +295,58 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             cin>>dificuldade;
             switch(dificuldade)
             {
-            case 1:
-            {
-                cout << "digite seu nome" << endl;
-                cin >> nome;
+            case 1:{
+                    cout << "digite seu nome" << endl;
+                    cin >> nome;
 
-                pontos=900;
-                dificuldade=3;
-                jogadores facil;
-                facil.nome = nome;
-
+                    pontos=900;
+                    dificuldade=3;
+                    jogadores facil;
+                    facil.nome = nome;
 
 
 
-                Inimigos.resize(dificuldade);
 
 
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
-                return;
-            }
+                    Inimigos.resize(dificuldade);
+
+
+                    PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                    return;
+                }
 
             case 2:
-            {
-                pontos = 600;
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                {
+                    cout << "digite seu nome" << endl;
+                    cin >> nome;
+                    pontos = 600;
 
-                dificuldade=5;
-                cout << "digite seu nome" << endl;
-                cin >> nome;
-                jogadores medio;
-                medio.nome = nome;
-                ofstream arquivoS;
-                arquivoS.open("ranking");
-                arquivoS << "MEDIO" << endl;
-                arquivoS << nome << endl;
-                arquivoS.close();
-                Inimigos.resize(dificuldade);
-                return;
-            }
+                    dificuldade=5;
+
+                    jogadores medio;
+                    medio.nome = nome;
+
+                    PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                    Inimigos.resize(dificuldade);
+
+                    return;
+                }
 
             case 3:
-            {
-                pontos = 400;
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                {
+                    cout << "digite seu nome" << endl;
+                    cin >> nome;
 
-                dificuldade=7;
-                cout << "digite seu nome" << endl;
-                cin >> nome;
-                jogadores dificil;
-                dificil.nome = nome;
-                ofstream arquivoS;
-                arquivoS.open("ranking");
-                arquivoS << "DIFICIL" << endl;
-                arquivoS.close();
+                    pontos = 400;
 
 
+                    dificuldade=7;
+
+                    jogadores dificil;
+                    dificil.nome = nome;
+
+
+PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
                 return;
             }
@@ -866,11 +886,19 @@ int main()
                 cout<<"Parabens voce venceu!"<<endl;
                 if(dificuldade==3)
                 {
-                    ofstream arquivoS;
-                    arquivoS.open("ranking");
-                    arquivoS << pontos << endl;
-                    arquivoS.close();
 
+             salvarRanking(nome,pontos, dificuldade);
+
+                exibirRanking();
+                }else if(dificuldade==5){
+
+                salvarRanking(nome,pontos, dificuldade);
+
+                exibirRanking();
+                }else if(dificuldade==7){
+                salvarRanking(nome,pontos, dificuldade);
+
+                exibirRanking();
 
                 }
                 ///SCORE AQUI, RANK ETC...
@@ -893,6 +921,11 @@ int main()
             case 2:
                 GameContinue = false;
                 ///SCORE AQUI, RANK ETC..
+
+                salvarRanking(nome,pontos, dificuldade);
+
+                exibirRanking();
+
                 return 0;
                 break;
             }
@@ -905,7 +938,7 @@ int main()
             if(dificuldade==3)
             {
 
-                salvarRanking(nome,pontos);
+                salvarRanking(nome,pontos,dificuldade);
 
                 exibirRanking();
 
@@ -913,8 +946,7 @@ int main()
             }
             else if(dificuldade==5)
             {
-
-                salvarRanking(nome,pontos);
+                salvarRanking(nome,pontos,dificuldade);
 
                 exibirRanking();
 
@@ -923,7 +955,7 @@ int main()
             {
 
 
-                salvarRanking(nome,pontos);
+                salvarRanking(nome,pontos,dificuldade);
 
                 exibirRanking();
             }
@@ -946,18 +978,31 @@ int main()
                 break;
             }
         }
-        if(VidaPlayer==0&&Vitorias<1)
+        if(VidaPlayer==0&&Vitorias!=1)
         {
             system("cls");
             cout<<"voce morreu!"<<endl;
             ///SCORE AQUI, RANK ETC...
             if(dificuldade==3)
             {
-                ofstream arquivoS;
-                arquivoS.open("ranking.txt");
-                arquivoS << pontos << endl;
-                arquivoS.close();
-                cout << "oi";
+
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
+
+            }else if(dificuldade==5){
+
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
+
+            }else if(dificuldade==7){
+
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
+
+
             }
             cout<<"Digite [1] para voltar ao menu, [2] para sair:"<<endl;
             cin>>ContinuarJogo;
