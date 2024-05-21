@@ -43,12 +43,12 @@ bool colisaInimigo(int G)  ///COLISAO DO INIMIGO
     return G !=0;
 }
 
-struct ExplosaoBomba
+struct ExplosaoBomba    ///BOMBA
 {
     int xboom, yboom;
 };
 
-void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos)
+void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos)    ///GERA INIMIGO
 {
     srand(time(0));
     for (int i = 0; i < dificuldade; i++)
@@ -57,7 +57,7 @@ void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimi
         {
             int PosicaoAleatoriaY = rand() % 13;
             int PosicaoAleatoriaX = rand() % 27;
-            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0)
+            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0)   ///GERAÇÃO ALEATORIA
             {
                 Inimigos.push_back({PosicaoAleatoriaY, PosicaoAleatoriaX});
                 break;
@@ -66,20 +66,20 @@ void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimi
     }
 }
 
-void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[13][27])
+void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[13][27]) ///MOVIMENTO DO INIMIGO
 {
     int ProbabilidadeMoverParaPlayer = 0;
     if(dificuldade==5)
     {
         ProbabilidadeMoverParaPlayer=50;
     }
-    else if(dificuldade==7)
+    else if(dificuldade==7)                 ///CHANCE DE SE MOVER
     {
         ProbabilidadeMoverParaPlayer=75;
     }
     for(auto &inimigo:Inimigos)
     {
-        int MoverParaPlayer = rand()%100;
+        int MoverParaPlayer = rand()%100;                   ///INIMIGO SE MOVE PARA PLAYER
         if(MoverParaPlayer<ProbabilidadeMoverParaPlayer)
         {
             if(inimigo.xi<J.x)
@@ -113,7 +113,7 @@ void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int
         }
         else
         {
-            int Direcao = rand()%4;
+            int Direcao = rand()%4;             ///MOVIMENTO NORMAL INIMIGO
             switch(Direcao)
             {
             case 0: ///CIMA
@@ -144,7 +144,7 @@ void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int
         }
     }
 }
-void MapaIniciar(int m[13][27])
+void MapaIniciar(int m[13][27])                     ///INICIA O MAPA
 {
     srand(time(0));
     for (int i = 0; i < 13; i++)
@@ -165,13 +165,13 @@ void MapaIniciar(int m[13][27])
             }
         }
     }
-    for (int i = 1; i < 12; i++)
+    for (int i = 1; i < 12; i++)            ///GERA PAREDES ALEATORIAS
     {
         for (int j = 1; j < 26; j++)
         {
             if (m[i][j] == 0 && (rand() % 5 == 0))
             {
-                m[i][j] = 2; // Parede quebrável
+                m[i][j] = 2; /// PAREDE QUEBRAVEL
             }
         }
     }
@@ -181,13 +181,13 @@ void MapaIniciar(int m[13][27])
 }
 
 void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J)
-{
+{   ///FUNCAO INICIAR FASE
     MapaIniciar(m);
     GeracaoInimigo(m, dificuldade, InimigoPosicoes);
     Inimigos.clear();
     for(int i=0; i<dificuldade; i++)
     {
-        Inimigos.push_back({InimigoPosicoes[i].first, InimigoPosicoes[i].second});
+        Inimigos.push_back({InimigoPosicoes[i].first, InimigoPosicoes[i].second});      ///GERA OS INIMIGOS
     }
     J.clear();
     J.push_back({5,5});
@@ -196,7 +196,7 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
 
 
 
-void salvarRanking(const string& nome, int &pontos, int dificuldade)
+void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///FAZER O RANK
 {
     ofstream arquivoS;
     arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
@@ -236,7 +236,7 @@ void salvarRanking(const string& nome, int &pontos, int dificuldade)
 
 }
 
-void exibirRanking()
+void exibirRanking()        ///EXIBE O RANK
 {
     ifstream arquivoE;
     string linha;
@@ -257,7 +257,7 @@ void exibirRanking()
 
 
 void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
-{
+{   ///MENU DO JOGO
     do
     {
         PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
@@ -286,7 +286,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             system("cls");
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
-            cin>>dificuldade;
+            cin>>dificuldade;       ///ESCOLHE DIFICULDADE
             switch(dificuldade)
             {
             case 1:
@@ -390,7 +390,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
     while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer)
+void PowerUps(int &VidaPlayer)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
 {
     int ChancePower;
     ///ChancePower = rand()%6+1;
@@ -406,7 +406,7 @@ void PowerUps(int &VidaPlayer)
     }
 }
 void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, int &NumeroDBombas, int ChanceItem)
-{
+{   ///TIME DA BOMBA
     for (auto &player : J)
     {
         for (const auto &ExplosaoBomba : Explosoes)
@@ -423,7 +423,7 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
         {
             if(m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]==2)
             {
-                ChanceItem = rand()%100+1;
+                ChanceItem = rand()%100+1;  ///CHANCE DE VIR ITEM
                 switch(dificuldade)
                 {
                 case 3:
@@ -460,7 +460,7 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
                     break;
                 }
             }
-            if(inimigo.xi == ExplosaoBomba.xboom && inimigo.yi == ExplosaoBomba.yboom)
+            if(inimigo.xi == ExplosaoBomba.xboom && inimigo.yi == ExplosaoBomba.yboom)  ///INIMIGO MORRE
             {
                 inimigo.xi=-1;
                 inimigo.yi=-1;
@@ -491,7 +491,7 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
     YB=-3;
 }
 
-bool verificaJogadorInimigo(player &J, vector<inimigo> &Inimigos)
+bool verificaJogadorInimigo(player &J, vector<inimigo> &Inimigos)   ///VERIFICA A COLISAO COM O INIMIGO
 {
     for (const auto &inimigo : Inimigos)
     {
@@ -506,7 +506,7 @@ bool verificaJogadorInimigo(player &J, vector<inimigo> &Inimigos)
 int main()
 {
     using namespace chrono;
-    milliseconds TempoAnimacao(500);
+    milliseconds TempoAnimacao(500);        ///UNIDADES DE TEMPO
     milliseconds TempoInimigo (500);
     milliseconds BombaTimer   (3000);
     auto InicioBomba = chrono::high_resolution_clock::now();
@@ -586,7 +586,7 @@ int main()
     system("cls");
 
     auto inicio = steady_clock::now();
-    while(GameContinue)
+    while(GameContinue)     ///JOGO COMEÇA AQUI
     {
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -665,7 +665,7 @@ int main()
                         contcima+= c;
                         c++;
                         movimentos++;
-                        movimento_valido = true;
+                        movimento_valido = true;        ///POTUAÇÃO SENDO ACUMULADA
                     }
                     while(false);
                 }
@@ -812,10 +812,10 @@ int main()
         {
             auto TempoBombaAgora = chrono::high_resolution_clock::now();
             auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-            if(BombaPassou>=BombaTimer)
+            if(BombaPassou>=BombaTimer) ///TEMPO DA BOMBA
             {
                 BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
-                InicioBomba=TempoBombaAgora;
+                InicioBomba=TempoBombaAgora;    ///RECEBE O TEMPO ATUAL
             }
         }
 
@@ -824,7 +824,7 @@ int main()
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer);
+            PowerUps(VidaPlayer); ///VIDA
         }
 
 
@@ -848,7 +848,7 @@ int main()
             }
         }
 
-
+            ///INFORMAÇÕES NA TELA
         auto final = steady_clock::now();
         auto tempo = final - inicio;
         cout << " _________________________________________________________________" << endl;
@@ -861,7 +861,7 @@ int main()
 
         if(InimigosVivos==0)
         {
-            if(Vitorias==3)
+            if(Vitorias==3) ///GANHAR O JOGO
             {
                 GameContinue=false;
                 cout<<"Parabens voce venceu!"<<endl;
@@ -896,7 +896,7 @@ int main()
             cin>>ContinuarJogo;
             switch(ContinuarJogo)
             {
-            case 1:
+            case 1: 
                 system("cls");
                 Vitorias+=1;
                 VidaPlayer+=1;
@@ -916,7 +916,7 @@ int main()
             }
 
         }
-        if(VidaPlayer==0&&Vitorias==1)
+        if(VidaPlayer==0&&Vitorias==1) ///DERROTA
         {
             system("cls");
             cout<<"Voce perdeu!"<<endl;
