@@ -194,6 +194,30 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
     J.push_back({5,5});
 }
 
+
+void salvarRanking(const string& nome, int pontos) {
+    ofstream arquivoS;
+    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
+    if (arquivoS.is_open()) {
+        arquivoS << "Nome: " << nome << endl;
+        arquivoS << "Pontuacao: " << pontos <<  endl;
+        arquivoS.close();
+    }
+}
+
+void exibirRanking() {
+    ifstream arquivoE;
+    string linha;
+    arquivoE.open("ranking.txt");
+    if (arquivoE.is_open()) {
+        while (getline(arquivoE, linha)) {
+            cout << linha << endl;
+        }
+        arquivoE.close();}}
+
+
+
+
 void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
 {
     do
@@ -500,6 +524,7 @@ int main()
 
     bool GameContinue = true;
 
+
     int m[13][27];
     int Vitorias=1;
     int dificuldade;
@@ -539,6 +564,11 @@ int main()
     int contesquerda;
     int pontos;
     string nome;
+
+          salvarRanking(nome, pontos);
+              exibirRanking();
+
+
     int menu = 0;
     ///ITENS
     char item           (134);
@@ -872,28 +902,12 @@ int main()
             cout<<"Voce perdeu!"<<endl;
             if(dificuldade==3)
             {
-                ofstream arquivoS;
-                arquivoS.open("ranking.txt");
-                arquivoS << "FACIL"<< endl;
 
-                arquivoS << pontos << endl;
-                arquivoS<< nome<< endl << endl;
-                                arquivoS << "MEDIO"<< endl << endl;
-                                                arquivoS << "DIFICIL"<< endl;
+            salvarRanking(nome,pontos);
+            exibirRanking();
+                        salvarRanking(nome,pontos);
+                        exibirRanking;
 
-
-
-                arquivoS.close();
-
-                ifstream arquivoE;
-                string linha;
-                arquivoE.open("ranking.txt");
-                if(arquivoE.is_open()){
-                    while(getline(arquivoE, linha)){
-                        cout << linha << endl;
-                    }
-                }
-                arquivoE.close();
 
 
 
