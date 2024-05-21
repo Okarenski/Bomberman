@@ -235,11 +235,26 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 jogadores facil;
                 facil.nome = nome;
                 ofstream arquivoS;
-                arquivoS.open("ranking");
+                arquivoS.open("ranking.txt");
                 //arquivoS << "FACIL" << endl;
                 arquivoS << nome << endl;
 
                 arquivoS.close();
+
+                ifstream arquivoE;
+                string linha;
+                arquivoE.open("ranking.txt");
+                if(arquivoE.is_open()){
+                    while(getline(arquivoE, linha)){
+                        cout << linha << endl;
+                    }
+                }
+                arquivoE.close();
+
+
+                arquivoS.open("ranking.txt");
+                arquivoS.close();
+
 
 
 
@@ -851,14 +866,14 @@ int main()
             }
 
         }
-        if(VidaPlayer==0&&Vitorias>=1)
+        if(VidaPlayer==0&&Vitorias==1)
         {
             system("cls");
             cout<<"Voce perdeu!"<<endl;
             if(dificuldade==3)
             {
                 ofstream arquivoS;
-                arquivoS.open("ranking");
+                arquivoS.open("ranking.txt");
                 arquivoS << "FACIL"<< endl;
 
                 arquivoS << pontos << endl;
@@ -869,6 +884,24 @@ int main()
 
 
                 arquivoS.close();
+
+                ifstream arquivoE;
+                string linha;
+                arquivoE.open("ranking.txt");
+                if(arquivoE.is_open()){
+                    while(getline(arquivoE, linha)){
+                        cout << linha << endl;
+                    }
+                }
+                arquivoE.close();
+
+
+
+
+
+
+
+
 
             }
             cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
@@ -898,7 +931,7 @@ int main()
             if(dificuldade==3)
             {
                 ofstream arquivoS;
-                arquivoS.open("ranking");
+                arquivoS.open("ranking.txt");
                 arquivoS << pontos << endl;
                 arquivoS.close();
                 cout << "oi";
