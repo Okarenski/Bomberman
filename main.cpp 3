@@ -420,7 +420,7 @@ void PowerUps(int &VidaPlayer)
 {
     int ChancePower;
     ///ChancePower = rand()%6+1;
-    ChancePower = 2;
+    ChancePower = 1;
     switch(ChancePower)
     {
     case 1:
@@ -517,6 +517,14 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
     YB=-3;
 }
 
+bool verificaJogadorInimigo(player &J, vector<inimigo> &Inimigos) {
+    for (const auto &inimigo : Inimigos) {
+        if (J.x == inimigo.xi && J.y == inimigo.yi) {
+            return true;
+        }
+    }
+    return false;
+}
 
 int main()
 {
@@ -857,16 +865,14 @@ int main()
             MovimentoInimigo(Inimigos,J[0],dificuldade,m);
         }
 
-        for(auto &player:J)  ///VERIFICAÇÃO DE VITORIA DO JOGO
-        {
-            for(auto &inimigo:Inimigos)
-            {
-                if(inimigo.xi==player.x&&inimigo.yi==player.y)
-                {
-                    VidaPlayer--;
-                }
+        if (verificaJogadorInimigo(J[0], Inimigos)) {
+            VidaPlayer--;
+        if (VidaPlayer > 0) {
+            /// RENICIAR A FASE AO PERDER VIDA
+            IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
             }
         }
+
 
         auto final = steady_clock::now();
         auto tempo = final - inicio;
@@ -875,7 +881,7 @@ int main()
         cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
         cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
         cout << "                                                                  " << endl;
-        cout << " BOMBAS USADAS: " << contagem << "       ITENS PEGOS:             " << endl;
+        cout << " BOMBAS USADAS: " << contagem << "       VIDAS:"<<VidaPlayer        << endl;
         cout << "__________________________________________________________________" << endl;
 
         if(InimigosVivos==0)
