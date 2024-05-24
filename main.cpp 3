@@ -516,7 +516,7 @@ int main()
     using namespace chrono;
     milliseconds TempoAnimacao(500);        ///UNIDADES DE TEMPO
     milliseconds TempoInimigo (500);
-    milliseconds BombaTimer   (4000);
+    milliseconds BombaTimer   (3500);
     auto InicioBomba = steady_clock::now();
     auto Inicio = steady_clock::now();
     auto final = steady_clock::now();
@@ -586,7 +586,7 @@ int main()
     int ChanceItem;
     bool NumeroDBombas = false;
     bool BombaColocada = false;
-    bool BombaRelogio = false;
+    bool BombaRelogio  = false;
 
     ///MENU
     MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
