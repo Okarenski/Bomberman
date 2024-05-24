@@ -398,35 +398,42 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
     while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer, auto &BombaRelogio)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
+void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
 {
     int ChancePower;
     ///ChancePower = rand()%6+1;
-    ChancePower = 2;
+    ChancePower = 3;
     switch(ChancePower)
     {
-    case 1:
+    case 1: ///VIDA EXTRA
         if(VidaPlayer<=3)
         {
-            VidaPlayer++;       ///VIDA EXTRA
+            VidaPlayer++;
         }
         break;
-    case 2:
+    case 2: ///BOMBA RELOGIO
         BombaRelogio=true;
         break;
+    case 3: ///SOBREVIVE A BOMBA
+        ImuneBomba = true;
+        break;
+
 
     }
 }
-void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem)
+void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem, bool ImuneBomba)
 {   ///TIME DA BOMBA
     for (auto &player : J)
     {
         for (const auto &ExplosaoBomba : Explosoes)
         {
-            if (player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom)  ///IMPLEMENTAR ALGO PARA PLAYER MORRER QUANDO FICAR EM CIMA DA BOMBA
+            if (ImuneBomba==false&& player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom)
             {
                 VidaPlayer--;
             }
+        }
+        if(ImuneBomba==false&& m[player.x][player.y]==3){
+            VidaPlayer--;
         }
     }
     for(auto &inimigo:Inimigos)
@@ -592,6 +599,7 @@ int main()
     bool BombaColocada = false;
     bool BombaRelogio  = false;
     bool AtivarBomba   = false;
+    bool ImuneBomba    = false;
 
 
     ///MENU
@@ -845,7 +853,7 @@ int main()
                 InicioBomba=TempoBombaAgora;    ///RECEBE O TEMPO ATUAL
                 BombaColocada=false;
                 AtivarBomba=false;
-                BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
+                BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem, ImuneBomba);
 
             }
             }
@@ -855,7 +863,7 @@ int main()
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer, BombaRelogio); ///VIDA
+            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba); ///VIDA
         }
 
 
