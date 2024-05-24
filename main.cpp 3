@@ -398,11 +398,11 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
     while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
+void PowerUps(int &VidaPlayer, auto &BombaRelogio)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
 {
     int ChancePower;
     ///ChancePower = rand()%6+1;
-    ChancePower = 1;
+    ChancePower = 2;
     switch(ChancePower)
     {
     case 1:
@@ -411,6 +411,10 @@ void PowerUps(int &VidaPlayer)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
             VidaPlayer++;       ///VIDA EXTRA
         }
         break;
+    case 2:
+        BombaRelogio=true;
+        break;
+
     }
 }
 void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem)
@@ -587,6 +591,8 @@ int main()
     bool NumeroDBombas = false;
     bool BombaColocada = false;
     bool BombaRelogio  = false;
+    bool AtivarBomba   = false;
+
 
     ///MENU
     MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
@@ -785,6 +791,14 @@ int main()
                     Explosoes.push_back({XB,YB+1}); ///DIREITA
                 }
                 break;
+            case 89:
+            case 'q': ///BOMBA RELOGIO
+                if(BombaRelogio==true){
+                    InicioBomba = steady_clock::now();
+                    AtivarBomba = true;
+                    BombaColocada=true;
+                }
+                break;
 
             }
             if(movimento_valido)
@@ -822,13 +836,15 @@ int main()
 
         }
             ///CHAMA O TIMER DA BOMBA
-            if(NumeroDBombas==true&&BombaColocada==true){
+            if((BombaRelogio==false)||(BombaRelogio==true&&BombaColocada==true)){
             auto TempoBombaAgora = steady_clock::now();
             auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-            if(BombaPassou>BombaTimer)
+
+            if(BombaPassou>BombaTimer||AtivarBomba==true)
             {
                 InicioBomba=TempoBombaAgora;    ///RECEBE O TEMPO ATUAL
                 BombaColocada=false;
+                AtivarBomba=false;
                 BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
 
             }
@@ -839,7 +855,7 @@ int main()
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer); ///VIDA
+            PowerUps(VidaPlayer, BombaRelogio); ///VIDA
         }
 
 
