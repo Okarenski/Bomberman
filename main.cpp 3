@@ -180,7 +180,7 @@ void MapaIniciar(int m[13][27])                     ///INICIA O MAPA
     m[5][5] = 0;
 }
 
-void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J)
+void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J, auto &final)
 {   ///FUNCAO INICIAR FASE
     MapaIniciar(m);
     GeracaoInimigo(m, dificuldade, InimigoPosicoes);
@@ -191,6 +191,7 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
     }
     J.clear();
     J.push_back({5,5});
+
 }
 
 
@@ -515,9 +516,10 @@ int main()
     using namespace chrono;
     milliseconds TempoAnimacao(500);        ///UNIDADES DE TEMPO
     milliseconds TempoInimigo (500);
-    milliseconds BombaTimer   (3000);
+    milliseconds BombaTimer   (4000);
     auto InicioBomba = steady_clock::now();
     auto Inicio = steady_clock::now();
+    auto final = steady_clock::now();
 
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
     //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
@@ -583,12 +585,13 @@ int main()
     char item           (134);
     int ChanceItem;
     bool NumeroDBombas = false;
-    bool MultiplasBombas = false;
+    bool BombaColocada = false;
+    bool BombaRelogio = false;
 
     ///MENU
     MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
     InimigosVivos = Inimigos.size();
-    IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+    IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
 
     system("cls");
 
@@ -755,12 +758,16 @@ int main()
 
             case 'e': ///bomba
 
-                if(NumeroDBombas==false)
+                if(!NumeroDBombas)
                 {
                     NumeroDBombas=true;
                     XB=J[0].x;
                     YB=J[0].y;
                     m[XB][YB]=3;
+                    if(BombaRelogio==false){
+                        InicioBomba = steady_clock::now();
+                        BombaColocada=true;
+                    }
                     do
                     {
                         int b = 1;
@@ -814,17 +821,18 @@ int main()
             }
 
         }
-
-//        if(NumeroDBombas==true)    ///BOMBA
-//        {
+            ///CHAMA O TIMER DA BOMBA
+            if(NumeroDBombas==true&&BombaColocada==true){
             auto TempoBombaAgora = steady_clock::now();
             auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-            if(BombaPassou>BombaTimer) ///TEMPO DA BOMBA
+            if(BombaPassou>BombaTimer)
             {
                 InicioBomba=TempoBombaAgora;    ///RECEBE O TEMPO ATUAL
+                BombaColocada=false;
                 BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
+
             }
-//        }
+            }
 
 
 
@@ -854,7 +862,7 @@ int main()
         }
 
             ///INFORMAÇÕES NA TELA
-        auto final = steady_clock::now();
+        final = steady_clock::now();
         auto tempo = final - inicio;
         cout << " _________________________________________________________________" << endl;
         cout << "                         PONTUACAO:" << pontos                   << endl;
@@ -906,7 +914,7 @@ int main()
                 Vitorias+=1;
                 VidaPlayer+=1;
                 InimigosVivos = Inimigos.size();
-                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
                 break;
             case 2:
                 GameContinue = false;
@@ -958,9 +966,8 @@ int main()
                 GameContinue = true;
                 MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
                 VidaPlayer+=1;
-
                 InimigosVivos = Inimigos.size();
-                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
                 break;
             case 2:
                 GameContinue = false;
@@ -1010,7 +1017,7 @@ int main()
                 VidaPlayer+=1;
 
                 InimigosVivos = Inimigos.size();
-                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
                 break;
             case 2:
                 GameContinue = false;
