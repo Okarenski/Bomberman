@@ -1,263 +1,1152 @@
+/**
+    Estrutura inicial para um jogo
+    versão: 0.1 (Prof. Alex,  Adaptado Prof. Felski)
+*/
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
 #include <vector>
 #include <chrono>
-#include <algorithm>
+#include <mmsystem.h>
+#include <fstream>
 
 using namespace std;
+using namespace std::chrono;
 
-struct player {
-    int x, y;
+struct player
+{
+    int x,y;
 };
 
-struct inimigo {
-    int xi, yi;
-    bool alive; // Flag para verificar se o inimigo está vivo
+struct inimigo
+{
+    int xi,yi;
 };
 
-bool colisao(int p) {
-    return p == 0;
+
+struct pontuacao
+{
+    int pontos;
+    string nome;
+};
+
+
+vector<pontuacao> ler_pontos(const string & filename)        ///le pontuacoes do arquivo
+{
+    vector<pontuacao>pontuacoes;
+    ifstream file(filename);
+
+    if (file.is_open())
+    {
+        pontuacao dados;
+        while (file >> dados.nome >> dados.pontos)
+        {
+            if(file.fail())
+            {
+                cout << "arquivo vazio" << endl;
+                break;
+
+            }
+            pontuacoes.push_back(dados);
+
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "erro para ler o arquivo" << endl;
+
+    }
+    return pontuacoes;
 }
 
-bool isEnemyAtPosition(int x, int y, const vector<inimigo> &Inimigos) {
-    for (const auto &enemy : Inimigos) {
-        if (enemy.xi == x && enemy.yi == y && enemy.alive) {
+void salvarRanking(const vector<pontuacao> & pontuacoes, const string & filename)        ///envia a pontuacao para o arquivo
+{
+    ofstream file;
+    file.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
+    if (file.is_open())
+
+    {
+        for(const pontuacao&dados : pontuacoes)
+        {
+            file << dados.nome << " " << dados.pontos << endl;
+            if(file.fail())
+            {
+
+                cout << "Erro ao salvar pontuações no arquivo." << endl;
+                break;
+
+            }
+
+        }
+
+        file.close();
+
+    }
+    else
+    {
+
+        cout << "Erro ao abrir o arquivo para escrita." << endl;
+
+    }
+
+}
+
+///recursividade
+
+void recursividade(vector<pontuacao> & pontuacoes, const pontuacao& pontuacao_atual, int indice)
+{
+
+    if(indice>=pontuacoes.size() || pontuacoes[indice].pontos <pontuacao_atual.pontos)
+    {
+
+
+        pontuacoes.insert(pontuacoes.begin()+indice, pontuacao_atual);
+        return;
+    }
+
+    recursividade(pontuacoes, pontuacao_atual, indice+1);
+
+}
+
+void atualizar_pontuacao(vector<pontuacao>&pontuacoes, const string & nome, int pontos)
+{
+
+   pontuacao  pontuacao_atual = {nome, pontos};
+    recursividade(pontuacoes, pontuacao_atual, 0);
+
+}
+
+void exibirRanking(const vector<pontuacao>&pontuacoes)
+{
+    if(pontuacoes.empty())
+    {
+        cout << "ranking vazio" << endl;
+    }
+    else
+    {
+        cout << "RANKING" << endl;
+        for(size_t i=0; i< pontuacoes.size(); ++i)
+        {
+            cout << i + 1 << " " << pontuacoes[i]. nome << " " << pontuacoes[i].pontos << endl;
+        }
+
+    }
+
+}
+
+
+
+struct PowerUPS
+{
+    int ExtraVida;
+};
+bool colisao(int p)  ///COLISAO
+{
+    return p == 0 || p == 5;
+}
+bool colisaInimigo(int G)  ///COLISAO DO INIMIGO
+{
+    return G !=0;
+}
+
+struct ExplosaoBomba    ///BOMBA
+{
+    int xboom, yboom;
+};
+
+void GeracaoInimigo(int m[13][27], int dificuldade, vector<pair<int,int>> &Inimigos)    ///GERA INIMIGO
+{
+    srand(time(0));
+    for (int i = 0; i < dificuldade; i++)
+    {
+        while (true)
+        {
+            int PosicaoAleatoriaY = rand() % 13;
+            int PosicaoAleatoriaX = rand() % 27;
+            if (m[PosicaoAleatoriaY][PosicaoAleatoriaX] == 0)   ///GERAÇÃO ALEATORIA
+            {
+                Inimigos.push_back({PosicaoAleatoriaY, PosicaoAleatoriaX});
+                break;
+            }
+        }
+    }
+}
+
+void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int m[13][27]) ///MOVIMENTO DO INIMIGO
+{
+    int ProbabilidadeMoverParaPlayer = 0;
+    if(dificuldade==5)
+    {
+        ProbabilidadeMoverParaPlayer=50;
+    }
+    else if(dificuldade==7)                 ///CHANCE DE SE MOVER
+    {
+        ProbabilidadeMoverParaPlayer=75;
+    }
+    for(auto &inimigo:Inimigos)
+    {
+        int MoverParaPlayer = rand()%100;                   ///INIMIGO SE MOVE PARA PLAYER
+        if(MoverParaPlayer<ProbabilidadeMoverParaPlayer)
+        {
+            if(inimigo.xi<J.x)
+            {
+                if(!colisaInimigo(m[inimigo.xi+1][inimigo.yi]))
+                {
+                    inimigo.xi++;
+                }
+            }
+            else if(inimigo.xi>J.x)
+            {
+                if(!colisaInimigo(m[inimigo.xi-1][inimigo.yi]))
+                {
+                    inimigo.xi--;
+                }
+            }
+            if(inimigo.yi<J.y)
+            {
+                if(!colisaInimigo(m[inimigo.xi][inimigo.yi+1]))
+                {
+                    inimigo.yi++;
+                }
+            }
+            else if(inimigo.yi>J.y)
+            {
+                if(!colisaInimigo(m[inimigo.xi][inimigo.yi-1]))
+                {
+                    inimigo.yi--;
+                }
+            }
+        }
+        else
+        {
+            int Direcao = rand()%4;             ///MOVIMENTO NORMAL INIMIGO
+            switch(Direcao)
+            {
+            case 0: ///CIMA
+                if(!colisaInimigo(m[inimigo.xi - 1][inimigo.yi]))
+                {
+                    inimigo.xi--;
+                }
+                break;
+            case 1: ///BAIXO
+                if (!colisaInimigo(m[inimigo.xi + 1][inimigo.yi]))
+                {
+                    inimigo.xi++;
+                }
+                break;
+            case 2: ///ESQUERDA
+                if (!colisaInimigo(m[inimigo.xi][inimigo.yi - 1]))
+                {
+                    inimigo.yi--;
+                }
+                break;
+            case 3: ///BAIXO
+                if (!colisaInimigo(m[inimigo.xi][inimigo.yi + 1]))
+                {
+                    inimigo.yi++;
+                }
+                break;
+            }
+        }
+    }
+}
+void MapaIniciar(int m[13][27])                     ///INICIA O MAPA
+{
+    srand(time(0));
+    for (int i = 0; i < 13; i++)
+    {
+        for (int j = 0; j < 27; j++)
+        {
+            if (i == 0 || i == 12 || j == 0 || j == 26)
+            {
+                m[i][j] = 1;
+            }
+            else if ((i % 2 == 0) && (j % 2 == 0))
+            {
+                m[i][j] = 1;
+            }
+            else
+            {
+                m[i][j] = 0;
+            }
+        }
+    }
+    for (int i = 1; i < 12; i++)            ///GERA PAREDES ALEATORIAS
+    {
+        for (int j = 1; j < 26; j++)
+        {
+            if (m[i][j] == 0 && (rand() % 5 == 0))
+            {
+                m[i][j] = 2; /// PAREDE QUEBRAVEL
+            }
+        }
+    }
+    m[1][1] = 0;
+    m[1][2] = 0;
+    m[5][5] = 0;
+}
+
+void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J, auto &final)
+{   ///FUNCAO INICIAR FASE
+    MapaIniciar(m);
+    GeracaoInimigo(m, dificuldade, InimigoPosicoes);
+    Inimigos.clear();
+    for(int i=0; i<dificuldade; i++)
+    {
+        Inimigos.push_back({InimigoPosicoes[i].first, InimigoPosicoes[i].second});      ///GERA OS INIMIGOS
+    }
+    J.clear();
+    J.push_back({5,5});
+
+}
+
+
+
+
+void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///FAZER O RANK
+{
+    ofstream arquivoS;
+    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
+    if (arquivoS.is_open())
+
+    {
+
+
+
+        switch(dificuldade)
+        {
+        case 3:
+        {
+
+            arquivoS << "FACIL" << endl << endl;
+
+
+            break;
+        }
+        case 5:
+        {
+            arquivoS << "MEDIO" << endl;
+            break;
+        }
+        case 7:
+        {
+            arquivoS << "DIFICIL" << endl;
+            break;
+        }
+
+
+        }
+        arquivoS << "Nome: " << nome <<  endl;
+        arquivoS << "Pontuacao: " << pontos <<  endl << endl;
+        arquivoS.close();
+    }
+
+}
+
+void exibirRanking()        ///EXIBE O RANK
+{
+    ifstream arquivoE;
+    string linha;
+    arquivoE.open("ranking.txt");
+    if (arquivoE.is_open())
+    {
+
+        while (getline(arquivoE, linha))
+        {
+            cout << linha << endl;
+
+
+
+        }
+        arquivoE.close();
+    }
+}
+
+
+void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
+{   ///MENU DO JOGO
+    do
+    {
+        PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+        system ("cls");
+        cout << " _______  _______  __   __  _______  _______  ______    __   __  _______  __    _ \n"
+             "|  _    ||       ||  |_|  ||  _    ||       ||    _ |  |  |_|  ||   _   ||  |  | |\n"
+             "| |_|   ||   _   ||       || |_|   ||    ___||   | ||  |       ||  |_|  ||   |_| |\n"
+             "|       ||  | |  ||       ||       ||   |___ |   |_||_ |       ||       ||       |\n"
+             "|  _   | |  |_|  ||       ||  _   | |    ___||    __  ||       ||       ||  _    |\n"
+             "| |_|   ||       || ||_|| || |_|   ||   |___ |   |  | || ||_|| ||   _   || | |   |\n"
+             "|_______||_______||_|   |_||_______||_______||___|  |_||_|   |_||__| |__||_|  |__|\n";
+
+
+        cout <<"                          ______________________________ " << endl;
+        cout << "                         |         1 - COMECAR          |" << endl;
+        cout << "                         |         2 - TUTORIAL         |" << endl;
+        cout << "                         |         3 - PONTUACAO        |" << endl;
+        cout << "                         |         4 - SAIR             |" << endl;
+        cout << "                         |                              |" << endl;
+        cout << "                         |______________________________|" << endl;
+        cin >> menu;
+        switch(menu)
+        {
+        case 1:
+            PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+            system("cls");
+            cout <<"selecione a dificuldade:" << endl;
+            cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
+            cin>>dificuldade;       ///ESCOLHE DIFICULDADE
+            if(dificuldade<1||dificuldade>3){
+                do{
+                cout<<"Opcao invalida! por favor digite novamente."<<endl;
+                cin>>dificuldade;
+                } while(dificuldade<1||dificuldade>3);
+            }
+            switch(dificuldade)
+            {
+            case 1:
+            {
+                cout << "digite seu nome" << endl;
+                cin >> nome;
+
+                pontos=900;
+                dificuldade=3;
+
+                Inimigos.resize(dificuldade);
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                return;
+            }
+
+            case 2:
+            {
+                cout << "digite seu nome" << endl;
+                cin >> nome;
+
+                pontos = 600;
+                dificuldade=5;
+
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                Inimigos.resize(dificuldade);
+
+                return;
+            }
+
+            case 3:
+            {
+                cout << "digite seu nome" << endl;
+                cin >> nome;
+                pontos = 400;
+                dificuldade=7;
+
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                Inimigos.resize(dificuldade);
+                return;
+            }
+            default:
+                cout<<"Opcao invalida!"<<endl;
+
+            }
+            break;
+        case 2:
+            system ("cls");
+            //"Tutorial
+            cout << "Objetivo:\n";
+            cout << "Seu objetivo principal e limpar cada mapa de todos os inimigos, utilizando suas bombas de forma inteligente.\n\n";
+            cout << "Controles:\n";
+            cout << "- Utilize as teclas:\n";
+            cout << "  - W: Movimento para cima\n";
+            cout << "  - A: Movimento para a esquerda\n";
+            cout << "  - S: Movimento para baixo\n";
+            cout << "  - D: Movimento para a direita\n";
+            cout << "  - E: Colocar uma bomba\n\n";
+            cout << "Como Jogar:\n";
+            cout << "1. Explosoes: Quando uma bomba explode, ela causa danos em um raio ao seu redor. Tenha cuidado para nao ser pego na explosao!\n";
+            cout << "2. Destrua Paredes: Algumas paredes podem ser destruidas pelas explosoes das bombas.\n";
+            cout << "3. Voce pode encontrar itens especiais que aumentam o alcance de suas bombas ou concedem poderes adicionais.\n";
+            cout << "4. Inimigos: Enfrente os inimigos pelo caminho, evitando suas investidas e utilizando suas bombas de forma estrategica para elimina-los.\n";
+            cout << "5. Mapas: Avance atraves dos mapas, enfrentando inimigos cada vez mais desafiadores, ate chegar ao ultimo mapa e derrotar o chefao final.\n\n";
+            system("pause");
+            break;
+        case 3:
+            system("cls");
+
+            cout << "PONTUACAO: " << endl;
+            // Fácil
+            cout << "FACIL" << endl;
+            cout << "No modo facil o jogador inicia com 900 pontos \n"
+                 << "A cada movimento retira-se 1 ponto da pontuacao total\n"
+                 << "A cada bomba colocada retira-se 1 ponto da pontuacao total\n"
+                 << "A cada inimigo abatido soma-se 3 pontos na pontuacao total\n\n";
+
+            // Medio
+            cout << "MEDIO" << endl;
+            cout << "No modo medio o jogador inicia com 600 pontos \n"
+                 << "A cada movimento retira-se 3 pontos da pontuacao total\n"
+                 << "A cada bomba colocada retira-se 3 pontos da pontuacao total\n"
+                 << "A cada inimigo abatido soma-se 5 pontos na pontuacao total\n\n";
+
+            // Dificil
+            cout << "DIFICIL" << endl;
+            cout << "No modo dificil o jogador inicia com 400 pontos \n"
+                 << "A cada movimento retira-se 7 pontos da pontuacao total\n"
+                 << "A cada bomba colocada retira-se 7 pontos da pontuacao total\n"
+                 << "A cada inimigo abatido soma-se 10 pontos na pontuacao total\n";
+            system("pause");
+            break;
+
+        case 4:
+            exit(0);
+            break;
+        default:
+            cout<<"Opcao invalida!"<<endl;
+        }
+    }
+    while (menu!=1);
+}
+
+void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
+{
+    int ChancePower;
+    ///ChancePower = rand()%6+1;
+    ChancePower = 3;
+    switch(ChancePower)
+    {
+    case 1: ///VIDA EXTRA
+        if(VidaPlayer<=3)
+        {
+            VidaPlayer++;
+        }
+        break;
+    case 2: ///BOMBA RELOGIO
+        BombaRelogio=true;
+        break;
+    case 3: ///SOBREVIVE A BOMBA
+        ImuneBomba = true;
+        break;
+
+
+    }
+}
+void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem, bool ImuneBomba)
+{   ///TIME DA BOMBA
+    for (auto &player : J)
+    {
+        for (const auto &ExplosaoBomba : Explosoes)
+        {
+            if (ImuneBomba==false&& player.x == ExplosaoBomba.xboom && player.y == ExplosaoBomba.yboom)
+            {
+                VidaPlayer--;
+            }
+        }
+        if(ImuneBomba==false&& m[player.x][player.y]==3){
+            VidaPlayer--;
+        }
+    }
+    for(auto &inimigo:Inimigos)
+    {
+        for(const auto& ExplosaoBomba : Explosoes)
+        {
+            if(m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]==2)
+            {
+                ChanceItem = rand()%100+1;  ///CHANCE DE VIR ITEM
+                switch(dificuldade)
+                {
+                case 3:
+                    if(ChanceItem>=25)
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
+                    }
+                    else
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
+                    }
+                    break;
+
+                case 5:
+                    if(ChanceItem<=25)
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
+                    }
+                    else
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
+                    }
+                    break;
+
+                case 7:
+                    if(ChanceItem<=10)
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=5;
+                    }
+                    else
+                    {
+                        m[ExplosaoBomba.xboom][ExplosaoBomba.yboom]=0;
+                    }
+                    break;
+                }
+            }
+            if(inimigo.xi == ExplosaoBomba.xboom && inimigo.yi == ExplosaoBomba.yboom)  ///INIMIGO MORRE
+            {
+                inimigo.xi=-1;
+                inimigo.yi=-1;
+                InimigosVivos--;
+                bool verificacao_inimigos = true;
+                if(verificacao_inimigos)
+                {
+                    if(dificuldade==3)
+                    {
+                        pontos+=2;
+
+                    }
+                    else if(dificuldade==5)
+                    {
+                        pontos+=3;
+                    }
+                    else if(dificuldade==7)
+                    {
+                        pontos+=5;
+                    }
+                }
+            }
+        }
+    }
+    NumeroDBombas=false;
+    m[XB][YB]=0;
+    XB=-3;
+    YB=-3;
+}
+
+bool verificaJogadorInimigo(player &J, vector<inimigo> &Inimigos)   ///VERIFICA A COLISAO COM O INIMIGO
+{
+    for (const auto &inimigo : Inimigos)
+    {
+        if (J.x == inimigo.xi && J.y == inimigo.yi)
+        {
             return true;
         }
     }
     return false;
 }
 
-struct ExplosaoBomba {
-    int xboom, yboom;
-};
-
-void initializeMap(int m[13][27]) {
-    for (int i = 0; i < 13; i++) {
-        for (int j = 0; j < 27; j++) {
-            if (i == 0 || i == 12 || j == 0 || j == 26) {
-                m[i][j] = 1;
-            } else if ((i % 2 == 0) && (j % 2 == 0)) {
-                m[i][j] = 1;
-            } else {
-                if (rand() % 5 == 0) {
-                    m[i][j] = 2;
-                } else {
-                    m[i][j] = 0;
-                }
-            }
-        }
-    }
-}
-
-void resetGame(player &J, vector<inimigo> &Inimigos, int m[13][27]) {
-    J.x = 6;
-    J.y = 13;
-    initializeMap(m);
-    Inimigos = {
-        {1, 1, true}, {1, 25, true}, {11, 1, true}, {11, 25, true}, {6, 13, true}, {1, 13, true}, {11, 13, true}
-    };
-}
-
-int main() {
+int main()
+{
     using namespace chrono;
-    milliseconds TempoInimigo(500);
-    milliseconds BombaTimer(2000);
-    auto InicioBomba = high_resolution_clock::now();
-    auto Inicio = high_resolution_clock::now();
+    milliseconds TempoAnimacao(500);        ///UNIDADES DE TEMPO
+    milliseconds TempoInimigo (500);
+    milliseconds BombaTimer   (3500);
+    auto InicioBomba = steady_clock::now();
+    auto Inicio = steady_clock::now();
+    auto final = steady_clock::now();
 
+    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
+    //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cursorInfo;
+    CONSOLE_CURSOR_INFO     cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
-    cursorInfo.bVisible = false;
+    cursorInfo.bVisible = false; // set the cursor visibility
     SetConsoleCursorInfo(out, &cursorInfo);
+    //FIM: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
 
-    short int CX = 0, CY = 0;
+    //INICIO: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
+    short int CX=0, CY=0;
     COORD coord;
     coord.X = CX;
     coord.Y = CY;
+    //FIM: COMANDOS PARA REPOSICIONAR O CURSOR NO INICIO DA TELA
+    ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, ACIMA.
 
+    bool GameContinue = true;
     int m[13][27];
-    initializeMap(m);
+    int Vitorias=1;
+    int dificuldade;
+    int ContinuarJogo;
+    ///Bomba
+    int XB=-3;
+    int YB=-3;
+    ///inimigo
+    char enemy  (041);
+    vector <inimigo> Inimigos;
+    vector<pair<int,int>> InimigoPosicoes;
+    int InimigosVivos;
 
-    player J = {6, 13};
-    m[J.x][J.y] = 0;
+    ///Posicao inicial do personagem no console
+    vector <player> J;
+    J.push_back({5,5}); ///player 1
+    ///J.push_back({5,4}); ///player 2
 
-    vector<inimigo> Inimigos = {
-        {1, 1, true}, {1, 25, true}, {11, 1, true}, {11, 25, true}, {6, 13, true}, {1, 13, true}, {11, 13, true}
-    };
-
-    int XB = -3;
-    int YB = -3;
-
-    char enemy(041);
-    vector<ExplosaoBomba> Explosoes;
-
+    int VidaPlayer;
+    VidaPlayer = 1;
+    ///Variavel para tecla precionada
     char tecla;
-    char Portal(221); // Alteração do caractere do portal
-    bool portalOpened = false;
-    int portalX = -1, portalY = -1;
+    ///Parade Quebravel
+    char ParedeQuebravel (176);
+    ///Bomba
+    char Bomba           (022);
+    char quente          (105);
+    char kbom            (161);
+    ///Vector da bomba
+    vector <ExplosaoBomba> Explosoes;
+    ///COISAS DO MENU(ISA)
+    int contagem;
+    int movimentos = 0;
+    int contbaixo;
+    int contcima;
+    int contdireita;
+    int contesquerda;
+    int pontos;
+    string nome;
+    int Cavalo=1;
+    int menu = 0;
+    ///ITENS
+    char item           (134);
+    int ChanceItem;
+    bool NumeroDBombas = false;
+    bool BombaColocada = false;
+    bool BombaRelogio  = false;
+    bool AtivarBomba   = false;
+    bool ImuneBomba    = false;
 
-    while (true) {
+
+
+
+    string nomeArquivo = "ranking.txt";
+    vector<pontuacao> pontuacoes =  ler_pontos(nomeArquivo);
+    atualizar_pontuacao(pontuacoes, nome, pontos);
+
+
+
+    ///MENU
+    MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+    InimigosVivos = Inimigos.size();
+    IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+
+    system("cls");
+
+    auto inicio = steady_clock::now();
+    while(GameContinue)     ///JOGO COMEÇA AQUI
+    {
+        ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
-        for (int i = 0; i < 13; i++) {
-            for (int j = 0; j < 27; j++) {
+        ///Imprime o jogo: mapa e personagem.
+        for(int i=0; i<13; i++)
+        {
+            for(int j=0; j<27; j++)
+            {
                 bool isEnemy = false;
 
-                if (i == J.x && j == J.y) {
-                    cout << char(36);
-                } else if (i == XB && j == YB) {
-                    cout << char(022);
-                } else if (portalOpened && i == portalX && j == portalY) {
-                    cout << Portal;
-                } else {
-                    for (const auto &inimigo : Inimigos) {
-                        if (i == inimigo.xi && j == inimigo.yi && inimigo.alive) {
-                            cout << enemy;
+                if(i==J[0].x && j==J[0].y)
+                {
+                    cout<<char(36); //personagem
+                }
+                else if (i==XB&&j==YB)
+                {
+                    cout<<char(022); //bomba
+                }
+                else
+                {
+                    for(const auto& inimigo : Inimigos)
+                    {
+                        if(i==inimigo.xi&&j==inimigo.yi)
+                        {
+                            cout<<enemy;
                             isEnemy = true;
                             break;
                         }
                     }
-                    if (!isEnemy) {
-                        switch (m[i][j]) {
-                            case 0:
-                                cout << " ";
-                                break;
-                            case 1:
-                                cout << char(219);
-                                break;
-                            case 2:
-                                cout << char(176);
-                                break;
-                        }
+                    if(!isEnemy)
+                    {
+                        switch (m[i][j])
+                        {
+                        case 0:
+                            cout<<" ";
+                            break;       //caminho
+                        case 1:
+                            cout<<char(219);
+                            break; //parede
+                        case 2:
+                            cout<<char(176);
+                            break; //parede quebravel
+                        case 5:
+                            cout<<char(134);
+                            break; //item
+                            //default: cout<<"-"; //erro
+                        }   //fim switch
                     }
                 }
             }
-            cout << "\n";
-        }
+            cout<<"\n";
+        } //fim for mapa
 
-        if (_kbhit()) {
+        ///executa os movimentos
+
+        if (_kbhit())
+        {
             tecla = getch();
-            switch (tecla) {
-                case 72:
-                case 'w':
-                    if (colisao(m[J.x - 1][J.y]) && !isEnemyAtPosition(J.x - 1, J.y, Inimigos)) {
-                        J.x--;
-                    }
-                    break;
-                case 80:
-                case 's':
-                    if (colisao(m[J.x + 1][J.y]) && !isEnemyAtPosition(J.x + 1, J.y, Inimigos)) {
-                        J.x++;
-                    }
-                    break;
-                case 75:
-                case 'a':
-                    if (colisao(m[J.x][J.y - 1]) && !isEnemyAtPosition(J.x, J.y - 1, Inimigos)) {
-                        J.y--;
-                    }
-                    break;
-                case 77:
-                case 'd':
-                    if (colisao(m[J.x][J.y + 1]) && !isEnemyAtPosition(J.x, J.y + 1, Inimigos)) {
-                        J.y++;
-                    }
-                    break;
-                case 78:
-                case 'z':
-                    if (XB == -3 && YB == -3) {
-                        XB = J.x;
-                        YB = J.y;
-                        m[XB][YB] = 3;
-                        Explosoes.clear();
-                        Explosoes.push_back({XB - 1, YB});
-                        Explosoes.push_back({XB + 1, YB});
-                        Explosoes.push_back({XB, YB - 1});
-                        Explosoes.push_back({XB, YB + 1});
-                    }
-                    break;
-            }
-        }
-
-        if (XB != -3 && YB != -3) {
-            auto TempoBombaAgora = high_resolution_clock::now();
-            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora - InicioBomba);
-            if (BombaPassou >= BombaTimer) {
-                for (auto &inimigo : Inimigos) {
-                    for (const auto &explosao : Explosoes) {
-                        if (m[explosao.xboom][explosao.yboom] == 2) {
-                            m[explosao.xboom][explosao.yboom] = 0;
-                        }
-                        if (inimigo.xi == explosao.xboom && inimigo.yi == explosao.yboom) {
-                            inimigo.alive = false; // Marcando o inimigo como morto
-                        }
-                    }
+            bool movimento_valido = false;
+            bool bomba_colocada = true;
+            switch(tecla)
+            {
+            case 72:
+            case 'w': ///cima
+                J[0].x--;
+                if(!colisao(m[J[0].x][J[0].y]))
+                {
+                    J[0].x++;
                 }
-                m[XB][YB] = 0;
-                XB = -3;
-                YB = -3;
-                InicioBomba = TempoBombaAgora;
-            }
-        }
-
-        auto TempoAgora = high_resolution_clock::now();
-        auto Passou = duration_cast<milliseconds>(TempoAgora - Inicio);
-        for (auto &inimigo : Inimigos) {
-            if (inimigo.alive && Passou >= TempoInimigo) {
-                int mov = rand() % 4 + 1;
-                switch (mov) {
-                    case 1:
-                        inimigo.xi++;
-                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
-                            inimigo.xi--;
-                        }
-                        break;
-                    case 2:
-                        inimigo.xi--;
-                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
-                            inimigo.xi++;
-                        }
-                        break;
-                    case 3:
-                        inimigo.yi++;
-                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
-                            inimigo.yi--;
-                        }
-                        break;
-                    case 4:
-                        inimigo.yi--;
-                        if (!colisao(m[inimigo.xi][inimigo.yi])) {
-                            inimigo.yi++;
-                        }
-                        break;
+                else
+                {
+                    do
+                    {
+                        int c = 1;
+                        contcima+= c;
+                        c++;
+                        movimentos++;
+                        movimento_valido = true;        ///POTUAÇÃO SENDO ACUMULADA
+                    }
+                    while(false);
                 }
-                Inicio = TempoAgora;
+                break;
+            case 80:
+            case 's': ///baixo
+                J[0].x++;
+                if(!colisao(m[J[0].x][J[0].y]))
+                {
+                    J[0].x--;
+                }
+                else
+                {
+                    do
+                    {
+                        int ba = 1;
+                        contbaixo+=ba;
+                        ba++;
+                        movimentos++;
+                        movimento_valido = true;
+                    }
+                    while(false);
+                }
+
+
+                break;
+            case 75:
+            case 'a': ///esquerda
+
+                J[0].y--;
+                if(!colisao(m[J[0].x][J[0].y]))
+
+                {
+                    J[0].y++;
+
+                }
+                else
+                {
+                    do
+                    {
+                        int es = 1;
+                        contesquerda+=es;
+                        es++;
+                        movimentos++;
+                        movimento_valido=true;
+                    }
+                    while(false);
+                }
+
+                break;
+            case 77:
+            case 'd': ///direita
+
+                J[0].y++;
+                if(!colisao(m[J[0].x][J[0].y]))
+                {
+
+                    J[0].y--;
+
+                }
+                else
+                {
+                    do
+                    {
+
+                        int di = 1;
+                        contdireita+=di;
+                        di++;
+
+                        movimentos++;
+                        movimento_valido=true;
+                    }
+                    while(false);
+                }
+
+                break;
+
+
+            case 78:
+
+            case 'e': ///bomba
+
+                if(!NumeroDBombas)
+                {
+                    NumeroDBombas=true;
+                    XB=J[0].x;
+                    YB=J[0].y;
+                    m[XB][YB]=3;
+                    if(BombaRelogio==false){
+                        InicioBomba = steady_clock::now();
+                        BombaColocada=true;
+                    }
+                    do
+                    {
+                        int b = 1;
+
+                        contagem+= b;
+                        b++;
+                        bomba_colocada = true;
+                    }
+                    while(false);
+                    Explosoes.clear();
+                    ///DEFINE A AREA DAS EXPLOSÕES
+                    Explosoes.push_back({XB-1,YB}); ///CIMA
+                    Explosoes.push_back({XB+1,YB}); ///BAIXO
+                    Explosoes.push_back({XB,YB-1}); ///ESQUERDA
+                    Explosoes.push_back({XB,YB+1}); ///DIREITA
+                }
+                break;
+            case 89:
+            case 'q': ///BOMBA RELOGIO
+                if(BombaRelogio==true){
+                    InicioBomba = steady_clock::now();
+                    AtivarBomba = true;
+                    BombaColocada=true;
+                }
+                break;
+
+            }
+            if(movimento_valido)
+            {
+                if(dificuldade==3)
+                {
+                    pontos-=1;
+                }
+                else if(dificuldade==5)
+                {
+                    pontos-=1;
+                }
+                else if(dificuldade==7)
+                {
+                    pontos-=1;
+
+                }
+            }
+            if(bomba_colocada)
+            {
+                if(dificuldade==3)
+                {
+                    pontos--;
+                }
+                else if(dificuldade==5)
+                {
+                    pontos-=3;
+                }
+                else if(dificuldade==7)
+                {
+                    pontos-=7;
+                }
+
+            }
+
+        }
+            ///CHAMA O TIMER DA BOMBA
+            if((BombaRelogio==false)||(BombaRelogio==true&&BombaColocada==true)){
+            auto TempoBombaAgora = steady_clock::now();
+            auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
+
+            if(BombaPassou>BombaTimer||AtivarBomba==true)
+            {
+                InicioBomba=TempoBombaAgora;    ///RECEBE O TEMPO ATUAL
+                BombaColocada=false;
+                AtivarBomba=false;
+                BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem, ImuneBomba);
+
+            }
+            }
+
+
+
+        if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
+        {
+            m[J[0].x][J[0].y]=0;
+            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba); ///VIDA
+        }
+
+
+        ///executa os movimentos dos inimigos
+
+        auto TempoAgora = steady_clock::now();        ///Tempo recebe o tempo do clock, agora;
+        auto Passou = duration_cast<milliseconds>(TempoAgora-Inicio);   ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
+        if(Passou>TempoInimigo)
+        {
+            Inicio = TempoAgora; ///inico recebe o tempo atual
+            MovimentoInimigo(Inimigos,J[0],dificuldade,m);
+        }
+
+        if (verificaJogadorInimigo(J[0], Inimigos)==true)
+        {
+            VidaPlayer--;
+            J.clear();
+            J.push_back({5,5});
+            MapaIniciar(m);
+        }
+
+            ///INFORMAÇÕES NA TELA
+        final = steady_clock::now();
+        auto tempo = final - inicio;
+        cout << " _________________________________________________________________" << endl;
+        cout << "                         PONTUACAO:" << pontos                   << endl;
+        cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
+        cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
+        cout << "                                                                  " << endl;
+        cout << " BOMBAS USADAS: " << contagem << "       VIDAS:"<<VidaPlayer        << endl;
+        cout << "__________________________________________________________________" << endl;
+
+        if(InimigosVivos==0)
+        {
+            if(Vitorias==3) ///GANHAR O JOGO
+            {
+                GameContinue=false;
+                cout<<"Parabens voce venceu!"<<endl;
+                if(dificuldade==3)
+                {
+
+                       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+                }
+                else if(dificuldade==5)
+                {
+
+                       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+                }
+                else if(dificuldade==7)
+                {
+                           atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+                }
+                ///SCORE AQUI, RANK ETC...
+                system("pause");
+                system("cls");
+                return 0;
+            }
+            cout<<"voce passou de fase!"<<endl;
+            cout<<"Se deseja continuar digite [1] e se deseja para digite [2]."<<endl;
+            cin>>ContinuarJogo;
+            switch(ContinuarJogo)
+            {
+            case 1:
+                system("cls");
+                Vitorias+=1;
+                VidaPlayer+=1;
+                InimigosVivos = Inimigos.size();
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                break;
+            case 2:
+                GameContinue = false;
+                ///SCORE AQUI, RANK ETC..
+
+
+                return 0;
+                break;
+            }
+
+        }
+        if(VidaPlayer==0&&Vitorias==1) ///DERROTA
+        {
+            system("cls");
+            cout<<"Voce perdeu!"<<endl;
+            if(dificuldade==3)
+            {
+       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+            }
+            else if(dificuldade==5)
+            {
+                       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+            }
+            else if(dificuldade==7)
+            {       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+
+
+            }
+            cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
+            cin>>ContinuarJogo;
+            switch (ContinuarJogo)
+            {
+            case 1:
+                system("cls");
+                GameContinue = true;
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                VidaPlayer+=1;
+                InimigosVivos = Inimigos.size();
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                break;
+            case 2:
+                GameContinue = false;
+                return 0;
+                break;
             }
         }
+        if(VidaPlayer==0&&Vitorias!=1)
+        {
+            system("cls");
+            cout<<"voce morreu!"<<endl;
+            ///SCORE AQUI, RANK ETC...
+            if(dificuldade==3)
+            {       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
 
-        // Verificação se todos os inimigos estão mortos
-        if (all_of(Inimigos.begin(), Inimigos.end(), [](inimigo e){ return !e.alive; }) && !portalOpened) {
-            portalX = 6;  // Definindo o portal no meio do mapa
-            portalY = 13; // Definindo o portal no meio do mapa
-            portalOpened = true;
-        }
 
-        // Limpeza das posições dos inimigos mortos
-        for (auto &inimigo : Inimigos) {
-            if (!inimigo.alive) {
-                m[inimigo.xi][inimigo.yi] = 0;
+            }
+            else if(dificuldade==5)
+            {       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+
+
+            }
+            else if(dificuldade==7)
+            {       atualizar_pontuacao(pontuacoes, nome, pontos);
+                    salvarRanking(pontuacoes, nomeArquivo);
+
+
+
+
+            }
+            cout<<"Digite [1] para voltar ao menu, [2] para sair:"<<endl;
+            cin>>ContinuarJogo;
+            switch(ContinuarJogo)
+            {
+            case 1:
+                system("cls");
+                GameContinue = true;
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                VidaPlayer+=1;
+
+                InimigosVivos = Inimigos.size();
+                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                break;
+            case 2:
+                GameContinue = false;
+                return 0;
+                break;
             }
         }
-
-        if (portalOpened && J.x == portalX && J.y == portalY) {
-            resetGame(J, Inimigos, m);
-            portalOpened = false;
-            portalX = -1;
-            portalY = -1;
-        }
-    }
+    } //fim do laco do jogo
 
     return 0;
-}
+} //fim main
