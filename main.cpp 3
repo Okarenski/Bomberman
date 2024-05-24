@@ -287,6 +287,12 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
             cin>>dificuldade;       ///ESCOLHE DIFICULDADE
+            if(dificuldade<1||dificuldade>3){
+                do{
+                cout<<"Opcao invalida! por favor digite novamente."<<endl;
+                cin>>dificuldade;
+                } while(dificuldade<1||dificuldade>3);
+            }
             switch(dificuldade)
             {
             case 1:
@@ -331,6 +337,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             }
             default:
                 cout<<"Opcao invalida!"<<endl;
+
             }
             break;
         case 2:
@@ -405,7 +412,7 @@ void PowerUps(int &VidaPlayer)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
         break;
     }
 }
-void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, int &NumeroDBombas, int ChanceItem)
+void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem)
 {   ///TIME DA BOMBA
     for (auto &player : J)
     {
@@ -485,7 +492,7 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
             }
         }
     }
-    NumeroDBombas++;
+    NumeroDBombas=false;
     m[XB][YB]=0;
     XB=-3;
     YB=-3;
@@ -509,8 +516,8 @@ int main()
     milliseconds TempoAnimacao(500);        ///UNIDADES DE TEMPO
     milliseconds TempoInimigo (500);
     milliseconds BombaTimer   (3000);
-    auto InicioBomba = chrono::high_resolution_clock::now();
-    auto Inicio = chrono::high_resolution_clock::now();
+    auto InicioBomba = steady_clock::now();
+    auto Inicio = steady_clock::now();
 
     ///ALERTA: NAO MODIFICAR O TRECHO DE CODIGO, A SEGUIR.
     //INICIO: COMANDOS PARA QUE O CURSOR NAO FIQUE PISCANDO NA TELA
@@ -570,12 +577,12 @@ int main()
     int pontos;
     string nome;
     exibirRanking();
-
+    int Cavalo=1;
     int menu = 0;
     ///ITENS
     char item           (134);
     int ChanceItem;
-    int NumeroDBombas = 1;
+    bool NumeroDBombas = false;
     bool MultiplasBombas = false;
 
     ///MENU
@@ -748,9 +755,9 @@ int main()
 
             case 'e': ///bomba
 
-                if(NumeroDBombas>0)
+                if(NumeroDBombas==false)
                 {
-                    NumeroDBombas--;
+                    NumeroDBombas=true;
                     XB=J[0].x;
                     YB=J[0].y;
                     m[XB][YB]=3;
@@ -808,16 +815,16 @@ int main()
 
         }
 
-        if(NumeroDBombas==0)    ///BOMBA
-        {
-            auto TempoBombaAgora = chrono::high_resolution_clock::now();
+//        if(NumeroDBombas==true)    ///BOMBA
+//        {
+            auto TempoBombaAgora = steady_clock::now();
             auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
-            if(BombaPassou>=BombaTimer) ///TEMPO DA BOMBA
+            if(BombaPassou>BombaTimer) ///TEMPO DA BOMBA
             {
-                BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
                 InicioBomba=TempoBombaAgora;    ///RECEBE O TEMPO ATUAL
+                BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem);
             }
-        }
+//        }
 
 
 
@@ -830,7 +837,7 @@ int main()
 
         ///executa os movimentos dos inimigos
 
-        auto TempoAgora = chrono::high_resolution_clock::now();         ///Tempo recebe o tempo do clock, agora;
+        auto TempoAgora = steady_clock::now();        ///Tempo recebe o tempo do clock, agora;
         auto Passou = duration_cast<milliseconds>(TempoAgora-Inicio);   ///Não precisa desse durantion cast pois ele converte os valores para millisegundos, sendo que as variaveis ja sao em millisegundos o que importa mesmo esta entre os ()
         if(Passou>TempoInimigo)
         {
@@ -838,14 +845,12 @@ int main()
             MovimentoInimigo(Inimigos,J[0],dificuldade,m);
         }
 
-        if (verificaJogadorInimigo(J[0], Inimigos))
+        if (verificaJogadorInimigo(J[0], Inimigos)==true)
         {
             VidaPlayer--;
-            if (VidaPlayer > 0)
-            {
-                /// RENICIAR A FASE AO PERDER VIDA
-                IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J);
-            }
+            J.clear();
+            J.push_back({5,5});
+            MapaIniciar(m);
         }
 
             ///INFORMAÇÕES NA TELA
@@ -896,7 +901,7 @@ int main()
             cin>>ContinuarJogo;
             switch(ContinuarJogo)
             {
-            case 1: 
+            case 1:
                 system("cls");
                 Vitorias+=1;
                 VidaPlayer+=1;
