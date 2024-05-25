@@ -24,118 +24,22 @@ struct inimigo
 };
 
 
-struct pontuacao
+bool contemApenasLetras(const string& str) { // verifica se o nome contém apenas letras
+    for (char c : str) {
+        if (!isalpha(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
+struct jogadores
 {
     int pontos;
     string nome;
 };
-
-
-vector<pontuacao> ler_pontos(const string & filename)        ///le pontuacoes do arquivo
-{
-    vector<pontuacao>pontuacoes;
-    ifstream file(filename);
-
-    if (file.is_open())
-    {
-        pontuacao dados;
-        while (file >> dados.nome >> dados.pontos)
-        {
-            if(file.fail())
-            {
-                cout << "arquivo vazio" << endl;
-                break;
-
-            }
-            pontuacoes.push_back(dados);
-
-        }
-        file.close();
-    }
-    else
-    {
-        cout << "erro para ler o arquivo" << endl;
-
-    }
-    return pontuacoes;
-}
-
-void salvarRanking(const vector<pontuacao> & pontuacoes, const string & filename)        ///envia a pontuacao para o arquivo
-{
-    ofstream file;
-    file.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
-    if (file.is_open())
-
-    {
-        for(const pontuacao&dados : pontuacoes)
-        {
-            file << dados.nome << " " << dados.pontos << endl;
-            if(file.fail())
-            {
-
-                cout << "Erro ao salvar pontuações no arquivo." << endl;
-                break;
-
-            }
-
-        }
-
-        file.close();
-
-    }
-    else
-    {
-
-        cout << "Erro ao abrir o arquivo para escrita." << endl;
-
-    }
-
-}
-
-///recursividade
-
-void recursividade(vector<pontuacao> & pontuacoes, const pontuacao& pontuacao_atual, int indice)
-{
-
-    if(indice>=pontuacoes.size() || pontuacoes[indice].pontos <pontuacao_atual.pontos)
-    {
-
-
-        pontuacoes.insert(pontuacoes.begin()+indice, pontuacao_atual);
-        return;
-    }
-
-    recursividade(pontuacoes, pontuacao_atual, indice+1);
-
-}
-
-void atualizar_pontuacao(vector<pontuacao>&pontuacoes, const string & nome, int pontos)
-{
-
-//    pontuacao  pontuacao_atual = {nome, pontos};
-    //recursividade(pontuacoes, pontuacao_atual, 0);
-
-}
-
-void exibirRanking(const vector<pontuacao>&pontuacoes)
-{
-    if(pontuacoes.empty())
-    {
-        cout << "ranking vazio" << endl;
-    }
-    else
-    {
-        cout << "RANKING" << endl;
-        for(size_t i=0; i< pontuacoes.size(); ++i)
-        {
-            cout << i + 1 << " " << pontuacoes[i]. nome << " " << pontuacoes[i].pontos << endl;
-        }
-
-    }
-
-}
-
-
 
 struct PowerUPS
 {
@@ -407,10 +311,18 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
+                if (!contemApenasLetras(nome)) {
+        cout << "Erro: O nome deve conter apenas letras." << endl;
+        cout << "digite seu nome:" << endl;
+        cin >> nome;
+    }
+
+
 
                 pontos=900;
                 dificuldade=3;
-
+                jogadores facil;
+                facil.nome = nome;
                 Inimigos.resize(dificuldade);
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 return;
@@ -420,10 +332,16 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
+                  if (!contemApenasLetras(nome)) {
+        cout << "Erro: O nome deve conter apenas letras." << endl;
+        cout << "digite seu nome:" << endl;
+        cin >> nome;
+    }
 
                 pontos = 600;
                 dificuldade=5;
-
+                jogadores medio;
+                medio.nome = nome;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
 
@@ -434,9 +352,16 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
+                  if (!contemApenasLetras(nome)) {
+        cout << "Erro: O nome deve conter apenas letras." << endl;
+        cout << "digite seu nome:" << endl;
+        cin >> nome;
+    }
+
                 pontos = 400;
                 dificuldade=7;
-
+                jogadores dificil;
+                dificil.nome = nome;
                 PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
                 return;
@@ -694,6 +619,7 @@ int main()
     int contesquerda;
     int pontos;
     string nome;
+    exibirRanking();
     int Cavalo=1;
     int menu = 0;
     ///ITENS
@@ -704,14 +630,6 @@ int main()
     bool BombaRelogio  = false;
     bool AtivarBomba   = false;
     bool ImuneBomba    = false;
-
-
-
-
-    string nomeArquivo = "ranking.txt";
-    vector<pontuacao> pontuacoes =  ler_pontos(nomeArquivo);
-    atualizar_pontuacao(pontuacoes, nome, pontos);
-
 
 
     ///MENU
@@ -1017,20 +935,22 @@ int main()
                 if(dificuldade==3)
                 {
 
-                       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+                    salvarRanking(nome,pontos, dificuldade);
 
+                    exibirRanking();
                 }
                 else if(dificuldade==5)
                 {
 
-                       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+                    salvarRanking(nome,pontos, dificuldade);
+
+                    exibirRanking();
                 }
                 else if(dificuldade==7)
                 {
-                           atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+                    salvarRanking(nome,pontos, dificuldade);
+
+                    exibirRanking();
 
                 }
                 ///SCORE AQUI, RANK ETC...
@@ -1054,6 +974,9 @@ int main()
                 GameContinue = false;
                 ///SCORE AQUI, RANK ETC..
 
+                salvarRanking(nome,pontos, dificuldade);
+
+                exibirRanking();
 
                 return 0;
                 break;
@@ -1066,22 +989,27 @@ int main()
             cout<<"Voce perdeu!"<<endl;
             if(dificuldade==3)
             {
-       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
+
 
             }
             else if(dificuldade==5)
             {
-                       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
 
             }
             else if(dificuldade==7)
-            {       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+            {
 
 
+                salvarRanking(nome,pontos,dificuldade);
 
+                exibirRanking();
             }
             cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
             cin>>ContinuarJogo;
@@ -1107,23 +1035,28 @@ int main()
             cout<<"voce morreu!"<<endl;
             ///SCORE AQUI, RANK ETC...
             if(dificuldade==3)
-            {       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+            {
 
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
 
             }
             else if(dificuldade==5)
-            {       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+            {
 
+                salvarRanking(nome,pontos,dificuldade);
 
+                exibirRanking();
 
             }
             else if(dificuldade==7)
-            {       atualizar_pontuacao(pontuacoes, nome, pontos);
-                    salvarRanking(pontuacoes, nomeArquivo);
+            {
 
 
+                salvarRanking(nome,pontos,dificuldade);
+
+                exibirRanking();
 
 
             }
