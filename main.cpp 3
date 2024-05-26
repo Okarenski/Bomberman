@@ -247,25 +247,51 @@ void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///F
     }
 
 }
-
-void exibirRanking()        ///EXIBE O RANK
-{
-    ifstream arquivoE;
-    string linha;
-    arquivoE.open("ranking.txt");
-    if (arquivoE.is_open())
-    {
-
-        while (getline(arquivoE, linha))
-        {
-            cout << linha << endl;
-
-
-
+///recursividade
+void exibirRankingRecursivo(vector<pair<int, string>>& ranking, int left, int right) {
+    if (left < right) {
+        int pivot = ranking[right].first;
+        int i = left - 1;
+        for (int j = left; j <= right - 1; j++) {
+            if (ranking[j].first > pivot) {
+                i++;
+                swap(ranking[i], ranking[j]);
+            }
         }
-        arquivoE.close();
+        swap(ranking[i + 1], ranking[right]);
+        int partitionIndex = i + 1;
+        exibirRankingRecursivo(ranking, left, partitionIndex - 1);
+        exibirRankingRecursivo(ranking, partitionIndex + 1, right);
     }
 }
+
+void exibirRanking() {
+    ifstream arquivoE;
+    string linha;
+    vector<pair<int, string>> ranking;
+    arquivoE.open("ranking.txt");
+    if (arquivoE.is_open()) {
+        int pontos;
+        string nome;
+        while (arquivoE >> linha) {
+            if (linha == "Pontuacao:") {
+                arquivoE >> pontos;
+                ranking.push_back(make_pair(pontos, nome));
+            } else if (linha == "Nome:") {
+                arquivoE >> nome;
+            }
+        }
+        arquivoE.close();
+        exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+        cout << "Ranking:" << endl;
+        for (const auto& pair : ranking) {
+            cout << pair.second << " - " << pair.first << endl;
+        }
+    } else {
+        cout << "Erro ao abrir o arquivo de ranking." << endl;
+    }
+}
+
 
 
 void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
