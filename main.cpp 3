@@ -247,7 +247,9 @@ void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///F
     }
 
 }
+
 ///recursividade
+
 void exibirRankingRecursivo(vector<pair<int, string>>& ranking, int left, int right) {
     if (left < right) {
         int pivot = ranking[right].first;
@@ -266,23 +268,25 @@ void exibirRankingRecursivo(vector<pair<int, string>>& ranking, int left, int ri
 }
 
 void exibirRanking() {
-    ifstream arquivoE;
+    ifstream arquivoS;
     string linha;
     vector<pair<int, string>> ranking;
-    arquivoE.open("ranking.txt");
-    if (arquivoE.is_open()) {
+    arquivoS.open("ranking.txt");
+    if (arquivoS.is_open()) {
         int pontos;
         string nome;
-        while (arquivoE >> linha) {
+        while (arquivoS >> linha) {
             if (linha == "Pontuacao:") {
-                arquivoE >> pontos;
+                arquivoS >> pontos;
                 ranking.push_back(make_pair(pontos, nome));
             } else if (linha == "Nome:") {
-                arquivoE >> nome;
+                arquivoS >> nome;
             }
         }
-        arquivoE.close();
+        arquivoS.close();
+       
         exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+        
         cout << "Ranking:" << endl;
         for (const auto& pair : ranking) {
             cout << pair.second << " - " << pair.first << endl;
@@ -291,8 +295,6 @@ void exibirRanking() {
         cout << "Erro ao abrir o arquivo de ranking." << endl;
     }
 }
-
-
 
 void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
 {   ///MENU DO JOGO
@@ -339,6 +341,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 cin >> nome;
                 if (!contemApenasLetras(nome)) {
         cout << "Erro: O nome deve conter apenas letras." << endl;
+        system ("cls");
         cout << "digite seu nome:" << endl;
         cin >> nome;
     }
@@ -360,6 +363,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 cin >> nome;
                   if (!contemApenasLetras(nome)) {
         cout << "Erro: O nome deve conter apenas letras." << endl;
+        system ("cls");
         cout << "digite seu nome:" << endl;
         cin >> nome;
     }
@@ -646,6 +650,7 @@ int main()
     int pontos;
     string nome;
     exibirRanking();
+    vector<pair<int, string>> ranking;
     int Cavalo=1;
     int menu = 0;
     ///ITENS
@@ -963,20 +968,23 @@ int main()
 
                     salvarRanking(nome,pontos, dificuldade);
 
-                    exibirRanking();
+                       exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
                 }
                 else if(dificuldade==5)
                 {
 
                     salvarRanking(nome,pontos, dificuldade);
 
-                    exibirRanking();
+                        exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
                 }
                 else if(dificuldade==7)
                 {
                     salvarRanking(nome,pontos, dificuldade);
 
-                    exibirRanking();
+                      exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
                 }
                 ///SCORE AQUI, RANK ETC...
@@ -1002,7 +1010,8 @@ int main()
 
                 salvarRanking(nome,pontos, dificuldade);
 
-                exibirRanking();
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
                 return 0;
                 break;
@@ -1018,15 +1027,16 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                exibirRanking();
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
 
             }
             else if(dificuldade==5)
             {
                 salvarRanking(nome,pontos,dificuldade);
+    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
-                exibirRanking();
 
             }
             else if(dificuldade==7)
@@ -1035,7 +1045,8 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                exibirRanking();
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
             }
             cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
             cin>>ContinuarJogo;
@@ -1065,7 +1076,8 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                exibirRanking();
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
             }
             else if(dificuldade==5)
@@ -1073,7 +1085,8 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                exibirRanking();
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
             }
             else if(dificuldade==7)
@@ -1082,7 +1095,8 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                exibirRanking();
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
 
             }
