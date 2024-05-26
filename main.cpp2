@@ -112,8 +112,8 @@ void recursividade(vector<pontuacao> & pontuacoes, const pontuacao& pontuacao_at
 void atualizar_pontuacao(vector<pontuacao>&pontuacoes, const string & nome, int pontos)
 {
 
-   pontuacao  pontuacao_atual = {nome, pontos};
-    recursividade(pontuacoes, pontuacao_atual, 0);
+//    pontuacao  pontuacao_atual = {nome, pontos};
+    //recursividade(pontuacoes, pontuacao_atual, 0);
 
 }
 
@@ -141,9 +141,13 @@ struct PowerUPS
 {
     int ExtraVida;
 };
-bool colisao(int p)  ///COLISAO
+bool colisao(int p,)  ///COLISAO
 {
+    if( KittyPryde){
+        return p == 0 || p == 5 || p == 3;
+    }else{
     return p == 0 || p == 5;
+}
 }
 bool colisaInimigo(int G)  ///COLISAO DO INIMIGO
 {
@@ -368,7 +372,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
 {   ///MENU DO JOGO
     do
     {
-        PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+       // PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
         system ("cls");
         cout << " _______  _______  __   __  _______  _______  ______    __   __  _______  __    _ \n"
              "|  _    ||       ||  |_|  ||  _    ||       ||    _ |  |  |_|  ||   _   ||  |  | |\n"
@@ -390,7 +394,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
         switch(menu)
         {
         case 1:
-            PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+        //    PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
             system("cls");
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
@@ -412,7 +416,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 dificuldade=3;
 
                 Inimigos.resize(dificuldade);
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                // PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 return;
             }
 
@@ -424,7 +428,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 pontos = 600;
                 dificuldade=5;
 
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+              //  PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
 
                 return;
@@ -437,7 +441,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 pontos = 400;
                 dificuldade=7;
 
-                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+              //  PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
                 return;
             }
@@ -503,28 +507,36 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
     while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba)  ///IDEIA DE POWE UPS (MAS AGORA SO TEM VIDA)
-{
-    int ChancePower;
-    ///ChancePower = rand()%6+1;
-    ChancePower = 3;
-    switch(ChancePower)
-    {
-    case 1: ///VIDA EXTRA
-        if(VidaPlayer<=3)
-        {
-            VidaPlayer++;
+void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &KittyPryde) {
+
+  int ChancePower = rand() % 6 + 1;
+
+  switch (ChancePower) {
+    case 1: // Vida Extra
+      if (VidaPlayer <= 3) {
+        VidaPlayer++;
         }
-        break;
-    case 2: ///BOMBA RELOGIO
-        BombaRelogio=true;
-        break;
-    case 3: ///SOBREVIVE A BOMBA
-        ImuneBomba = true;
-        break;
+      break;
+    case 2: // Bomba Relógio
+      BombaRelogio = true;
 
+      break;
+    case 3: // Sobrevive Bomba
+      ImuneBomba = true;
 
-    }
+      break;
+     case 4: // passar paredes
+      KittyPryde = true;
+// linha dos power ups on 715
+      break;
+      //case 5: // multiplas bombas
+      //MultiBomba = true;
+
+      break;
+    default:
+
+      break;
+  }
 }
 void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem, bool ImuneBomba)
 {   ///TIME DA BOMBA
@@ -704,7 +716,9 @@ int main()
     bool BombaRelogio  = false;
     bool AtivarBomba   = false;
     bool ImuneBomba    = false;
-
+    bool KittyPryde    = false;
+    bool MultiBomba    = false;
+// linha do sistema de power ups 500
 
 
 
@@ -975,7 +989,7 @@ int main()
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba); ///VIDA
+            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba, KittyPryde); ///VIDA
         }
 
 
