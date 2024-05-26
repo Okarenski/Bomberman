@@ -135,15 +135,15 @@ void exibirRanking(const vector<pontuacao>&pontuacoes)
 
 }
 
+bool KittyPryde = false;
 
-bool  KittyPryde    = false;
 struct PowerUPS
 {
     int ExtraVida;
 };
-bool colisao(int p,bool  KittyPryde)  ///COLISAO
+bool colisao(int p)  ///COLISAO
 {
-    if( KittyPryde == true){
+    if( KittyPryde){
         return p == 0 || p == 5 || p == 3;
     }else{
     return p == 0 || p == 5;
