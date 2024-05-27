@@ -752,7 +752,7 @@ int main()
             case 72:
             case 'w': ///cima
                 J[0].x--;
-                if(!colisao(m[J[0].x][J[0].y]))
+                if(!colisao(m[J[0].x][J[0].y], AtravessarParede))
                 {
                     J[0].x++;
                 }
@@ -772,7 +772,7 @@ int main()
             case 80:
             case 's': ///baixo
                 J[0].x++;
-                if(!colisao(m[J[0].x][J[0].y]))
+                if(!colisao(m[J[0].x][J[0].y], AtravessarParede))
                 {
                     J[0].x--;
                 }
@@ -795,7 +795,7 @@ int main()
             case 'a': ///esquerda
 
                 J[0].y--;
-                if(!colisao(m[J[0].x][J[0].y]))
+                if(!colisao(m[J[0].x][J[0].y], AtravessarParede))
 
                 {
                     J[0].y++;
@@ -819,7 +819,7 @@ int main()
             case 'd': ///direita
 
                 J[0].y++;
-                if(!colisao(m[J[0].x][J[0].y]))
+                if(!colisao(m[J[0].x][J[0].y], AtravessarParede))
                 {
 
                     J[0].y--;
@@ -938,7 +938,7 @@ int main()
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba); ///VIDA
+            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba,AtravessarParede); ///VIDA
         }
 
 
