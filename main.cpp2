@@ -714,7 +714,23 @@ int main()
                    cout << ' '; //bomba piscar
                 }
                 alternaBombaEstado();
-            }
+            }else if((i==XB&&j==YB+1)&&(bomb>97&&bomb==<=100)){ /// exploção direita
+
+                                cout << kbom;
+
+                        } else if((i==XB&&j==YB-1)&&(bomb>97&&bomb<=100)){ /// exploção esquerda
+
+                                cout << kbom;
+
+                        } else if((i==XB+1&&j==YB)&&(bomb>97&&bomb<=100)){ /// exploção baixo
+
+                                cout << kbom;
+
+                        } else if((i==XB-1&&j==YB)&&(bomb>97&&bomb<=100)){ /// exploção cima
+
+                                cout << kbom;
+
+                        }
                 else
                 {
                     for(const auto& inimigo : Inimigos)
