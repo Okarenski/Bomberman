@@ -152,6 +152,27 @@ void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int
         }
     }
 }
+const int PAREDE_NAO_QUEBRADA = 1;
+
+void imprimirExplosao(int raio, char kbom, int direction, int XB, int YB, int i, int j, int m[][27]) {
+    for (int r = 1; r <= raio; r++) {
+        // Verifique se é uma parede não quebrável
+        if (m[i][j] == PAREDE_NAO_QUEBRADA) {
+            cout << char(219);
+            return;
+        }
+
+
+        if ((direction == 1 && j == YB + r) ||  // Direita
+            (direction == 2 && j == YB - r) ||  // Esquerda
+            (direction == 3 && i == XB + r) ||  // Baixo
+            (direction == 4 && i == XB - r)) {  // Cima
+            cout << kbom;
+            return;
+        }
+    }
+    cout << ' ';
+}
 void MapaIniciar(int m[13][27])                     ///INICIA O MAPA
 {
     srand(time(0));
@@ -695,6 +716,8 @@ int main()
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
         ///Imprime o jogo: mapa e personagem.
+       int bomb = 98;
+        ///Imprime o jogo: mapa e personagem.
         for(int i=0; i<13; i++)
         {
             for(int j=0; j<27; j++)
@@ -708,11 +731,18 @@ int main()
                 else if (i==XB&&j==YB)
                 {
                     cout<<char(022); //bomba
-                }
-                else
-                {
-                    for(const auto& inimigo : Inimigos)
-                    {
+                }  else if (bomb > 97 && bomb <= 100) {
+                   if ((i == XB && j >= YB + 1 && j <= YB + RaioTamanho)) { // Explosão direita
+                   imprimirExplosao(RaioTamanho, kbom, 1, XB, YB, i, j, m);
+                   } else if ((i == XB && j <= YB - 1 && j >= YB - RaioTamanho)) { // Explosão esquerda
+                   imprimirExplosao(RaioTamanho, kbom, 2, XB, YB, i, j, m);
+                   } else if ((i >= XB + 1 && i <= XB + RaioTamanho && j == YB)) { // Explosão baixo
+                    imprimirExplosao(RaioTamanho, kbom, 3, XB, YB, i, j, m);
+                    } else if ((i <= XB - 1 && i >= XB - RaioTamanho && j == YB)) { // Explosão cima
+                     imprimirExplosao(RaioTamanho, kbom, 4, XB, YB, i, j, m);
+                      } else{
+                         for(const auto& inimigo : Inimigos){
+
                         if(i==inimigo.xi&&j==inimigo.yi)
                         {
                             cout<<enemy;
@@ -740,6 +770,7 @@ int main()
                         }   //fim switch
                     }
                 }
+            }
             }
             cout<<"\n";
         } //fim for mapa
