@@ -454,9 +454,9 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
     while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &AtravessarParede) {
+void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &AtravessarParede, int &RaioTamanho) {
 
-   int ChancePower = rand()%4+1;
+   int ChancePower = 5;
 
   switch (ChancePower) {
     case 1: // Vida Extra
@@ -476,8 +476,12 @@ void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &Atrav
       AtravessarParede = true;
 // linha dos power ups on 715
       break;
-      //case 5: // multiplas bombas
-      //MultiBomba = true;
+      case 5: // Raio bomba
+      if(RaioTamanho<=3){
+      RaioTamanho+=1;
+      } else {
+      RaioTamanho=3;
+      }
 
       break;
     default:
@@ -664,7 +668,7 @@ int main()
     string nome;
     exibirRanking();
     vector<pair<int, string>> ranking;
-    int Cavalo=1;
+    int RaioTamanho=1;
     int menu = 0;
     ///ITENS
     char item           (134);
@@ -867,10 +871,13 @@ int main()
                     while(false);
                     Explosoes.clear();
                     ///DEFINE A AREA DAS EXPLOSÕES
-                    Explosoes.push_back({XB-1,YB}); ///CIMA
-                    Explosoes.push_back({XB+1,YB}); ///BAIXO
-                    Explosoes.push_back({XB,YB-1}); ///ESQUERDA
-                    Explosoes.push_back({XB,YB+1}); ///DIREITA
+                    for(int i=1;i<=RaioTamanho;i++){
+                    Explosoes.push_back({XB-i,YB}); ///CIMA
+                    Explosoes.push_back({XB+i,YB}); ///BAIXO
+                    Explosoes.push_back({XB,YB-i}); ///ESQUERDA
+                    Explosoes.push_back({XB,YB+i}); ///DIREITA
+                    }
+
                 }
                 break;
             case 89:
@@ -937,7 +944,7 @@ int main()
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba,AtravessarParede); ///VIDA
+            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba,AtravessarParede, RaioTamanho); ///VIDA
         }
 
 
