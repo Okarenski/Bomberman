@@ -456,7 +456,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
 
 void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &AtravessarParede, int &RaioTamanho) {
 
-   int ChancePower = 5;
+   int ChancePower = rand()%5+1;
 
   switch (ChancePower) {
     case 1: // Vida Extra
@@ -647,7 +647,7 @@ int main()
     ///J.push_back({5,4}); ///player 2
 
     int VidaPlayer;
-    VidaPlayer = 1;
+    VidaPlayer = 2;
     ///Variavel para tecla precionada
     char tecla;
     ///Parade Quebravel
@@ -971,7 +971,7 @@ int main()
         final = steady_clock::now();
         auto tempo = final - inicio;
         cout << " _________________________________________________________________" << endl;
-        cout << "                         PONTUACAO:" << pontos                   << endl;
+        cout << " PONTUACAO:" << pontos<<"     "<<"Raio da bomba"<<" "<<RaioTamanho<< endl;
         cout << " TEMPO: " << duration_cast<seconds>(tempo).count()<<"         "<<(AtravessarParede?"Atravesar Paredes":" ")<< endl;
         cout << " MOVIMENTOS: " << movimentos <<"    "<<(ImuneBomba?"Imune a bombas":"   ")<< endl;
         cout << "                   "    << (BombaRelogio ?"Bomba Relogio":"    ")   << endl;
@@ -1027,6 +1027,7 @@ int main()
                 BombaRelogio=false;
                 ImuneBomba=false;
                 AtravessarParede=false;
+                RaioTamanho=1;
                 break;
             case 2:
                 GameContinue = false;
@@ -1086,6 +1087,7 @@ int main()
                 BombaRelogio=false;
                 ImuneBomba=false;
                 AtravessarParede=false;
+                RaioTamanho=1;
                 break;
             case 2:
                 GameContinue = false;
@@ -1141,6 +1143,7 @@ int main()
                 BombaRelogio=false;
                 ImuneBomba=false;
                 AtravessarParede=false;
+                RaioTamanho=1;
                 break;
             case 2:
                 GameContinue = false;
