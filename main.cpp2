@@ -582,6 +582,7 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
         }
     }
     NumeroDBombas=false;
+    Explosoes.clear();
     m[XB][YB]=0;
     XB=-3;
     YB=-3;
