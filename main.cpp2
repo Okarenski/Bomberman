@@ -293,7 +293,7 @@ void exibirRanking() {
     }
 }
 
-void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
+void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos, bool &GameContinue)
 {   ///MENU DO JOGO
     do
     {
@@ -342,13 +342,11 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
         cout << "digite seu nome:" << endl;
         cin >> nome;
     }
-
-
-
                 pontos=900;
                 dificuldade=3;
                 jogadores facil;
                 facil.nome = nome;
+                GameContinue = true;
                 Inimigos.resize(dificuldade);
             //    PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 return;
@@ -364,11 +362,11 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
         cout << "digite seu nome:" << endl;
         cin >> nome;
     }
-
                 pontos = 600;
                 dificuldade=5;
                 jogadores medio;
                 medio.nome = nome;
+                GameContinue = true;
              //  PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
 
@@ -389,6 +387,7 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
                 dificuldade=7;
                 jogadores dificil;
                 dificil.nome = nome;
+                GameContinue = true;
              //   PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
                 return;
@@ -678,7 +677,7 @@ int main()
     bool AtravessarParede = false;
 
     ///MENU
-    MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+    MenuJogo(menu, dificuldade, pontos, nome,Inimigos, GameContinue);
     InimigosVivos = Inimigos.size();
     IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
 
@@ -1017,6 +1016,9 @@ int main()
                 VidaPlayer+=1;
                 InimigosVivos = Inimigos.size();
                 IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                BombaRelogio=false;
+                ImuneBomba=false;
+                AtravessarParede=false;
                 break;
             case 2:
                 GameContinue = false;
@@ -1069,10 +1071,13 @@ int main()
             case 1:
                 system("cls");
                 GameContinue = true;
-                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos, GameContinue);
                 VidaPlayer+=1;
                 InimigosVivos = Inimigos.size();
                 IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                BombaRelogio=false;
+                ImuneBomba=false;
+                AtravessarParede=false;
                 break;
             case 2:
                 GameContinue = false;
@@ -1121,11 +1126,13 @@ int main()
             case 1:
                 system("cls");
                 GameContinue = true;
-                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos, GameContinue);
                 VidaPlayer+=1;
-
                 InimigosVivos = Inimigos.size();
                 IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                BombaRelogio=false;
+                ImuneBomba=false;
+                AtravessarParede=false;
                 break;
             case 2:
                 GameContinue = false;
