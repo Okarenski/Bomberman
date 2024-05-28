@@ -24,9 +24,12 @@ struct inimigo
 };
 
 
-bool contemApenasLetras(const string& str) { // verifica se o nome contém apenas letras
-    for (char c : str) {
-        if (!isalpha(c)) {
+bool contemApenasLetras(const string& str)   // verifica se o nome contém apenas letras
+{
+    for (char c : str)
+    {
+        if (!isalpha(c))
+        {
             return false;
         }
     }
@@ -152,6 +155,31 @@ void MovimentoInimigo(vector<inimigo> &Inimigos, player &J, int dificuldade, int
         }
     }
 }
+const int PAREDE_NAO_QUEBRADA = 1;
+
+void imprimirExplosao(int raio, char kbom, int direction, int XB, int YB, int i, int j, int m[][27])
+{
+    for (int r = 1; r <= raio; r++)
+    {
+        // Verifique se é uma parede não quebrável
+        if (m[i][j] == PAREDE_NAO_QUEBRADA)
+        {
+            cout << char(219);
+            return;
+        }
+
+
+        if ((direction == 1 && j == YB + r) ||  // Direita
+                (direction == 2 && j == YB - r) ||  // Esquerda
+                (direction == 3 && i == XB + r) ||  // Baixo
+                (direction == 4 && i == XB - r))    // Cima
+        {
+            cout << kbom;
+            return;
+        }
+    }
+    cout << ' ';
+}
 void MapaIniciar(int m[13][27])                     ///INICIA O MAPA
 {
     srand(time(0));
@@ -189,7 +217,8 @@ void MapaIniciar(int m[13][27])                     ///INICIA O MAPA
 }
 
 void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vector<pair<int,int>> &InimigoPosicoes, vector<player> &J, auto &final)
-{   ///FUNCAO INICIAR FASE
+{
+    ///FUNCAO INICIAR FASE
     MapaIniciar(m);
     GeracaoInimigo(m, dificuldade, InimigoPosicoes);
     Inimigos.clear();
@@ -205,10 +234,10 @@ void IniciarFase(int m[13][27], int dificuldade, vector<inimigo> &Inimigos, vect
 
 
 
-void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///FAZER O RANK
+void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///salva a pontuacao no arquivo
 {
     ofstream arquivoS;
-    arquivoS.open("ranking.txt", std::ios_base::app); // Abre o arquivo em modo de adição para não sobrescrever
+    arquivoS.open("ranking.txt", std::ios_base::app);
     if (arquivoS.is_open())
 
     {
@@ -245,38 +274,48 @@ void salvarRanking(const string& nome, int &pontos, int dificuldade)        ///F
 
 }
 
-///recursividade
+///recursividade (ordenando rank)
 
-void exibirRankingRecursivo(vector<pair<int, string>>& ranking, int left, int right) {
-    if (left < right) {
-        int pivot = ranking[right].first;
-        int i = left - 1;
-        for (int j = left; j <= right - 1; j++) {
-            if (ranking[j].first > pivot) {
+void exibirRankingRecursivo(vector<pair<int, string>>& ranking, int esquerda, int direita)
+{
+    if (esquerda < direita)
+    {
+        int pivo = ranking[direita].first;
+        int i = esquerda - 1;
+        for (int j = esquerda; j <= direita - 1; j++)
+        {
+            if (ranking[j].first > pivo)
+            {
                 i++;
                 swap(ranking[i], ranking[j]);
             }
         }
-        swap(ranking[i + 1], ranking[right]);
-        int partitionIndex = i + 1;
-        exibirRankingRecursivo(ranking, left, partitionIndex - 1);
-        exibirRankingRecursivo(ranking, partitionIndex + 1, right);
+        swap(ranking[i + 1], ranking[direita]);
+        int indice = i + 1;
+        exibirRankingRecursivo(ranking, esquerda, indice - 1);
+        exibirRankingRecursivo(ranking, indice + 1, direita);
     }
 }
 
-void exibirRanking() {
+void exibirRanking() ///exibi rank ordenado em tela
+{
     ifstream arquivoS;
     string linha;
     vector<pair<int, string>> ranking;
     arquivoS.open("ranking.txt");
-    if (arquivoS.is_open()) {
+    if (arquivoS.is_open())
+    {
         int pontos;
         string nome;
-        while (arquivoS >> linha) {
-            if (linha == "Pontuacao:") {
+        while (arquivoS >> linha)
+        {
+            if (linha == "Pontuacao:")
+            {
                 arquivoS >> pontos;
                 ranking.push_back(make_pair(pontos, nome));
-            } else if (linha == "Nome:") {
+            }
+            else if (linha == "Nome:")
+            {
                 arquivoS >> nome;
             }
         }
@@ -285,19 +324,23 @@ void exibirRanking() {
         exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
         cout << "Ranking:" << endl;
-        for (const auto& pair : ranking) {
+        for (const auto& pair : ranking)
+        {
             cout << pair.second << " - " << pair.first << endl;
         }
-    } else {
+    }
+    else
+    {
         cout << "Erro ao abrir o arquivo de ranking." << endl;
     }
 }
 
-void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos)
-{   ///MENU DO JOGO
+void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimigo> &Inimigos, bool &GameContinue)
+{
+    ///MENU DO JOGO
     do
     {
-      //  PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+        PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
         system ("cls");
         cout << " _______  _______  __   __  _______  _______  ______    __   __  _______  __    _ \n"
              "|  _    ||       ||  |_|  ||  _    ||       ||    _ |  |  |_|  ||   _   ||  |  | |\n"
@@ -312,23 +355,26 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
         cout << "                         |         1 - COMECAR          |" << endl;
         cout << "                         |         2 - TUTORIAL         |" << endl;
         cout << "                         |         3 - PONTUACAO        |" << endl;
-        cout << "                         |         4 - SAIR             |" << endl;
-        cout << "                         |                              |" << endl;
+        cout << "                         |         4 - RANKING          |" << endl;
+        cout << "                         |         5 - SAIR             |" << endl;
         cout << "                         |______________________________|" << endl;
         cin >> menu;
         switch(menu)
         {
         case 1:
-        //    PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
+            PlaySound(TEXT("menu.wav"), NULL, SND_ASYNC);
             system("cls");
             cout <<"selecione a dificuldade:" << endl;
             cout << "1 - facil" << endl << "2 - medio" << endl << "3 - dificil" << endl;
             cin>>dificuldade;       ///ESCOLHE DIFICULDADE
-            if(dificuldade<1||dificuldade>3){
-                do{
-                cout<<"Opcao invalida! por favor digite novamente."<<endl;
-                cin>>dificuldade;
-                } while(dificuldade<1||dificuldade>3);
+            if(dificuldade<1||dificuldade>3)
+            {
+                do
+                {
+                    cout<<"Opcao invalida! por favor digite novamente."<<endl;
+                    cin>>dificuldade;
+                }
+                while(dificuldade<1||dificuldade>3);
             }
             switch(dificuldade)
             {
@@ -336,21 +382,19 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
-                if (!contemApenasLetras(nome)) {
-        cout << "Erro: O nome deve conter apenas letras." << endl;
-        system ("cls");
-        cout << "digite seu nome:" << endl;
-        cin >> nome;
-    }
-
-
-
+                if (!contemApenasLetras(nome))
+                {
+                    cout << "Erro: O nome deve conter apenas letras." << endl;
+                    cout << "digite seu nome:" << endl;
+                    cin >> nome;
+                }
                 pontos=900;
                 dificuldade=3;
                 jogadores facil;
                 facil.nome = nome;
+                GameContinue = true;
                 Inimigos.resize(dificuldade);
-            //    PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 return;
             }
 
@@ -358,18 +402,18 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
-                  if (!contemApenasLetras(nome)) {
-        cout << "Erro: O nome deve conter apenas letras." << endl;
-        system ("cls");
-        cout << "digite seu nome:" << endl;
-        cin >> nome;
-    }
-
+                if (!contemApenasLetras(nome))
+                {
+                    cout << "Erro: O nome deve conter apenas letras." << endl;
+                    cout << "digite seu nome:" << endl;
+                    cin >> nome;
+                }
                 pontos = 600;
                 dificuldade=5;
                 jogadores medio;
                 medio.nome = nome;
-             //  PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                GameContinue = true;
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
 
                 return;
@@ -379,17 +423,19 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             {
                 cout << "digite seu nome" << endl;
                 cin >> nome;
-                  if (!contemApenasLetras(nome)) {
-        cout << "Erro: O nome deve conter apenas letras." << endl;
-        cout << "digite seu nome:" << endl;
-        cin >> nome;
-    }
+                if (!contemApenasLetras(nome))
+                {
+                    cout << "Erro: O nome deve conter apenas letras." << endl;
+                    cout << "digite seu nome:" << endl;
+                    cin >> nome;
+                }
 
                 pontos = 400;
                 dificuldade=7;
                 jogadores dificil;
                 dificil.nome = nome;
-             //   PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
+                GameContinue = true;
+                PlaySound(TEXT("trilha.wav"), NULL, SND_ASYNC);
                 Inimigos.resize(dificuldade);
                 return;
             }
@@ -415,7 +461,12 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             cout << "2. Destrua Paredes: Algumas paredes podem ser destruidas pelas explosoes das bombas.\n";
             cout << "3. Voce pode encontrar itens especiais que aumentam o alcance de suas bombas ou concedem poderes adicionais.\n";
             cout << "4. Inimigos: Enfrente os inimigos pelo caminho, evitando suas investidas e utilizando suas bombas de forma estrategica para elimina-los.\n";
-            cout << "5. Mapas: Avance atraves dos mapas, enfrentando inimigos cada vez mais desafiadores, ate chegar ao ultimo mapa e derrotar o chefao final.\n\n";
+            cout << "5. Mapas: Avance atraves dos mapas, enfrentando inimigos cada vez mais desafiadores.\n\n";
+            cout << "6. itens:\n";
+            cout << "vida extra: e possivel conseguir vida extra explodindo paredes quebraveis" << endl;
+            cout << "é possivel aumentar o alcance de explosao da bomba com um iten especial" << endl;
+
+
             system("pause");
             break;
         case 3:
@@ -446,57 +497,82 @@ void MenuJogo (int menu,int &dificuldade,int &pontos, string &nome, vector<inimi
             break;
 
         case 4:
+            system("cls");
+
+
+            exibirRanking();
+            system("pause");
+            break;
+        case 5:
             exit(0);
             break;
         default:
             cout<<"Opcao invalida!"<<endl;
+
+
+
         }
     }
     while (menu!=1);
 }
 
-void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &AtravessarParede) {
+void PowerUps(int &VidaPlayer, bool &BombaRelogio, bool &ImuneBomba, bool &AtravessarParede, int &RaioTamanho)
+{
 
-   int ChancePower = rand()%6+1;
+    int ChancePower = rand()%5+1;
 
-  switch (ChancePower) {
+    switch (ChancePower)
+    {
     case 1: // Vida Extra
-      if (VidaPlayer <= 3) {
-        VidaPlayer++;
+        if (VidaPlayer <= 3)
+        {
+            VidaPlayer++;
         }
-      break;
+        break;
     case 2: // Bomba Relógio
-      BombaRelogio = true;
+        BombaRelogio = true;
 
-      break;
+        break;
     case 3: // Sobrevive Bomba
-      ImuneBomba = true;
+        ImuneBomba = true;
 
-      break;
-     case 4: // passar paredes
-      AtravessarParede = true;
+        break;
+    case 4: // passar paredes
+        AtravessarParede = true;
 // linha dos power ups on 715
-      break;
-      //case 5: // multiplas bombas
-      //MultiBomba = true;
+        break;
+    case 5: // Raio bomba
+        if(RaioTamanho<=3)
+        {
+            RaioTamanho+=1;
+        }
+        else
+        {
+            RaioTamanho=3;
+        }
 
-      break;
+        break;
     default:
 
-      break;
-  }
+        break;
+    }
 }
 bool AtravessarParede = true;
-bool colisao(int p, bool AtravessarParede) {
-  if (AtravessarParede == true) {
-    return p == 0 || p == 5 || p == 2;
-  } else {
-    return p == 0 || p == 5;
-  }
+bool colisao(int p, bool AtravessarParede)
+{
+    if (AtravessarParede == true)
+    {
+        return p == 0 || p == 5 || p == 2;
+    }
+    else
+    {
+        return p == 0 || p == 5;
+    }
 }
 
 void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigos, int &dificuldade, int &VidaPlayer, int &InimigosVivos, int &pontos, vector<player> &J, vector<ExplosaoBomba> &Explosoes, bool &NumeroDBombas, int ChanceItem, bool ImuneBomba)
-{   ///TIME DA BOMBA
+{
+    ///TIME DA BOMBA
     for (auto &player : J)
     {
         for (const auto &ExplosaoBomba : Explosoes)
@@ -506,7 +582,8 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
                 VidaPlayer--;
             }
         }
-        if(ImuneBomba==false&& m[player.x][player.y]==3){
+        if(ImuneBomba==false&& m[player.x][player.y]==3)
+        {
             VidaPlayer--;
         }
     }
@@ -579,6 +656,7 @@ void BombaTimeExplosao(int &XB, int &YB, int m[13][27], vector<inimigo> &Inimigo
         }
     }
     NumeroDBombas=false;
+    Explosoes.clear();
     m[XB][YB]=0;
     XB=-3;
     YB=-3;
@@ -643,7 +721,7 @@ int main()
     ///J.push_back({5,4}); ///player 2
 
     int VidaPlayer;
-    VidaPlayer = 1;
+    VidaPlayer = 2;
     ///Variavel para tecla precionada
     char tecla;
     ///Parade Quebravel
@@ -655,7 +733,7 @@ int main()
     ///Vector da bomba
     vector <ExplosaoBomba> Explosoes;
     ///COISAS DO MENU(ISA)
-    int contagem;
+    int contagem=0;
     int movimentos = 0;
     int contbaixo;
     int contcima;
@@ -665,7 +743,7 @@ int main()
     string nome;
     exibirRanking();
     vector<pair<int, string>> ranking;
-    int Cavalo=1;
+    int RaioTamanho=1;
     int menu = 0;
     ///ITENS
     char item           (134);
@@ -678,7 +756,7 @@ int main()
     bool AtravessarParede = false;
 
     ///MENU
-    MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+    MenuJogo(menu, dificuldade, pontos, nome,Inimigos, GameContinue);
     InimigosVivos = Inimigos.size();
     IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
 
@@ -690,6 +768,8 @@ int main()
         ///Posiciona a escrita no iicio do console
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
+        ///Imprime o jogo: mapa e personagem.
+        int bomb = 98;
         ///Imprime o jogo: mapa e personagem.
         for(int i=0; i<13; i++)
         {
@@ -705,42 +785,75 @@ int main()
                 {
                     cout<<char(022); //bomba
                 }
-                else
+                else if (bomb > 97 && bomb <= 100)
                 {
-                    for(const auto& inimigo : Inimigos)
+                    if ((i == XB && j >= YB + 1 && j <= YB + RaioTamanho))   // Explosão direita
                     {
-                        if(i==inimigo.xi&&j==inimigo.yi)
-                        {
-                            cout<<enemy;
-                            isEnemy = true;
-                            break;
-                        }
+                        imprimirExplosao(RaioTamanho, kbom, 1, XB, YB, i, j, m);
                     }
-                    if(!isEnemy)
+                    else if ((i == XB && j <= YB - 1 && j >= YB - RaioTamanho))     // Explosão esquerda
                     {
-                        switch (m[i][j])
+                        imprimirExplosao(RaioTamanho, kbom, 2, XB, YB, i, j, m);
+                    }
+                    else if ((i >= XB + 1 && i <= XB + RaioTamanho && j == YB))     // Explosão baixo
+                    {
+                        imprimirExplosao(RaioTamanho, kbom, 3, XB, YB, i, j, m);
+                    }
+                    else if ((i <= XB - 1 && i >= XB - RaioTamanho && j == YB))     // Explosão cima
+                    {
+                        imprimirExplosao(RaioTamanho, kbom, 4, XB, YB, i, j, m);
+                    }
+                    else
+                    {
+                        for(const auto& inimigo : Inimigos)
                         {
-                        case 0:
-                            cout<<" ";
-                            break;       //caminho
-                        case 1:
-                            cout<<char(219);
-                            break; //parede
-                        case 2:
-                            cout<<char(176);
-                            break; //parede quebravel
-                        case 5:
-                            cout<<char(134);
-                            break; //item
-                            //default: cout<<"-"; //erro
-                        }   //fim switch
+
+                            if(i==inimigo.xi&&j==inimigo.yi)
+                            {
+                                cout<<enemy;
+                                isEnemy = true;
+                                break;
+                            }
+                        }
+                        if(!isEnemy)
+                        {
+                            switch (m[i][j])
+                            {
+                            case 0:
+                                cout<<" ";
+                                break;       //caminho
+                            case 1:
+                                cout<<char(219);
+                                break; //parede
+                            case 2:
+                                cout<<char(176);
+                                break; //parede quebravel
+                            case 5:
+                                cout<<char(134);
+                                break; //item
+                                //default: cout<<"-"; //erro
+                            }   //fim switch
+                        }
                     }
                 }
             }
             cout<<"\n";
         } //fim for mapa
 
+
+        ///power up aumento pontuacao
+
+        if(ImuneBomba==true)
+        {
+            pontos++;
+        }
+        if(AtravessarParede==true)
+        {
+            pontos++;
+        }
+
         ///executa os movimentos
+
 
         if (_kbhit())
         {
@@ -853,7 +966,8 @@ int main()
                     XB=J[0].x;
                     YB=J[0].y;
                     m[XB][YB]=3;
-                    if(BombaRelogio==false){
+                    if(BombaRelogio==false)
+                    {
                         InicioBomba = steady_clock::now();
                         BombaColocada=true;
                     }
@@ -868,18 +982,24 @@ int main()
                     while(false);
                     Explosoes.clear();
                     ///DEFINE A AREA DAS EXPLOSÕES
-                    Explosoes.push_back({XB-1,YB}); ///CIMA
-                    Explosoes.push_back({XB+1,YB}); ///BAIXO
-                    Explosoes.push_back({XB,YB-1}); ///ESQUERDA
-                    Explosoes.push_back({XB,YB+1}); ///DIREITA
+                    for(int i=1; i<=RaioTamanho; i++)
+                    {
+                        Explosoes.push_back({XB-i,YB}); ///CIMA
+                        Explosoes.push_back({XB+i,YB}); ///BAIXO
+                        Explosoes.push_back({XB,YB-i}); ///ESQUERDA
+                        Explosoes.push_back({XB,YB+i}); ///DIREITA
+                    }
+
                 }
                 break;
             case 89:
             case 'q': ///BOMBA RELOGIO
-                if(BombaRelogio==true){
+                if(BombaRelogio==true)
+                {
                     InicioBomba = steady_clock::now();
                     AtivarBomba = true;
                     BombaColocada=true;
+                    pontos++;
                 }
                 break;
 
@@ -918,8 +1038,9 @@ int main()
             }
 
         }
-            ///CHAMA O TIMER DA BOMBA
-            if((BombaRelogio==false)||(BombaRelogio==true&&BombaColocada==true)){
+        ///CHAMA O TIMER DA BOMBA
+        if((BombaRelogio==false)||(BombaRelogio==true&&BombaColocada==true))
+        {
             auto TempoBombaAgora = steady_clock::now();
             auto BombaPassou = duration_cast<milliseconds>(TempoBombaAgora-InicioBomba);
 
@@ -931,14 +1052,14 @@ int main()
                 BombaTimeExplosao(XB, YB, m, Inimigos, dificuldade, VidaPlayer, InimigosVivos, pontos, J, Explosoes, NumeroDBombas, ChanceItem, ImuneBomba);
 
             }
-            }
+        }
 
 
 
         if(m[J[0].x][J[0].y]==5)  ///PLAYER PEGA ITEM
         {
             m[J[0].x][J[0].y]=0;
-            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba,AtravessarParede); ///VIDA
+            PowerUps(VidaPlayer, BombaRelogio, ImuneBomba,AtravessarParede, RaioTamanho); ///VIDA
         }
 
 
@@ -960,15 +1081,23 @@ int main()
             MapaIniciar(m);
         }
 
-            ///INFORMAÇÕES NA TELA
+        ///INFORMAÇÕES NA TELA
         final = steady_clock::now();
         auto tempo = final - inicio;
         cout << " _________________________________________________________________" << endl;
-        cout << "                         PONTUACAO:" << pontos                   << endl;
-        cout << " TEMPO: " << duration_cast<seconds>(tempo).count() <<            "     "<< endl;
-        cout << " MOVIMENTOS: " << movimentos << "                                 " << endl;
-        cout << "                                                                  " << endl;
+        cout << " PONTUACAO:" << pontos<<"     "<<"Raio da bomba"<<" "<<RaioTamanho<< endl;
+        cout << " TEMPO: " << duration_cast<seconds>(tempo).count()<<"         "<<(AtravessarParede?"Atravesar Paredes":" ")<< endl;
+        cout << " MOVIMENTOS: " << movimentos <<"    "<<(ImuneBomba?"Imune a bombas":"   ")<< endl;
+        cout << "                   "    << (BombaRelogio ?"Bomba Relogio":"    ")   << endl;
         cout << " BOMBAS USADAS: " << contagem << "       VIDAS:"<<VidaPlayer        << endl;
+        if(AtravessarParede==true)
+        {
+            cout << "atravesar paredes" << endl;
+            if(ImuneBomba==true)
+            {
+                cout << "imune a bombaas" << endl;
+            }
+        }
         cout << "__________________________________________________________________" << endl;
 
         if(InimigosVivos==0)
@@ -982,7 +1111,7 @@ int main()
 
                     salvarRanking(nome,pontos, dificuldade);
 
-                       exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
                 }
                 else if(dificuldade==5)
@@ -990,18 +1119,20 @@ int main()
 
                     salvarRanking(nome,pontos, dificuldade);
 
-                        exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
                 }
                 else if(dificuldade==7)
                 {
                     salvarRanking(nome,pontos, dificuldade);
 
-                      exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
 
                 }
                 ///SCORE AQUI, RANK ETC...
+                exibirRanking();
+
                 system("pause");
                 system("cls");
                 return 0;
@@ -1017,6 +1148,10 @@ int main()
                 VidaPlayer+=1;
                 InimigosVivos = Inimigos.size();
                 IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                BombaRelogio=false;
+                ImuneBomba=false;
+                AtravessarParede=false;
+                RaioTamanho=1;
                 break;
             case 2:
                 GameContinue = false;
@@ -1024,7 +1159,7 @@ int main()
 
                 salvarRanking(nome,pontos, dificuldade);
 
-                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
 
                 return 0;
@@ -1041,7 +1176,8 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+
 
 
 
@@ -1049,7 +1185,7 @@ int main()
             else if(dificuldade==5)
             {
                 salvarRanking(nome,pontos,dificuldade);
-    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
 
             }
@@ -1059,9 +1195,10 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
             }
+            exibirRanking();
             cout<<"Digite [1] para retornar ao menu, [2] para sair."<<endl;
             cin>>ContinuarJogo;
             switch (ContinuarJogo)
@@ -1069,10 +1206,14 @@ int main()
             case 1:
                 system("cls");
                 GameContinue = true;
-                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos, GameContinue);
                 VidaPlayer+=1;
                 InimigosVivos = Inimigos.size();
                 IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                BombaRelogio=false;
+                ImuneBomba=false;
+                AtravessarParede=false;
+                RaioTamanho=1;
                 break;
             case 2:
                 GameContinue = false;
@@ -1090,7 +1231,7 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
 
             }
@@ -1099,7 +1240,7 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
 
             }
@@ -1109,11 +1250,13 @@ int main()
 
                 salvarRanking(nome,pontos,dificuldade);
 
-                    exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
+                exibirRankingRecursivo(ranking, 0, ranking.size() - 1);
 
 
 
             }
+            exibirRanking();
+
             cout<<"Digite [1] para voltar ao menu, [2] para sair:"<<endl;
             cin>>ContinuarJogo;
             switch(ContinuarJogo)
@@ -1121,11 +1264,14 @@ int main()
             case 1:
                 system("cls");
                 GameContinue = true;
-                MenuJogo(menu, dificuldade, pontos, nome,Inimigos);
+                MenuJogo(menu, dificuldade, pontos, nome,Inimigos, GameContinue);
                 VidaPlayer+=1;
-
                 InimigosVivos = Inimigos.size();
                 IniciarFase(m, dificuldade, Inimigos, InimigoPosicoes, J, final);
+                BombaRelogio=false;
+                ImuneBomba=false;
+                AtravessarParede=false;
+                RaioTamanho=1;
                 break;
             case 2:
                 GameContinue = false;
